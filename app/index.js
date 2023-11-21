@@ -25,7 +25,15 @@ export default function Page() {
 
   const handleRecordUpdated = (payload) => {
     console.log("UDPATE", payload);
-    // setData(oldData => )
+
+    setData((oldData) => {
+      return oldData.map((item) => {
+        if (item.id === payload.new.id) {
+          return payload.new;
+        }
+        return item;
+      });
+    });
   };
 
   const handleRecordInserted = (payload) => {

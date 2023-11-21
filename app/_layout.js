@@ -32,6 +32,8 @@ export default function HomeLayout() {
           fontSize: 30,
         },
         tabBarStyle: { backgroundColor: "#311866", activeTintColor: "red" },
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "#BBADD3",
       }}
     >
       <Tabs.Screen
@@ -75,7 +77,7 @@ export default function HomeLayout() {
         name="me"
         options={{
           tabBarLabel: "Me",
-          tabBarIcon: ({ size, color }) => (
+          tabBarIcon: ({ focused, size, color }) => (
             <Ionicons name="person-circle" size={size} color={color} />
           ),
         }}

@@ -10,6 +10,7 @@ import {
   Dimensions,
 } from "react-native";
 import supabase from "../Supabase";
+import { AntDesign } from "@expo/vector-icons";
 import {
   useFonts,
   Caladea_400Regular,
@@ -19,8 +20,11 @@ import {
 
 import AppLoading from "expo-app-loading";
 
-const LIKE_ICON_OUTLINE = require("../assets/like_regular_light.png");
-const LIKE_ICON_FILLED = require("../assets/like_solid_light.png");
+const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
+const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
+
+// const LIKE_ICON_OUTLINE = <AntDesign name="hearto" size={24} color="black" />;
+// const LIKE_ICON_FILLED = <AntDesign name="heart" size={24} color="black" />;
 
 const Post = ({
   id,
@@ -121,8 +125,8 @@ const styles = StyleSheet.create({
     textColor: "black",
   },
   heart: {
-    width: 20,
-    height: 18,
+    width: 24,
+    height: 22,
   },
   textInput: {
     // opacity: "20%",
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 8,
     flex: 1,
-    marginRight: 10,
+    marginRight: 8,
   },
   header: {
     flexDirection: "row",
