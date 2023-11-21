@@ -1,14 +1,37 @@
 import { Tabs } from "expo-router";
-
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+
+import {
+  useFonts,
+  ImperialScript_400Regular,
+} from "@expo-google-fonts/imperial-script";
+import AppLoading from "expo-app-loading";
 
 export default function HomeLayout() {
+  const [fontsLoaded] = useFonts({
+    ImperialScript: ImperialScript_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerTitle: "RendezViewz",
+        headerStyle: {
+          backgroundColor: "#311866",
+        },
+        headerTitleStyle: {
+          color: "white",
+          fontFamily: "ImperialScript",
+          fontSize: 30,
+        },
+        tabBarStyle: { backgroundColor: "#311866", activeTintColor: "red" },
       }}
     >
       <Tabs.Screen
