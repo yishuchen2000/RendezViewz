@@ -1,55 +1,64 @@
-import { StyleSheet, Text, View } from "react-native";
-//hearts
-import { Ionicons } from "@expo/vector-icons";
-//group
-import { FontAwesome } from "@expo/vector-icons";
-//cal1
-import { FontAwesome5 } from "@expo/vector-icons";
-//cal5
-import { AntDesign } from "@expo/vector-icons";
-import { Foundation } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { Octicons } from "@expo/vector-icons";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { Calendar, LocaleConfig, Agenda } from "react-native-calendars";
+import { LinearGradient } from "expo-linear-gradient";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 import { Link } from "expo-router";
 
 export default function Page() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Feed</Text>
-        <Ionicons name="heart-sharp" size={24} color="black" />
-        <Ionicons name="heart-outline" size={24} color="black" />
-        <AntDesign name="heart" size={24} color="black" />
-        <AntDesign name="hearto" size={24} color="black" />
-        <FontAwesome name="group" size={24} color="black" />
-        <FontAwesome5 name="calendar-day" size={24} color="black" />
-        <FontAwesome name="calendar-o" size={24} color="black" />
-        <FontAwesome name="calendar" size={24} color="black" />
-        <FontAwesome5 name="calendar-alt" size={24} color="black" />
-        <AntDesign name="calendar" size={24} color="black" />
-        <FontAwesome5 name="comment-alt" size={24} color="black" />
-        <Foundation name="comment" size={24} color="black" />
-        <MaterialCommunityIcons
-          name="comment-multiple-outline"
-          size={24}
-          color="black"
-        />
-        <MaterialCommunityIcons name="comment" size={24} color="black" />
-        <MaterialIcons name="mode-comment" size={24} color="black" />
-        <Feather name="send" size={24} color="black" />
-        <FontAwesome name="send" size={24} color="black" />
-        <Feather name="inbox" size={24} color="black" />
-        <FontAwesome name="inbox" size={24} color="black" />
-        <Ionicons name="add-circle" size={24} color="black" />
-        <Ionicons name="add-circle-outline" size={24} color="black" />
-        <MaterialIcons name="add" size={24} color="black" />
-        <MaterialIcons name="library-add" size={24} color="black" />
-        <Octicons name="diff-added" size={24} color="black" />
+  const [selected, setSelected] = useState("");
+  const [items, setItems] = useState({
+    "2023-11-21": [
+      { name: "test 1", people: ["Alexa", "Bernard", "Carrie"] },
+      { name: "test 3", people: ["A", "B"] },
+      { name: "test 4", people: ["A", , "C"] },
+    ],
+    "2023-11-30": [{ name: "test 2", people: ["A"] }],
+  });
+
+  const renderItem = (item) => {
+    return (
+      <View style={styles.itemContainer}>
+        <Text style={{ fontSize: 20, color: "purple" }}>{item.name}</Text>
+        <Text style={{ fontSize: 10, color: "gray" }}>
+          {item.people.toString()}
+        </Text>
       </View>
-    </View>
+    );
+  };
+
+  return (
+    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+      <View style={styles.main}>
+        <View style={styles.cal}>
+          <Text style={{ fontSize: 25, color: "white" }}>My Schedule</Text>
+        </View>
+        <Agenda
+          style={{ width: "100%", height: "100%" }}
+          theme={{
+            backgroundColor: "transparent",
+            calendarBackground: "#ffffff",
+            textSectionTitleColor: "#b6c1cd",
+            selectedDayBackgroundColor: "#602683",
+            selectedDayTextColor: "#ffffff",
+            todayTextColor: "#602683",
+            dayTextColor: "#2d4150",
+            textDisabledColor: "#c6c7c9",
+            arrowColor: "#602683",
+            dotColor: "#602683",
+          }}
+          onDayPress={(day) => {
+            setSelected(day.dateString);
+            console.log("selected day", day);
+          }}
+          items={items}
+          renderItem={renderItem}
+        />
+      </View>
+    </LinearGradient>
   );
 }
 
@@ -58,12 +67,38 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     padding: 24,
+    backgroundColor: "transparent",
+    backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+    borderColor: "red",
+    borderWidth: 5,
   },
   main: {
-    flex: 1,
+    height: windowHeight * 0.5,
+    width: windowWidth,
+    backgroundColor: "transparent",
+    flexDirection: "column",
+    width: windowWidth,
+    height: windowHeight,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    borderColor: "blue",
+    borderWidth: 5,
+  },
+  itemContainer: {
+    backgroundColor: "white",
+    margin: 5,
+    borderRadius: 15,
     justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
+    alignItems: "center",
+    flex: 1,
+  },
+  cal: {
+    width: "100%",
+    backgroundColor: "transparent",
+    height: "5%",
+    borderWidth: 5,
+    borderColor: "green",
+    alignItems: "center",
   },
   title: {
     fontSize: 64,
