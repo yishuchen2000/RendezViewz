@@ -115,7 +115,7 @@ const AddEvent = ({ route, navigation }) => {
         <Ionicons name="ios-film-outline" size={30} color="white" />
         <View style={styles.input}>
           <Dropdown
-            style={styles.dropdown}
+            style={styles.dropdown1}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
@@ -140,7 +140,7 @@ const AddEvent = ({ route, navigation }) => {
         <View style={styles.input}>
           <View style={styles.input1}>
             <MultiSelect
-              style={styles.dropdown}
+              style={styles.dropdown2}
               placeholderStyle={styles.placeholderStyle2}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -170,7 +170,7 @@ const AddEvent = ({ route, navigation }) => {
         </View>
       </View>
       <Pressable style={styles.button} onPress={handleAddEvent}>
-        <Text style={{ color: "purple" }}>Send Invites</Text>
+        <Text style={{ color: "purple", fontSize: 15 }}>Send Invites</Text>
       </Pressable>
     </LinearGradient>
   );
@@ -216,10 +216,10 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: "center",
     position: "absolute",
-    backgroundColor: "#DDDDDD",
+    backgroundColor: "white",
     width: 200,
     padding: 10,
-    borderRadius: 15,
+    borderRadius: 50,
     alignItems: "center",
     marginTop: 10,
     bottom: 7,
@@ -247,6 +247,18 @@ const styles = StyleSheet.create({
     width: 275,
     borderRadius: 50,
   },
+  dropdown1: {
+    color: "purple",
+    height: 50,
+    width: 275,
+    borderRadius: 50,
+  },
+  dropdown2: {
+    color: "purple",
+    height: 30,
+    width: 275,
+    borderRadius: 50,
+  },
   icon: {
     marginRight: 2,
   },
@@ -270,7 +282,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     shadowColor: "#000",
-    marginBottom: 7,
+    marginTop: 7,
     marginRight: 7,
     paddingLeft: 5,
     //paddingHorizontal: 12,
@@ -300,7 +312,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle2: {
     fontSize: 16,
-    alignSelf: "flex-start",
+    //alignSelf: "flex-start",
     color: "gray",
   },
 });

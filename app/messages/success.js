@@ -62,7 +62,7 @@ const Success = ({ navigation, route }) => {
           navigation.goBack();
         }}
       >
-        <Text style={{ color: "purple", fontSize: 20 }}>
+        <Text style={{ color: "purple", fontSize: 15 }}>
           Return to calendar
         </Text>
       </Pressable>
