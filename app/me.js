@@ -1,14 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { Link } from "expo-router";
 
 export default function Page() {
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
       <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
+        <Text style={styles.title}>Profile</Text>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
