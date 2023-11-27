@@ -45,9 +45,8 @@ export default function HomeLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
-        name="feed"
+        name="messages"
         options={{
           tabBarLabel: "Calendar",
           tabBarIcon: ({ size, color }) => (
@@ -64,15 +63,17 @@ export default function HomeLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
-        name="messages"
+        name="feed"
         options={{
-          tabBarLabel: "Friends",
+          tabBarLabel: "People",
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="group" size={size} color={color} />
           ),
         }}
       />
+
       <Tabs.Screen
         name="me"
         options={{
