@@ -25,6 +25,7 @@ export default function HomeLayout() {
         headerTitle: "RendezViewz",
         headerStyle: {
           backgroundColor: "#311866",
+          //borderBottomWidth: 0,
         },
         headerTitleStyle: {
           color: "white",
