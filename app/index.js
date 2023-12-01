@@ -90,6 +90,19 @@ export default function Page() {
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+      {/* <View style={styles.composer}>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => setInput(text)}
+          value={input}
+          placeholder="Write a post..."
+          placeholderTextColor="rgba(0, 0, 0, 0.5)"
+        />
+        <TouchableOpacity style={styles.send} onPress={onMessageSend}>
+          <FontAwesome name="send" size={20} color="#BBADD3" />
+        </TouchableOpacity>
+      </View> */}
+
       <SafeAreaView>
         <FlatList
           data={data}
@@ -103,24 +116,13 @@ export default function Page() {
               imageUrl={item.show_poster_url}
               profilePic={item.profile_pic}
               action={item.action}
+              comments={item.comments}
             />
           )}
           keyExtractor={(item) => item.text}
           style={styles.posts}
         />
       </SafeAreaView>
-      {/* <View style={styles.composer}>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => setInput(text)}
-          value={input}
-          placeholder="Write a post..."
-          placeholderTextColor="rgba(0, 0, 0, 0.5)"
-        />
-        <TouchableOpacity style={styles.send} onPress={onMessageSend}>
-          <FontAwesome name="send" size={20} color="rgb(0, 125, 255)" />
-        </TouchableOpacity>
-      </View> */}
     </LinearGradient>
   );
 }
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   posts: {
-    marginTop: 12,
+    // marginTop: 12,
   },
   composer: {
     flexDirection: "row",
@@ -144,6 +146,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 8,
+    
   },
   input: {
     flex: 1,

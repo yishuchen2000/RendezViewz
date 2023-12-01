@@ -8,6 +8,7 @@ import {
   Pressable,
   TouchableOpacity,
   Dimensions,
+  FlatList,
 } from "react-native";
 import supabase from "../Supabase";
 import { AntDesign } from "@expo/vector-icons";
@@ -17,6 +18,8 @@ import {
   Caladea_700Bold,
   Caladea_italic,
 } from "@expo-google-fonts/imperial-script";
+import { FontAwesome } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import AppLoading from "expo-app-loading";
 
@@ -35,6 +38,7 @@ const Post = ({
   imageUrl,
   profilePic,
   action,
+  comments,
 }) => {
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
@@ -49,6 +53,17 @@ const Post = ({
     console.log(response);
   };
 
+  const onCommentSend = async () => {
+    if (inputText !== "") {
+      const response = await supabase
+        .from("posts")
+        .update({ comments: [...comments, ["Yishu C", inputText]] })
+        .eq("id", id);
+      console.log(response);
+      setInputText("");
+    }
+  };
+
   // const [fontsLoaded] = useFonts({
   //   CaladeaRegular: Caladea_400Regular,
   //   CaladeaBold: Caladea_700Bold,
@@ -60,6 +75,11 @@ const Post = ({
   // }
 
   return (
+    // <LinearGradient
+    //   colors={["white", "rgba(217, 217, 217, 0.4)"]}
+    //   locations={[0, 0.25]}
+    //   style={styles.container}
+    // >
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.profile}>
@@ -71,6 +91,8 @@ const Post = ({
         </View>
         <Text>{timestamp}</Text>
       </View>
+
+      {/* <View style={styles.divider} /> */}
 
       <View style={styles.body}>
         <View style={styles.postContent}>
@@ -92,19 +114,37 @@ const Post = ({
       </View>
 
       <View style={styles.footer}>
-        <View style={styles.textInput}>
-          <TextInput
-            value={inputText}
-            onChangeText={(text) => setInputText(text)}
-            placeholder={"Write a comment..."}
+        <View style={styles.commentBar}>
+          <View style={styles.textInput}>
+            <TextInput
+              style={styles.inputText}
+              value={inputText}
+              onChangeText={(text) => setInputText(text)}
+              placeholder={"Write a comment..."}
+              placeholderTextColor="rgba(0, 0, 0, 0.5)"
+            />
+            <TouchableOpacity style={styles.send} onPress={onCommentSend}>
+              <FontAwesome name="send" size={20} color="#361866" />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity onPress={onLikePressed}>
+            <Image
+              style={styles.heart}
+              source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.commentSection}>
+          <FlatList
+            data={comments}
+            renderItem={({ item }) => (
+              <Text style={styles.comment}>{item[0] + ": " + item[1]}</Text>
+            )}
+            style={styles.flatList}
           />
         </View>
-        <TouchableOpacity onPress={onLikePressed}>
-          <Image
-            style={styles.heart}
-            source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
-          />
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -114,7 +154,7 @@ export default Post;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(217, 217, 217, 0.5)",
+    backgroundColor: "rgba(217, 217, 217, 0.8)",
     // borderColor: "black",
     // borderWidth: 1,
     borderRadius: 15,
@@ -130,16 +170,26 @@ const styles = StyleSheet.create({
   },
   textInput: {
     // opacity: "20%",
-    backgroundColor: "rgba(217, 217, 217, 0.5)",
+    backgroundColor: "rgba(217, 217, 217, 1)",
     borderRadius: 15,
-    padding: 8,
+    padding: 6,
     flex: 1,
     marginRight: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  inputText: {
+    // color: "red",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  divider: {
+    flex: 1,
+    // borderWidth: 1,
+    // borderColor: "#361866",
   },
   body: {
     flexDirection: "row",
@@ -151,9 +201,29 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
   footer: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
+    // borderWidth: 1,
+  },
+  commentBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    // backgroundColor: "rgba(217, 217, 217, 0.5)",
+    // flex: 1,
+    // borderWidth: 1,
+  },
+  commentSection: {
+    // borderWidth: 1,
+    width: "100%",
+    padding: 5,
+
+    // height: 1,
+  },
+  comment: {
+    color: "rgba(0, 0, 0, 0.7)",
   },
   profilePic: {
     // width: 32,

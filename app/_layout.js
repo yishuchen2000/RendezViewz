@@ -80,7 +80,7 @@ export default function HomeLayout() {
         options={{
           tabBarLabel: "Me",
           tabBarIcon: ({ focused, size, color }) => (
-            <Ionicons name="person-circle" size={size} color={color} />
+            <Ionicons name="person-circle" size={size + 5} color={color} />
           ),
         }}
       />
