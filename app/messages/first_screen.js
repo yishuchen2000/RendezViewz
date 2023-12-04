@@ -235,6 +235,86 @@ export const initialItems = {
       date: "2023-12-22",
     },
   ],
+  "2023-12-23": [
+    {
+      name: "Squid Games",
+      people: ["Vivian"],
+      time: "21:30",
+      date: "2023-12-23",
+    },
+  ],
+  "2023-12-24": [
+    {
+      name: "Queen Insoo",
+      people: ["Jenny"],
+      time: "22:30",
+      date: "2023-12-24",
+    },
+  ],
+  "2023-12-25": [
+    {
+      name: "She's the Man",
+      people: ["Sean"],
+      time: "22:00",
+      date: "2023-12-25",
+    },
+  ],
+  "2023-12-26": [
+    {
+      name: "Virgin River",
+      people: [],
+      time: "22:00",
+      date: "2023-12-26",
+    },
+  ],
+  "2023-12-27": [
+    {
+      name: "The Great British Baking Show",
+      people: ["McKenna", "Tomas", "Joey"],
+      time: "21:30",
+      date: "2023-12-27",
+    },
+  ],
+  "2023-12-28": [
+    {
+      name: "Single's Inferno",
+      people: ["Sean"],
+      time: "22:00",
+      date: "2023-12-28",
+    },
+  ],
+  "2023-12-29": [
+    {
+      name: "YOU",
+      people: ["Tomas"],
+      time: "21:30",
+      date: "2023-12-29",
+    },
+  ],
+  "2023-12-30": [
+    {
+      name: "Grey's Anatomy",
+      people: ["Lexi"],
+      time: "21:30",
+      date: "2023-12-30",
+    },
+  ],
+  "2023-12-31": [
+    {
+      name: "Poseidon",
+      people: ["Jake"],
+      time: "19:30",
+      date: "2023-12-31",
+    },
+  ],
+  "2024-01-01": [
+    {
+      name: "Carol",
+      people: ["Grace"],
+      time: "21:30",
+      date: "2024-01-01",
+    },
+  ],
   "2024-03-01": [
     { name: "Tenet", people: ["David"], time: "19:00", date: "2023-03-01" },
   ],
