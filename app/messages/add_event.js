@@ -6,7 +6,9 @@ import {
   TextInput,
   Pressable,
   FlatList,
-  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { initialItems } from "./first_screen";
@@ -20,6 +22,9 @@ import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 //import DropdownList from "react-widgets/DropdownList";
 //import "react-widgets/styles.css";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const shows = [
   { label: "Alice in Wonderland", value: "1" },
@@ -39,6 +44,13 @@ const people = [
   { label: "Sean", value: "5" },
   { label: "Aaron", value: "6" },
   { label: "Natalie", value: "7" },
+  { label: "Jessie", value: "8" },
+  { label: "Maya", value: "9" },
+  { label: "Avery", value: "10" },
+  { label: "Monique", value: "11" },
+  { label: "Zion", value: "12" },
+  { label: "Paige", value: "13" },
+  { label: "Jack", value: "14" },
 ];
 
 const AddEvent = ({ route, navigation }) => {
@@ -51,6 +63,11 @@ const AddEvent = ({ route, navigation }) => {
   const [items, setItems] = useState(initialItems);
 
   const handleAddEvent = () => {
+    if (!show) {
+      // Show an alert for missing show name
+      Alert.alert("Error", "Please select a show before adding an event.");
+      return;
+    }
     // Create a new event object with the entered data
     const newEvent = {
       name: show,
@@ -88,87 +105,99 @@ const AddEvent = ({ route, navigation }) => {
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
-      <View style={styles.eachBox1}>
-        <DateTimePicker
-          value={value}
-          onValueChange={(date) => {
-            const formattedDate = dayjs(date);
-            const datePart = formattedDate.format("YYYY-MM-DD"); // Extract date part
-            const timePart = formattedDate.format("HH:mm"); // Extract time part
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.ccontainer}>
+          <View style={styles.eachBox1}>
+            <DateTimePicker
+              value={value}
+              onValueChange={(date) => {
+                const formattedDate = dayjs(date);
+                const datePart = formattedDate.format("YYYY-MM-DD"); // Extract date part
+                const timePart = formattedDate.format("HH:mm"); // Extract time part
 
-            console.log(datePart);
-            console.log(timePart);
-            setValue(datePart);
-            setTime(timePart);
-            setDate(datePart);
-          }}
-          calendarTextStyle={{ color: "black" }}
-          selectedTextStyle={{ color: "white" }}
-          selectedItemColor="purple"
-          headerTextStyle={{ color: "white" }}
-          headerButtonColor="purple"
-          weekDaysTextStyle={{ color: "white" }}
-          //customStyles={customStyles}
-        />
-      </View>
-      <View style={styles.eachBox}>
-        <Ionicons name="ios-film-outline" size={30} color="white" />
-        <View style={styles.input}>
-          <Dropdown
-            style={styles.dropdown1}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={shows}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="label"
-            placeholder="Select Content"
-            searchPlaceholder="Search..."
-            value={show}
-            onChange={(item) => {
-              setShow(item.label);
-              console.log(item.label);
-            }}
-          />
-        </View>
-      </View>
-      <View style={styles.eachBox}>
-        <Ionicons name="ios-people" size={30} color="white" />
-        <View style={styles.input}>
-          <View style={styles.input1}>
-            <MultiSelect
-              style={styles.dropdown2}
-              placeholderStyle={styles.placeholderStyle2}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={people}
-              labelField="label"
-              valueField="label"
-              placeholder="Add People"
-              value={person}
-              search
-              searchPlaceholder="Search..."
-              onChange={(item) => {
-                setPerson(item);
-                console.log(item);
+                console.log(datePart);
+                console.log(timePart);
+                setValue(datePart);
+                setTime(timePart);
+                setDate(datePart);
               }}
-              renderItem={renderItem}
-              renderSelectedItem={(item, unSelect) => (
-                <Pressable onPress={() => unSelect && unSelect(item)}>
-                  <View style={styles.selectedStyle}>
-                    <Text style={styles.textSelectedStyle}>{item.label}</Text>
-                    <Entypo name="cross" size={15} color="black" />
-                  </View>
-                </Pressable>
-              )}
+              calendarTextStyle={{ color: "purple" }}
+              selectedTextStyle={{ color: "white" }}
+              selectedItemColor="purple"
+              headerTextStyle={{ color: "white" }}
+              headerButtonColor="purple"
+              weekDaysTextStyle={{ color: "white" }}
+              timePickerTextStyle={{ color: "purple" }}
+              //customStyles={customStyles}
             />
           </View>
+          <View style={styles.eachBox}>
+            <Ionicons name="ios-film-outline" size={30} color="white" />
+
+            <View style={styles.input}>
+              <Dropdown
+                style={styles.dropdown1}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                itemTextStyle={styles.selecttext}
+                iconStyle={styles.iconStyle}
+                data={shows}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="label"
+                placeholder="Select Content"
+                searchPlaceholder="Search..."
+                value={show}
+                onChange={(item) => {
+                  setShow(item.label);
+                  console.log(item.label);
+                }}
+              />
+            </View>
+          </View>
+          <View style={styles.eachBox}>
+            <Ionicons name="ios-people" size={30} color="white" />
+            <View style={styles.input}>
+              <View style={styles.input1}>
+                <MultiSelect
+                  style={styles.dropdown2}
+                  placeholderStyle={styles.placeholderStyle2}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  itemTextStyle={styles.selecttext}
+                  activeColor="rgba(70, 10, 90, 0.3)"
+                  data={people}
+                  labelField="label"
+                  valueField="label"
+                  placeholder="Add People"
+                  value={person}
+                  search
+                  searchPlaceholder="Search..."
+                  onChange={(item) => {
+                    setPerson(item);
+                    console.log(item);
+                  }}
+                  renderItem={renderItem}
+                  renderSelectedItem={(item, unSelect) => (
+                    <Pressable onPress={() => unSelect && unSelect(item)}>
+                      <View style={styles.selectedStyle}>
+                        <Text style={styles.textSelectedStyle}>
+                          {item.label}
+                        </Text>
+                        <Entypo name="cross" size={15} color="purple" />
+                      </View>
+                    </Pressable>
+                  )}
+                />
+              </View>
+            </View>
+          </View>
+          <View style={styles.space}></View>
         </View>
-      </View>
+      </ScrollView>
       <Pressable style={styles.button} onPress={handleAddEvent}>
         <Text style={{ color: "purple", fontSize: 15 }}>Send Invites</Text>
       </Pressable>
@@ -177,6 +206,12 @@ const AddEvent = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  space: {
+    height: 500,
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -184,6 +219,14 @@ const styles = StyleSheet.create({
     //padding: 24,
     backgroundColor: "transparent",
   },
+  ccontainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "start",
+    //padding: 24,
+    backgroundColor: "transparent",
+  },
+
   item: {
     padding: 17,
     flexDirection: "row",
@@ -225,16 +268,19 @@ const styles = StyleSheet.create({
     bottom: 7,
     //right: 20,
   },
+  selecttext: {
+    color: "purple",
+  },
   eachBox: {
-    height: 50,
+    height: windowHeight * 0.05,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   eachBox1: {
     padding: 5,
-    width: 340,
-    height: 350,
+    width: windowWidth * 0.88,
+    height: windowHeight * 0.41,
     justifyContent: "space-between",
     alignItems: "center",
     borderRadius: 20,
@@ -269,6 +315,7 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
+    color: "purple",
   },
   iconStyle: {
     width: 10,
@@ -282,9 +329,11 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     shadowColor: "#000",
+    //activeColor: "red",
     marginTop: 8,
     marginRight: 7,
     paddingLeft: 5,
+    paddingRight: 5,
     //paddingHorizontal: 12,
     //paddingVertical: 8,
     shadowOffset: {
@@ -293,10 +342,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-
     elevation: 2,
+    overflow: "hidden",
   },
   textSelectedStyle: {
+    color: "purple",
     marginRight: 5,
     fontSize: 13,
     alignSelf: "center",

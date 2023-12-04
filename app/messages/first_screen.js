@@ -199,7 +199,7 @@ export const initialItems = {
   ],
   "2023-12-17": [
     {
-      name: "The Mightmare Before Christmas",
+      name: "The Nightmare Before Christmas",
       people: ["Alice"],
       time: "22:00",
       date: "2023-12-17",
@@ -242,27 +242,41 @@ export const initialItems = {
 
 export default function FirstScreen({ navigation }) {
   const [selected, setSelected] = useState("");
+  const [items, setItems] = useState(initialItems);
+
+  const removeEvent = (date, eventName) => {
+    // Create a copy of the items
+    const updatedItems = { ...items };
+    // Find the index of the event to remove
+    const index = updatedItems[date].findIndex(
+      (event) => event.name === eventName
+    );
+    // Remove the event if found
+    if (index !== -1) {
+      updatedItems[date].splice(index, 1);
+      setItems(updatedItems);
+    }
+  };
 
   const renderItem = (item) => {
     return (
-      <Pressable
-        onPress={() =>
-          navigation.navigate("event_detail", {
-            date: item.date,
-            name: item.name,
-            people: item.people,
-            time: item.time,
-          })
-        }
-      >
-        <View style={styles.itemContainer}>
-          <Text style={{ fontSize: 17, color: "purple" }}>{item.name}</Text>
-          <Text style={{ fontSize: 10, color: "gray" }}>{item.time}</Text>
-          <Text style={{ fontSize: 10, color: "gray" }}>
-            {item.people.join(", ")}
-          </Text>
+      <View style={styles.itemContainer}>
+        <View style={styles.rowcont}>
+          <View style={styles.eventInfo}>
+            <Text style={{ fontSize: 17, color: "purple" }}>{item.name}</Text>
+            <Text style={{ fontSize: 10, color: "gray" }}>{item.time}</Text>
+            <Text style={{ fontSize: 10, color: "gray" }}>
+              {item.people.join(", ")}
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => removeEvent(item.date, item.name)}
+            style={styles.removeButton}
+          >
+            <AntDesign name="close" size={20} color="gray" />
+          </Pressable>
         </View>
-      </Pressable>
+      </View>
     );
   };
 
@@ -311,6 +325,12 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
   },
+  rowcont: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   main: {
     flex: 1,
     // height: windowHeight * 0.5,
@@ -354,8 +374,8 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignItems: "center",
     justifyContent: "center",
-    bottom: 200,
-    right: 10,
+    bottom: windowHeight * 0.03,
+    right: windowWidth * 0.05,
     backgroundColor: "transparent",
   },
   button: {
