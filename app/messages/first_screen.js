@@ -10,16 +10,16 @@ import {
   Dimensions,
   FlatList,
   TextInput,
+  Alert,
 } from "react-native";
-//import { useNavigation, Link, Stack } from "expo-router";
-//import { StatusBar } from "expo-status-bar";
-//import { WebView } from "react-native-webview";
-//import _debounce from 'lodash/debounce';
+
 import { Calendar, LocaleConfig, Agenda } from "react-native-calendars";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
-
+import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 export const initialItems = {
@@ -258,25 +258,51 @@ export default function FirstScreen({ navigation }) {
     }
   };
 
+  const doublecheck = (date, eventName) => {
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to remove this event?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        { text: "Delete", onPress: () => removeEvent(date, eventName) },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const renderItem = (item) => {
     return (
-      <View style={styles.itemContainer}>
-        <View style={styles.rowcont}>
-          <View style={styles.eventInfo}>
-            <Text style={{ fontSize: 17, color: "purple" }}>{item.name}</Text>
-            <Text style={{ fontSize: 10, color: "gray" }}>{item.time}</Text>
-            <Text style={{ fontSize: 10, color: "gray" }}>
-              {item.people.join(", ")}
-            </Text>
+      <Pressable
+        onPress={() =>
+          navigation.navigate("event_detail", {
+            date: item.date,
+            name: item.name,
+            people: item.people,
+            time: item.time,
+          })
+        }
+      >
+        <View style={styles.itemContainer}>
+          <View style={styles.rowcont}>
+            <View style={styles.eventInfo}>
+              <Text style={{ fontSize: 17, color: "purple" }}>{item.name}</Text>
+              <Text style={{ fontSize: 10, color: "gray" }}>{item.time}</Text>
+              <Text style={{ fontSize: 10, color: "gray" }}>
+                {item.people.join(", ")}
+              </Text>
+            </View>
+            <Pressable
+              onPress={() => doublecheck(item.date, item.name)}
+              style={styles.removeButton}
+            >
+              <AntDesign name="close" size={20} color="gray" />
+            </Pressable>
           </View>
-          <Pressable
-            onPress={() => removeEvent(item.date, item.name)}
-            style={styles.removeButton}
-          >
-            <AntDesign name="close" size={20} color="gray" />
-          </Pressable>
         </View>
-      </View>
+      </Pressable>
     );
   };
 
@@ -304,6 +330,22 @@ export default function FirstScreen({ navigation }) {
           items={initialItems}
           renderItem={renderItem}
         />
+        <View style={styles.buttonContainer2}>
+          <Pressable
+            style={styles.button1}
+            onPress={() => navigation.navigate("invite_inbox", {})}
+          >
+            <Feather name="mail" size={30} color="white" />
+          </Pressable>
+        </View>
+        <View style={styles.buttonContainer1}>
+          <Pressable
+            style={styles.button1}
+            onPress={() => navigation.navigate("search_event", {})}
+          >
+            <FontAwesome name="search" size={25} color="white" />
+          </Pressable>
+        </View>
         <View style={styles.buttonContainer}>
           <Pressable
             style={styles.button}
@@ -368,6 +410,10 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: "#38434D",
   },
+  inboxtext: {
+    color: "white",
+    fontSize: 15,
+  },
   buttonContainer: {
     position: "absolute",
     height: 60,
@@ -382,8 +428,44 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 50,
-    backgroundColor: "transparent", // Adjust as needed
+    backgroundColor: "white", // Adjust as needed
     justifyContent: "center",
     alignItems: "center",
+  },
+  button1: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: "#602683", // Adjust as needed
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button2: {
+    width: 100,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: "#602683", // Adjust as needed
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonContainer1: {
+    position: "absolute",
+    height: 60,
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    bottom: windowHeight * 0.03,
+    right: windowHeight * 0.1,
+    backgroundColor: "transparent",
+  },
+  buttonContainer2: {
+    position: "absolute",
+    height: 60,
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    bottom: windowHeight * 0.03,
+    left: windowHeight * 0.02,
+    backgroundColor: "transparent",
   },
 });

@@ -3,9 +3,7 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   Pressable,
-  FlatList,
   Dimensions,
   ScrollView,
   Alert,
@@ -13,15 +11,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { initialItems } from "./first_screen";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { MultiSelect } from "react-native-element-dropdown";
 import { Dropdown } from "react-native-element-dropdown";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { Entypo } from "@expo/vector-icons";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
-//import DropdownList from "react-widgets/DropdownList";
-//import "react-widgets/styles.css";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
