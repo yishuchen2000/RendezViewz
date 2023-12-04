@@ -78,8 +78,12 @@ const SearchEvent = ({ route, navigation }) => {
           <Text style={styles.datet}>{item.date}</Text>
           <Text style={styles.timet}>{item.time}</Text>
         </View>
-        <Text style={styles.showt}>{item.name}</Text>
-        <Text style={styles.timet}>{item.people.join(", ")}</Text>
+        <Text numberOfLines={1} style={styles.showt}>
+          {item.name}
+        </Text>
+        <Text numberOfLines={1} style={styles.timet}>
+          {item.people.join(", ")}
+        </Text>
       </View>
     </Pressable>
   );

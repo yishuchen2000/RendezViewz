@@ -152,7 +152,19 @@ export const initialItems = {
   "2023-12-11": [
     {
       name: "Almost Christmas",
-      people: ["Emily", "Jane", "Jolie"],
+      people: [
+        "Emily",
+        "Jane",
+        "Jolie",
+        "Nina",
+        "Kena",
+        "Zoe",
+        "Jane",
+        "Harry",
+        "Max",
+        "James",
+        "Harry",
+      ],
       time: "22:00",
       date: "2023-12-11",
     },
@@ -368,9 +380,15 @@ export default function FirstScreen({ navigation }) {
         <View style={styles.itemContainer}>
           <View style={styles.rowcont}>
             <View style={styles.eventInfo}>
-              <Text style={{ fontSize: 17, color: "purple" }}>{item.name}</Text>
+              <Text numberOfLines={1} style={{ fontSize: 17, color: "purple" }}>
+                {item.name}
+              </Text>
               <Text style={{ fontSize: 10, color: "gray" }}>{item.time}</Text>
-              <Text style={{ fontSize: 10, color: "gray" }}>
+              <Text
+                numberOfLines={1}
+                //ellipsizeMode="tail"
+                style={{ fontSize: 10, color: "gray" }}
+              >
                 {item.people.join(", ")}
               </Text>
             </View>
@@ -452,6 +470,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  eventInfo: {
+    width: windowWidth * 0.65,
   },
   main: {
     flex: 1,
