@@ -6,7 +6,7 @@ import EventDetail from "./event_detail";
 import AddEvent from "./add_event";
 import Success from "./success";
 import SearchEvent from "./search_event";
-import InviteInbox from "./invite_inbox";
+import MyEventTabs from "./Inbox/_layout";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,8 +19,8 @@ export default function MessagesLayout() {
         options={{ headerShown: false }} //no header for this page
       />
       <Stack.Screen
-        name="invite_inbox" //song detail page
-        component={InviteInbox}
+        name="Inbox" //song detail page
+        component={MyEventTabs}
         options={{
           title: "Invite Inbox",
           headerStyle: {

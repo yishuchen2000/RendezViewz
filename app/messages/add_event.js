@@ -9,7 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { initialItems } from "./first_screen";
+import { initialItems } from "./eventdata";
 import { Ionicons } from "@expo/vector-icons";
 import { MultiSelect } from "react-native-element-dropdown";
 import { Dropdown } from "react-native-element-dropdown";
