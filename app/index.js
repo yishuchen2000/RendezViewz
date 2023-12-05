@@ -10,6 +10,7 @@ import {
   TextInput,
   Pressable,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { useState, useEffect } from "react";
 import Post from "../components/Post";
@@ -18,6 +19,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import theme from "../assets/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 export default function Page() {
   const [data, setData] = useState(null);
@@ -103,7 +106,7 @@ export default function Page() {
         </TouchableOpacity>
       </View> */}
 
-      <SafeAreaView>
+      <View>
         <FlatList
           data={data}
           renderItem={({ item }) => (
@@ -122,7 +125,17 @@ export default function Page() {
           keyExtractor={(item) => item.text}
           style={styles.posts}
         />
-      </SafeAreaView>
+        <View style={styles.clapboard}>
+          <Image
+            source={require("../assets/Clapboard2.png")}
+            style={{
+              flex: 1,
+              width: windowWidth,
+              resizeMode: "stretch",
+            }}
+          />
+        </View>
+      </View>
     </LinearGradient>
   );
 }
@@ -146,8 +159,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 8,
-    
+    borderColor: "green",
+    borderWidth: 5,
   },
+  clapboard: {
+    position: "abolute",
+    bottom: windowHeight * 0.0055,
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
+    //marginBottom: 10,
+  },
+
   input: {
     flex: 1,
     height: 30,

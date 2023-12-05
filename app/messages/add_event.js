@@ -7,6 +7,7 @@ import {
   Dimensions,
   ScrollView,
   Alert,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { initialItems } from "./eventdata";
@@ -195,6 +196,16 @@ const AddEvent = ({ route, navigation }) => {
       <Pressable style={styles.button} onPress={handleAddEvent}>
         <Text style={{ color: "purple", fontSize: 15 }}>Send Invites</Text>
       </Pressable>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -220,7 +231,11 @@ const styles = StyleSheet.create({
     //padding: 24,
     backgroundColor: "transparent",
   },
-
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
+  },
   item: {
     padding: 17,
     flexDirection: "row",
@@ -259,7 +274,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: "center",
     marginTop: 10,
-    bottom: 7,
+    bottom: windowHeight * 0.05,
     //right: 20,
   },
   selecttext: {

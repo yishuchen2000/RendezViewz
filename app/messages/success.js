@@ -6,6 +6,7 @@ import {
   Dimensions,
   Pressable,
   ScrollView,
+  Image,
 } from "react-native";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -30,6 +31,7 @@ const Success = ({ navigation, route }) => {
       </View>
     ));
   };
+
   const renderPeopleCircles = () => {
     const maxPeopleToShow = 4;
     const abbreviatedPeople = showAllPeople
@@ -135,6 +137,16 @@ const Success = ({ navigation, route }) => {
           </Pressable>
         </View>
       </ScrollView>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -184,6 +196,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: "white",
     textAlign: "center",
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
   scrollView: {},
   c: {

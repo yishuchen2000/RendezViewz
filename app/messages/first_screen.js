@@ -137,6 +137,16 @@ export default function FirstScreen({ navigation }) {
           </Pressable>
         </View>
       </View>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
+      </View>
     </LinearGradient>
   );
 }
@@ -148,6 +158,11 @@ const styles = StyleSheet.create({
     // padding: 24,
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
   rowcont: {
     width: "100%",

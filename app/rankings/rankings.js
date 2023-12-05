@@ -6,6 +6,7 @@ import {
   Modal,
   Dimensions,
   FlatList,
+  Image,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
@@ -90,6 +91,16 @@ export default function Rankings() {
           <AntDesign name="pluscircle" size={60} color="#602683" />
         </Pressable>
       </View>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
+      </View>
     </LinearGradient>
   );
 }
@@ -107,7 +118,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignItems: "center",
     justifyContent: "center",
-    bottom: windowHeight * 0.03,
+    bottom: windowHeight * 0.05,
     right: windowWidth * 0.05,
     backgroundColor: "transparent",
   },
@@ -140,6 +151,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: windowWidth * 0.8,
     justifyContent: "space-between",
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
   modalTitle: {
     flex: 1,

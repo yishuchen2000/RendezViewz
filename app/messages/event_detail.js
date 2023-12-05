@@ -8,6 +8,7 @@ import {
   Dimensions,
   Pressable,
   ScrollView,
+  Image,
 } from "react-native";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -95,6 +96,16 @@ const EventDetail = ({ route }) => {
           )}
         </View>
       </ScrollView>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -106,6 +117,11 @@ const styles = StyleSheet.create({
     //padding: 24,
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
   overall: {
     flexDirection: "column",

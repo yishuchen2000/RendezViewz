@@ -11,6 +11,7 @@ import {
   FlatList,
   TextInput,
   Alert,
+  Image,
 } from "react-native";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -169,6 +170,16 @@ const Events = ({ route, navigation }) => {
         alignSelf="center"
         extraData={searchQuery} // This line ensures re-rendering when searchQuery changes
       />
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../../../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -182,6 +193,11 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
   background: {
     height: windowHeight * 0.09,

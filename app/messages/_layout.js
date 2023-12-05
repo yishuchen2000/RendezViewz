@@ -5,7 +5,6 @@ import FirstScreen from "./first_screen";
 import EventDetail from "./event_detail";
 import AddEvent from "./add_event";
 import Success from "./success";
-import SearchEvent from "./search_event";
 import MyEventTabs from "./Inbox/_layout";
 
 const Stack = createNativeStackNavigator();
@@ -23,20 +22,6 @@ export default function MessagesLayout() {
         component={MyEventTabs}
         options={{
           title: "Invite Inbox",
-          headerStyle: {
-            backgroundColor: "#361866", // Set the background color of the header
-          },
-          headerTitleStyle: {
-            color: "white", // Set the font color of the title
-          },
-          headerTintColor: "white", // Set the color of the back arrow
-        }}
-      />
-      <Stack.Screen
-        name="search_event" //song detail page
-        component={SearchEvent}
-        options={{
-          title: "Search Event",
           headerStyle: {
             backgroundColor: "#361866", // Set the background color of the header
           },
