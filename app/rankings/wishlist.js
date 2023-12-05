@@ -61,7 +61,7 @@ export default function Rankings() {
                   style={styles.buttonClose}
                   onPress={() => setModalVisible(!modalVisible)}
                 >
-                  <MaterialIcons name="cancel" size={30} color={"black"} />
+                  <MaterialIcons name="cancel" size={35} color={"black"} />
                 </Pressable>
               </View>
 
@@ -83,7 +83,7 @@ export default function Rankings() {
       />
       <View style={styles.buttonContainer}>
         <Pressable
-          style={styles.button}
+          style={styles.plusButton}
           onPress={() => setModalVisible(!modalVisible)}
         >
           <AntDesign name="pluscircle" size={60} color="#602683" />
@@ -125,9 +125,7 @@ const styles = StyleSheet.create({
     right: windowWidth * 0.05,
     backgroundColor: "transparent",
   },
-  button: {
-    width: 60,
-    height: 60,
+  plusButton: {
     borderRadius: 50,
     backgroundColor: "white", // Adjust as needed
     justifyContent: "center",
@@ -179,13 +177,10 @@ const styles = StyleSheet.create({
     bottom: 30,
   },
   plusButton: {
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-    height: windowHeight * 0.07,
-    width: windowHeight * 0.07,
-    backgroundColor: "white",
     borderRadius: 100,
+    backgroundColor: "white", // Adjust as needed
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
     paddingHorizontal: windowWidth * 0.02,

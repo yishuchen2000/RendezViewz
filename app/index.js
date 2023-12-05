@@ -124,6 +124,7 @@ export default function Page() {
           )}
           keyExtractor={(item) => item.text}
           style={styles.posts}
+          contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         />
         <View style={styles.clapboard}>
           <Image
