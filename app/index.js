@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   posts: {
-    // marginTop: 12,
+    marginTop: 12,
   },
   composer: {
     flexDirection: "row",
