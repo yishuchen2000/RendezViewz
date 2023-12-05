@@ -225,8 +225,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   button: {
-    width: 60,
-    height: 60,
+    width: 52,
+    height: 52,
     borderRadius: 50,
     backgroundColor: "white", // Adjust as needed
     justifyContent: "center",
