@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { FontAwesome } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome, MaterialIcons, Entypo } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 
 import {
@@ -56,15 +55,14 @@ export default function HomeLayout() {
         }}
       />
       <Tabs.Screen
-        name="add"
+        name="rankings"
         options={{
-          tabBarLabel: "Add",
+          tabBarLabel: "Rankings",
           tabBarIcon: ({ size, color }) => (
-            <MaterialIcons name="add" size={size + 5} color={color} />
+            <Entypo name="add-to-list" size={size + 5} color={color} />
           ),
         }}
       />
-
       <Tabs.Screen
         name="feed"
         options={{

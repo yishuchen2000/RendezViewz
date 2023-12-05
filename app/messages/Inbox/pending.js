@@ -136,7 +136,7 @@ const Pending = ({ route, navigation }) => {
               }}
               style={styles.crossContainer}
             >
-              <AntDesign name="check" size={20} color="gray" />
+              <AntDesign name="check" size={20} color="purple" />
             </Pressable>
           </View>
           <View style={styles.crossContainer}>
