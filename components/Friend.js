@@ -33,16 +33,17 @@ export default Friend;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(217, 217, 217, 0.8)",
+    backgroundColor: "rgba(225, 225, 225, 0.3)",
     borderColor: "#361866",
-    borderWidth: 0.5,
+    //borderWidth: 0.5,
     // height: 70,
-    // borderRadius: 15,
+    borderRadius: 15,
     padding: 8,
     width: "100%",
     // marginBottom: 10,
     // gap: 4,
     textColor: "black",
+    margin: 2,
   },
   header: {
     flexDirection: "row",

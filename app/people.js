@@ -37,7 +37,7 @@ export default function Page() {
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
-      <View>
+      <View style={styles.container1}>
         <View style={styles.searchBar}>
           <TextInput
             style={styles.input}
@@ -51,31 +51,33 @@ export default function Page() {
           </TouchableOpacity>
         </View>
 
-        <SafeAreaView style={styles.friendList}>
+        <View style={styles.friendList}>
           {/* <Text style={styles.title}>Add</Text> */}
           <FlatList
             data={data}
             renderItem={({ item }) => (
-              <Friend
-                id={item.id}
-                user={item.user}
-                profilePic={item.profile_pic}
-              />
+              <View style={styles.friendbox}>
+                <Friend
+                  id={item.id}
+                  user={item.user}
+                  profilePic={item.profile_pic}
+                />
+              </View>
             )}
             keyExtractor={(item) => item.text}
             style={styles.posts}
           />
-        </SafeAreaView>
-        <View style={styles.clapboard}>
-          <Image
-            source={require("../assets/Clapboard2.png")}
-            style={{
-              flex: 1,
-              width: windowWidth,
-              resizeMode: "stretch",
-            }}
-          />
         </View>
+      </View>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
       </View>
     </LinearGradient>
   );
@@ -91,6 +93,22 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     // borderWidth: 1,
   },
+  container1: {
+    paddingTop: 10,
+    backgroundColor: "transparent",
+    // borderWidth: 1,
+  },
+  friendbox: {
+    backgroundColor: "rgba(50, 50, 50, 0.1)",
+
+    // borderWidth: 1,
+  },
+  friendList: {
+    backgroundColor: "transpar",
+
+    // borderWidth: 1,
+  },
+
   searchBar: {
     // flex: 1,
     // borderWidth: 1,
@@ -141,9 +159,12 @@ const styles = StyleSheet.create({
   },
   clapboard: {
     position: "abolute",
-    bottom: -3.2,
+    bottom: windowHeight * 0.04,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
+  },
+  posts: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
 });

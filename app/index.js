@@ -121,16 +121,16 @@ export default function Page() {
           style={styles.posts}
           contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
         />
-        <View style={styles.clapboard}>
-          <Image
-            source={require("../assets/Clapboard2.png")}
-            style={{
-              flex: 1,
-              width: windowWidth,
-              resizeMode: "stretch",
-            }}
-          />
-        </View>
+      </View>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../assets/Clapboard2.png")}
+          style={{
+            flex: 1,
+            width: windowWidth,
+            resizeMode: "stretch",
+          }}
+        />
       </View>
     </LinearGradient>
   );
@@ -143,7 +143,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
-    padding: 8,
+    paddingRight: 8,
+    paddingLeft: 8,
   },
   posts: {
     marginTop: 12,
@@ -158,13 +159,13 @@ const styles = StyleSheet.create({
     borderColor: "green",
     borderWidth: 5,
   },
+
   clapboard: {
     position: "abolute",
-    bottom: windowHeight * 0.0055,
+    bottom: windowHeight * 0.015,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
-    //marginBottom: 10,
   },
 
   input: {
