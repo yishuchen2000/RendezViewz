@@ -8,13 +8,15 @@ import {
   TextInput,
   FlatList,
   Image,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { Calendar, LocaleConfig, Agenda } from "react-native-calendars";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Friend from "../components/Friend";
 import supabase from "../Supabase";
+import { Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -30,7 +32,12 @@ export default function Page() {
     fetchData();
   }, []);
 
-  const onSearch = async () => {
+  const handleSearch = async () => {
+    // create a drop down and return friend that matches
+    // after selection of the friend clear up the input
+  };
+
+  const clearSearch = async () => {
     // create a drop down and return friend that matches
     // after selection of the friend clear up the input
   };
@@ -40,15 +47,29 @@ export default function Page() {
       <View style={styles.container1}>
         <View style={styles.searchBar}>
           <TextInput
-            style={styles.input}
-            // onChangeText={(text) => setInput(text)}
-            // value={input}
-            placeholder="Search a friend..."
-            placeholderTextColor="rgba(0, 0, 0, 0.5)"
+            numberOfLines={1}
+            style={{ color: "purple", textAlign: "left" }}
+            placeholder="Search friend"
+            placeholderTextColor="gray"
+            //value={searchInput}
+            //onChangeText={handleSearchInput}
           />
-          <TouchableOpacity style={styles.send} onPress={onSearch}>
-            <FontAwesome name="search" size={20} color="#BBADD3" />
-          </TouchableOpacity>
+          <View style={styles.buttons}>
+            <Pressable onPress={clearSearch} style={styles.searchbutton}>
+              <View style={styles.searchbutton}>
+                <Entypo name="cross" size={24} color="gray" />
+              </View>
+            </Pressable>
+            <Pressable onPress={handleSearch} style={styles.searchbutton}>
+              <View style={styles.searchbutton}>
+                <FontAwesome
+                  name="search"
+                  size={18}
+                  color="rgba(150, 130, 200, 1)"
+                />
+              </View>
+            </Pressable>
+          </View>
         </View>
 
         <View style={styles.friendList}>
@@ -108,18 +129,27 @@ const styles = StyleSheet.create({
 
     // borderWidth: 1,
   },
-
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: windowWidth * 0.13,
+  },
+  searchbutton: {
+    alignItems: "center",
+    justifyContent: "center",
+    //borderColor: "red",
+    //borderWidth: 5,
+  },
   searchBar: {
     // flex: 1,
-    // borderWidth: 1,
-    // borderColor: "red",
     marginLeft: 5,
     marginRight: 5,
     flexDirection: "row",
     backgroundColor: "white",
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 15,
+    borderRadius: 30,
+    alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 6,
   },
