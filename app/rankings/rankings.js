@@ -9,34 +9,39 @@ import {
   Image,
   TextInput,
   Keyboard,
+  LayoutAnimation,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome, MaterialIcons, Entypo } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Dropdown } from "react-native-element-dropdown";
 
 import supabase from "../../Supabase";
 import Ranking from "../../components/Movie";
 
-import { Link } from "expo-router";
-
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+const UNDERLINE = require("../../assets/underline.png");
+
 export default function Rankings() {
   const [modalVisible, setModalVisible] = useState(false);
-
   const [data, setData] = useState(null);
   const [possibleEntries, setPossibleEntries] = useState(null);
   const [entry, setEntry] = useState(null);
+  const [entryPic, setEntryPic] = useState(null);
+  const [rankValue, setRankValue] = useState(null);
+  const [rankCount, setRankCount] = useState(null);
+  const [modalValid, setModalValid] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("rankings").select("*");
       const sortedData = response.data.sort((a, b) => a.index - b.index);
       setData(sortedData);
+      setRankCount(response.data.length);
     };
     fetchData();
   }, []);
@@ -48,6 +53,79 @@ export default function Rankings() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (entry && rankValue) {
+      setModalValid(true);
+    } else {
+      setModalValid(false);
+    }
+  }, [entry, rankValue]);
+
+  const handleRank = async () => {
+    setModalVisible(!modalVisible); //close modal
+    let newId = Date.now();
+    let adjustedRank = parseInt(rankValue);
+
+    let response = await supabase.from("rankings").select("*");
+    let sortedData = response.data.sort((a, b) => a.index - b.index);
+
+    if (adjustedRank > rankCount + 1) {
+      adjustedRank = rankCount + 1;
+    } else {
+      const updatedRankings = sortedData.map((item) => {
+        if (item.index >= adjustedRank) {
+          item.index += 1;
+        }
+        return item;
+      });
+      await supabase.from("rankings").upsert(updatedRankings);
+    }
+    const { data } = await supabase.from("rankings").upsert([
+      {
+        id: newId,
+        title: entry,
+        index: adjustedRank,
+        url: entryPic,
+      },
+    ]);
+    response = await supabase.from("rankings").select("*");
+    sortedData = response.data.sort((a, b) => a.index - b.index);
+
+    setData(sortedData);
+    setRankCount(response.data.length);
+  };
+  //Animation for delete
+  const layoutAnimConfig = {
+    duration: 300,
+    update: {
+      type: LayoutAnimation.Types.easeInEaseOut,
+    },
+    delete: {
+      duration: 100,
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.opacity,
+    },
+  };
+
+  const handleDelete = async (id, index) => {
+    await supabase.from("rankings").delete().eq("id", id);
+
+    let response = await supabase.from("rankings").select("*");
+    sortedData = response.data.sort((a, b) => a.index - b.index);
+
+    const updatedRankings = sortedData.map((item) => {
+      if (item.index > index) {
+        item.index -= 1;
+      }
+      return item;
+    });
+    await supabase.from("rankings").upsert(updatedRankings);
+
+    setData(updatedRankings);
+    LayoutAnimation.configureNext(layoutAnimConfig);
+    setRankCount(updatedRankings.length);
+  };
 
   return (
     <LinearGradient
@@ -77,6 +155,7 @@ export default function Rankings() {
           <View style={styles.modalView}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>New Ranking</Text>
+              <Image style={styles.underline} source={UNDERLINE} />
               <Pressable
                 style={styles.buttonCloseContainer}
                 onPress={() => setModalVisible(!modalVisible)}
@@ -96,13 +175,14 @@ export default function Rankings() {
                   data={possibleEntries}
                   search
                   value={entry}
-                  maxHeight={300}
+                  maxHeight={260}
                   labelField="title"
                   valueField="title"
                   placeholder="Choose Content"
                   searchPlaceholder="Search..."
                   onChange={(item) => {
                     setEntry(item.title);
+                    setEntryPic(item.url);
                   }}
                 />
               </View>
@@ -112,10 +192,18 @@ export default function Rankings() {
                   style={styles.rankingInput}
                   keyboardType="numeric"
                   returnKeyType="done"
+                  onChangeText={(text) => setRankValue(text)}
                 />
               </View>
             </View>
-            <Pressable style={styles.addButton}>
+            <Pressable
+              style={[
+                styles.addButton,
+                { backgroundColor: modalValid ? "#602683" : "gray" },
+              ]}
+              onPress={handleRank}
+              disabled={!modalValid}
+            >
               <Text
                 style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
               >
@@ -127,8 +215,14 @@ export default function Rankings() {
       </Modal>
       <FlatList
         data={data}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <Ranking index={item.index} title={item.title} coverPic={item.url} />
+          <Ranking
+            index={item.index}
+            title={item.title}
+            coverPic={item.url}
+            onDelete={() => handleDelete(item.id, item.index)}
+          />
         )}
         style={styles.rankList}
         contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
@@ -183,7 +277,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: windowWidth * 0.8,
-    height: windowHeight * 0.5,
+    height: windowHeight * 0.55,
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
@@ -217,6 +311,16 @@ const styles = StyleSheet.create({
     color: "#361866",
     textAlign: "center",
   },
+  underline: {
+    transform: [{ scaleX: -1 }, { rotate: "4deg" }],
+    alignSelf: "center",
+    position: "absolute",
+    top: 45,
+    left: 48,
+    width: "70%",
+    height: 90,
+    tintColor: "#361866",
+  },
   buttonCloseContainer: {
     position: "absolute",
     color: "white",
@@ -227,7 +331,7 @@ const styles = StyleSheet.create({
   questionsContainer: {
     width: "90%",
     height: "60%",
-    marginTop: 50,
+    marginTop: 80,
     gap: 40,
   },
   titleSelectContainer: {
@@ -272,7 +376,6 @@ const styles = StyleSheet.create({
   addButton: {
     alignSelf: "center",
     position: "absolute",
-    backgroundColor: "#602683",
     width: 200,
     height: 50,
     padding: 10,

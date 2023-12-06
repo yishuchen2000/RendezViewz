@@ -22,6 +22,7 @@ export default function HomeLayout() {
   return (
     <Tabs
       screenOptions={{
+        unmountOnBlur: true,
         headerTitle: "RendezViewz",
         headerStyle: {
           backgroundColor: "#311866",

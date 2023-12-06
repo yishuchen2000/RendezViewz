@@ -1,9 +1,18 @@
-import { Text, View, StyleSheet, Image, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  Pressable,
+  Alert,
+} from "react-native";
+import { EvilIcons } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Ranking = ({ index, title, coverPic }) => {
+const Ranking = ({ index, title, coverPic, onDelete }) => {
   return (
     <View style={styles.container}>
       <View style={styles.indexBox}>
@@ -17,6 +26,32 @@ const Ranking = ({ index, title, coverPic }) => {
           {title}
         </Text>
       </View>
+      <Pressable style={styles.deleteButtonContainer}>
+        <EvilIcons
+          style={styles.deleteButton}
+          onPress={() => {
+            Alert.alert(
+              "Delete Ranking?",
+              `Are you sure you want to remove ${title} from this list?`,
+
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Delete",
+                  onPress: onDelete,
+                },
+              ],
+              { cancelable: false }
+            );
+          }}
+          name="trash"
+          size={25}
+          color="#602683"
+        />
+      </Pressable>
     </View>
   );
 };
@@ -56,7 +91,7 @@ const styles = StyleSheet.create({
   },
   entry: {
     flexDirection: "row",
-    gap: 20,
+    gap: 10,
     paddingLeft: 1,
     alignItems: "center",
   },
@@ -64,6 +99,19 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    width: windowWidth * 0.6,
+    width: windowWidth * 0.55,
+  },
+  deleteButtonContainer: {
+    position: "absolute",
+    right: 0,
+    bottom: 5,
+    width: windowWidth * 0.1,
+    height: "50%",
+    justifyContent: "center",
+  },
+  deleteButton: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
   },
 });
