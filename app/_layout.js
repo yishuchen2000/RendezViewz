@@ -66,7 +66,7 @@ export default function HomeLayout() {
         }}
       />
       <Tabs.Screen
-        name="feed"
+        name="people"
         options={{
           tabBarLabel: "People",
           tabBarIcon: ({ size, color }) => (

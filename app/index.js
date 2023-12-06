@@ -27,8 +27,6 @@ export default function Page() {
   const [input, setInput] = useState("");
 
   const handleRecordUpdated = (payload) => {
-    console.log("UDPATE", payload);
-
     setData((oldData) => {
       return oldData.map((item) => {
         if (item.id === payload.new.id) {
@@ -40,12 +38,10 @@ export default function Page() {
   };
 
   const handleRecordInserted = (payload) => {
-    console.log("INSERT", payload);
     setData((oldData) => [...oldData, payload.new]);
   };
 
   const handleRecordDeleted = (payload) => {
-    console.log("DELETE", payload);
     setData((oldData) => oldData.filter((item) => item.id !== payload.old.id));
   };
 
@@ -76,8 +72,6 @@ export default function Page() {
     // Fetch data on initial load
     const fetchData = async () => {
       const response = await supabase.from("posts").select("*");
-      // console.log(response);
-      console.log(response.data);
       setData(response.data);
     };
     fetchData();
@@ -109,6 +103,7 @@ export default function Page() {
       <View>
         <FlatList
           data={data}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <Post
               id={item.id}

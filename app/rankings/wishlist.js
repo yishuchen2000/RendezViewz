@@ -30,7 +30,6 @@ export default function Rankings() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("wishlist").select("*");
-      console.log("data:", response.data);
       setData(response.data);
     };
     fetchData();

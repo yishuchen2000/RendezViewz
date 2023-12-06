@@ -10,21 +10,6 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import supabase from "../Supabase";
-import { AntDesign } from "@expo/vector-icons";
-import {
-  useFonts,
-  Caladea_400Regular,
-  Caladea_700Bold,
-  Caladea_italic,
-} from "@expo-google-fonts/imperial-script";
-import { FontAwesome } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-
-import AppLoading from "expo-app-loading";
-
-const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
-const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
 
 const Friend = ({ id, user, profilePic }) => {
   const [inputText, setInputText] = useState("");

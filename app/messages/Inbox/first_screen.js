@@ -195,9 +195,12 @@ const styles = StyleSheet.create({
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
   },
   clapboard: {
+    position: "abolute",
+    bottom: windowHeight * 0.0055,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
+    //marginBottom: 10,
   },
   background: {
     height: windowHeight * 0.09,

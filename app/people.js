@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TextInput,
   FlatList,
+  Image,
   TouchableOpacity,
 } from "react-native";
 import { Calendar, LocaleConfig, Agenda } from "react-native-calendars";
@@ -18,15 +19,12 @@ import supabase from "../Supabase";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-import { Link } from "expo-router";
-
 export default function Page() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("friends").select("*");
-      console.log("ahh:", response.data);
       setData(response.data);
     };
     fetchData();
@@ -39,34 +37,46 @@ export default function Page() {
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
-      <View style={styles.searchBar}>
-        <TextInput
-          style={styles.input}
-          // onChangeText={(text) => setInput(text)}
-          // value={input}
-          placeholder="Search a friend..."
-          placeholderTextColor="rgba(0, 0, 0, 0.5)"
-        />
-        <TouchableOpacity style={styles.send} onPress={onSearch}>
-          <FontAwesome name="search" size={20} color="#BBADD3" />
-        </TouchableOpacity>
-      </View>
+      <View>
+        <View style={styles.searchBar}>
+          <TextInput
+            style={styles.input}
+            // onChangeText={(text) => setInput(text)}
+            // value={input}
+            placeholder="Search a friend..."
+            placeholderTextColor="rgba(0, 0, 0, 0.5)"
+          />
+          <TouchableOpacity style={styles.send} onPress={onSearch}>
+            <FontAwesome name="search" size={20} color="#BBADD3" />
+          </TouchableOpacity>
+        </View>
 
-      <SafeAreaView style={styles.friendList}>
-        {/* <Text style={styles.title}>Add</Text> */}
-        <FlatList
-          data={data}
-          renderItem={({ item }) => (
-            <Friend
-              id={item.id}
-              user={item.user}
-              profilePic={item.profile_pic}
-            />
-          )}
-          keyExtractor={(item) => item.text}
-          style={styles.posts}
-        />
-      </SafeAreaView>
+        <SafeAreaView style={styles.friendList}>
+          {/* <Text style={styles.title}>Add</Text> */}
+          <FlatList
+            data={data}
+            renderItem={({ item }) => (
+              <Friend
+                id={item.id}
+                user={item.user}
+                profilePic={item.profile_pic}
+              />
+            )}
+            keyExtractor={(item) => item.text}
+            style={styles.posts}
+          />
+        </SafeAreaView>
+        <View style={styles.clapboard}>
+          <Image
+            source={require("../assets/Clapboard2.png")}
+            style={{
+              flex: 1,
+              width: windowWidth,
+              resizeMode: "stretch",
+            }}
+          />
+        </View>
+      </View>
     </LinearGradient>
   );
 }
@@ -94,9 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: "space-between",
     marginBottom: 6,
-  },
-  friendList: {
-    // borderWidth: 1,
   },
   main: {
     height: windowHeight * 0.5,
@@ -131,5 +138,12 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 36,
     color: "#38434D",
+  },
+  clapboard: {
+    position: "abolute",
+    bottom: -3.2,
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
 });
