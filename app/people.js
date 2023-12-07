@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   clapboard: {
     position: "abolute",
-    bottom: windowHeight * 0.04,
+    bottom: windowHeight * 0.042,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
