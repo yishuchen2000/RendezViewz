@@ -1,3 +1,4 @@
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -10,6 +11,7 @@ import {
   TextInput,
   Keyboard,
   LayoutAnimation,
+  ScrollView,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
@@ -17,9 +19,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Dropdown } from "react-native-element-dropdown";
+import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../Supabase";
-import Ranking from "../../components/Movie";
+import Ranking from "../../components/Ranking";
+import getMovieDetails from "../../components/getMovieDetails";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -27,29 +31,37 @@ const windowHeight = Dimensions.get("window").height;
 const UNDERLINE = require("../../assets/underline.png");
 
 export default function Rankings() {
+  const navigation = useNavigation();
+
   const [modalVisible, setModalVisible] = useState(false);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [possibleEntries, setPossibleEntries] = useState(null);
   const [entry, setEntry] = useState(null);
   const [entryPic, setEntryPic] = useState(null);
   const [rankValue, setRankValue] = useState(null);
   const [rankCount, setRankCount] = useState(null);
   const [modalValid, setModalValid] = useState(false);
+  const [renderSwitch, flipRenderSwitch] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("rankings").select("*");
       const sortedData = response.data.sort((a, b) => a.index - b.index);
+
       setData(sortedData);
       setRankCount(response.data.length);
     };
     fetchData();
-  }, []);
+  }, [renderSwitch, entry]);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("rankable").select("*");
-      setPossibleEntries(response.data);
+      const sortedMovies = response.data.sort((a, b) => {
+        return a.title.localeCompare(b.title);
+      });
+
+      setPossibleEntries(sortedMovies);
     };
     fetchData();
   }, []);
@@ -64,6 +76,8 @@ export default function Rankings() {
 
   const handleRank = async () => {
     setModalVisible(!modalVisible); //close modal
+    const movieDetails = await getMovieDetails(entry);
+
     let newId = Date.now();
     let adjustedRank = parseInt(rankValue);
 
@@ -81,19 +95,16 @@ export default function Rankings() {
       });
       await supabase.from("rankings").upsert(updatedRankings);
     }
+
     const { data } = await supabase.from("rankings").upsert([
       {
         id: newId,
-        title: entry,
+        title: movieDetails.Title,
         index: adjustedRank,
-        url: entryPic,
+        url: movieDetails.Poster,
       },
     ]);
-    response = await supabase.from("rankings").select("*");
-    sortedData = response.data.sort((a, b) => a.index - b.index);
-
-    setData(sortedData);
-    setRankCount(response.data.length);
+    flipRenderSwitch(!renderSwitch);
   };
   //Animation for delete
   const layoutAnimConfig = {
@@ -165,7 +176,7 @@ export default function Rankings() {
                 </View>
               </Pressable>
             </View>
-            <View style={styles.questionsContainer}>
+            <ScrollView style={styles.questionsContainer}>
               <View style={styles.titleSelectContainer}>
                 <Text style={styles.titleQuestion}> Select Title:</Text>
                 <Dropdown
@@ -182,7 +193,7 @@ export default function Rankings() {
                   searchPlaceholder="Search..."
                   onChange={(item) => {
                     setEntry(item.title);
-                    setEntryPic(item.url);
+                    setEntryPic(item.url); //unneeded?
                   }}
                 />
               </View>
@@ -195,7 +206,7 @@ export default function Rankings() {
                   onChangeText={(text) => setRankValue(text)}
                 />
               </View>
-            </View>
+            </ScrollView>
             <Pressable
               style={[
                 styles.addButton,
@@ -330,13 +341,14 @@ const styles = StyleSheet.create({
   },
   questionsContainer: {
     width: "90%",
-    height: "60%",
+    height: windowHeight * 0.0,
     marginTop: 80,
-    gap: 40,
+    marginBottom: windowHeight * 0.09,
   },
   titleSelectContainer: {
     width: "100%",
     gap: 8,
+    marginBottom: 50,
   },
   titleQuestion: {
     fontSize: 20,
@@ -349,7 +361,6 @@ const styles = StyleSheet.create({
     backgroundColor: "lavender",
     color: "purple",
     height: 50,
-    width: "90",
     borderRadius: 10,
     borderWidth: 0.5,
   },
@@ -369,7 +380,6 @@ const styles = StyleSheet.create({
     backgroundColor: "lavender",
     color: "purple",
     height: 50,
-    width: "90",
     borderRadius: 10,
     borderWidth: 0.5,
   },

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -8,24 +9,47 @@ import {
   Alert,
 } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+
+import getMovieDetails from "./getMovieDetails";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const Ranking = ({ index, title, coverPic, onDelete }) => {
+  const navigation = useNavigation();
+  const [movieDetails, setMovieDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      const details = await getMovieDetails(title);
+      setMovieDetails(details);
+    };
+
+    fetchMovieDetails();
+  }, [title]);
+
   return (
     <View style={styles.container}>
       <View style={styles.indexBox}>
         <Text style={styles.index}>{index}.</Text>
       </View>
-      <View style={styles.entry}>
-        <View style={styles.coverPicContainer}>
-          <Image style={styles.coverPic} source={{ uri: coverPic }} />
+      <Pressable
+        onPress={() =>
+          navigation.navigate("Ranking Details", {
+            details: movieDetails,
+          })
+        }
+      >
+        <View style={styles.entry}>
+          <View style={styles.coverPicContainer}>
+            <Image style={styles.coverPic} source={{ uri: coverPic }} />
+          </View>
+          <Text numberOfLines={1} style={styles.title}>
+            {title}
+          </Text>
         </View>
-        <Text numberOfLines={1} style={styles.title}>
-          {title}
-        </Text>
-      </View>
+      </Pressable>
       <Pressable style={styles.deleteButtonContainer}>
         <EvilIcons
           style={styles.deleteButton}
