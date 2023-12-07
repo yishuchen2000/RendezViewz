@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 import supabase from "../Supabase";
 import { AntDesign } from "@expo/vector-icons";
@@ -44,6 +45,7 @@ const Post = ({
   const windowHeight = Dimensions.get("window").height;
 
   const [inputText, setInputText] = useState("");
+  const [showComment, setshowComment] = useState(false);
 
   const onLikePressed = async () => {
     const response = await supabase
@@ -55,99 +57,187 @@ const Post = ({
 
   const onCommentSend = async () => {
     if (inputText !== "") {
+      const url =
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/me.png";
       const response = await supabase
         .from("posts")
-        .update({ comments: [...comments, ["Yishu C", inputText]] })
+        .update({ comments: [...comments, ["Yishu C", inputText, url, true]] })
         .eq("id", id);
       console.log(response);
       setInputText("");
     }
   };
 
-  // const [fontsLoaded] = useFonts({
-  //   CaladeaRegular: Caladea_400Regular,
-  //   CaladeaBold: Caladea_700Bold,
-  //   CaladeaItalic: Caladea_italic,
-  // });
+  const onCloseComment = async () => {
+    setshowComment(false);
+  };
 
-  // if (!fontsLoaded) {
-  //   return <AppLoading />;
-  // }
+  const onShowComment = async () => {
+    setshowComment(true);
+  };
 
-  return (
-    // <LinearGradient
-    //   colors={["white", "rgba(217, 217, 217, 0.4)"]}
-    //   locations={[0, 0.25]}
-    //   style={styles.container}
-    // >
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.profile}>
-          <View style={styles.profilePicContainer}>
-            <Image style={styles.profilePic} source={{ uri: profilePic }} />
+  if (!showComment) {
+    contentDisplayed = (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.profile}>
+            <View style={styles.profilePicContainer}>
+              <Image style={styles.profilePic} source={{ uri: profilePic }} />
+            </View>
+
+            <Text style={styles.username}>{user}</Text>
+          </View>
+          <Text>{timestamp}</Text>
+        </View>
+
+        {/* <View style={styles.divider} /> */}
+
+        <View style={styles.body}>
+          <View style={styles.postContent}>
+            <Text style={styles.action}>{action}</Text>
+            <View style={styles.contentContainer}>
+              <Text style={styles.content}>{text}</Text>
+            </View>
           </View>
 
-          <Text style={styles.username}>{user}</Text>
-        </View>
-        <Text>{timestamp}</Text>
-      </View>
-
-      {/* <View style={styles.divider} /> */}
-
-      <View style={styles.body}>
-        <View style={styles.postContent}>
-          <Text style={styles.action}>{action}</Text>
-          <View style={styles.contentContainer}>
-            <Text style={styles.content}>{text}</Text>
-          </View>
-        </View>
-
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: imageUrl,
-              name: "Preview",
-            }}
-            style={styles.image}
-          />
-        </View>
-      </View>
-
-      <View style={styles.footer}>
-        <View style={styles.commentBar}>
-          <View style={styles.textInput}>
-            <TextInput
-              style={styles.inputText}
-              value={inputText}
-              onChangeText={(text) => setInputText(text)}
-              placeholder={"Write a comment..."}
-              placeholderTextColor="rgba(0, 0, 0, 0.5)"
+          <View style={styles.imageContainer}>
+            <Image
+              source={{
+                uri: imageUrl,
+                name: "Preview",
+              }}
+              style={styles.image}
             />
-            <TouchableOpacity style={styles.send} onPress={onCommentSend}>
-              <FontAwesome name="send" size={20} color="#361866" />
+          </View>
+        </View>
+
+        <View style={styles.footer}>
+          <View style={styles.commentBar}>
+            <View style={styles.textInput}>
+              <TextInput
+                style={styles.inputText}
+                value={inputText}
+                onChangeText={(text) => setInputText(text)}
+                placeholder={"Write a comment..."}
+                placeholderTextColor="rgba(0, 0, 0, 0.6)"
+              />
+              <TouchableOpacity style={styles.send} onPress={onCommentSend}>
+                <FontAwesome name="send" size={18} color="#361866" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity onPress={onLikePressed}>
+              <Image
+                style={styles.heart}
+                source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
+              />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={onLikePressed}>
-            <Image
-              style={styles.heart}
-              source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.commentSection}>
-          <FlatList
-            data={comments}
-            renderItem={({ item }) => (
-              <Text style={styles.comment}>{item[0] + ": " + item[1]}</Text>
-            )}
-            style={styles.flatList}
-          />
+          <View style={styles.commentSection}>
+            <TouchableOpacity
+              style={styles.closeComment}
+              onPress={onShowComment}
+            >
+              <AntDesign name="down" size={18} color="rgba(0, 0, 0, 0.5)" />
+              <Text style={styles.close}>show comments</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  } else {
+    contentDisplayed = (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.profile}>
+            <View style={styles.profilePicContainer}>
+              <Image style={styles.profilePic} source={{ uri: profilePic }} />
+            </View>
+
+            <Text style={styles.username}>{user}</Text>
+          </View>
+          <Text>{timestamp}</Text>
+        </View>
+
+        {/* <View style={styles.divider} /> */}
+
+        <View style={styles.body}>
+          <View style={styles.postContent}>
+            <Text style={styles.action}>{action}</Text>
+            <View style={styles.contentContainer}>
+              <Text style={styles.content}>{text}</Text>
+            </View>
+          </View>
+
+          <View style={styles.imageContainer}>
+            <Image
+              source={{
+                uri: imageUrl,
+                name: "Preview",
+              }}
+              style={styles.image}
+            />
+          </View>
+        </View>
+
+        <View style={styles.footer}>
+          <View style={styles.commentBar}>
+            <View style={styles.textInput}>
+              <TextInput
+                style={styles.inputText}
+                value={inputText}
+                onChangeText={(text) => setInputText(text)}
+                placeholder={"Write a comment..."}
+                placeholderTextColor="rgba(0, 0, 0, 0.6)"
+              />
+              <TouchableOpacity style={styles.send} onPress={onCommentSend}>
+                <FontAwesome name="send" size={18} color="#361866" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity onPress={onLikePressed}>
+              <Image
+                style={styles.heart}
+                source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.commentSection}>
+            <FlatList
+              data={comments}
+              renderItem={({ item }) => (
+                <View style={styles.oneComment}>
+                  <View style={styles.commentAvatar}>
+                    <Image
+                      style={styles.profilePic}
+                      source={{ uri: item[2] }}
+                    />
+                  </View>
+
+                  <View style={styles.commentText}>
+                    <Text style={styles.userName}>{item[0]}</Text>
+                    <Text style={styles.comment}>{item[1]}</Text>
+                  </View>
+                </View>
+              )}
+              style={styles.flatList}
+            />
+            <TouchableOpacity
+              style={styles.closeComment}
+              onPress={onCloseComment}
+            >
+              <AntDesign name="up" size={18} color="rgba(0, 0, 0, 0.5)" />
+              <Text style={styles.close}>close comments</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  return <SafeAreaView>{contentDisplayed}</SafeAreaView>;
 };
 
 export default Post;
@@ -222,8 +312,39 @@ const styles = StyleSheet.create({
 
     // height: 1,
   },
+  closeComment: {
+    // borderWidth: 1,
+    flexDirection: "row", // To display items horizontally
+    justifyContent: "flex-end",
+    marginTop: 4,
+  },
+  oneComment: {
+    // borderWidth: 1,
+    flexDirection: "row", // To display items horizontally
+    justifyContent: "flex-start",
+    alignItems: "center",
+    // borderWidth: 1,
+    margin: 4,
+  },
+  commentAvatar: {
+    width: 30,
+    height: 30,
+    // borderWidth: 1,
+    marginRight: 5,
+  },
+  userName: {
+    fontWeight: "bold",
+    fontSize: 13,
+  },
   comment: {
     color: "rgba(0, 0, 0, 0.7)",
+    fontSize: 16,
+  },
+  close: {
+    // borderWidth: 1,
+    color: "rgba(0, 0, 0, 0.7)",
+    textAlign: "right",
+    // borderWidth: 1,
   },
   profilePic: {
     // width: 32,
@@ -236,9 +357,10 @@ const styles = StyleSheet.create({
     // borderBottomLeftRadius: '100%'
   },
   profilePicContainer: {
-    width: 32,
-    height: 32,
+    width: 35,
+    height: 35,
     margin: 5,
+    marginRight: 8,
   },
   profile: {
     flexDirection: "row",
@@ -246,6 +368,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontWeight: "bold",
+    fontSize: 15,
     // fontFamily: "CaladeaRegular",
   },
   imageContainer: {

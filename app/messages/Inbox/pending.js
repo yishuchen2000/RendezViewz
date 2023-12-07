@@ -189,7 +189,11 @@ const Pending = ({ route, navigation }) => {
             </Pressable>
             <Pressable onPress={handleSearch} style={styles.searchbutton}>
               <View style={styles.searchbutton}>
-                <FontAwesome name="search" size={18} color="gray" />
+                <FontAwesome
+                  name="search"
+                  size={18}
+                  color="rgba(150, 130, 200, 1)"
+                />
               </View>
             </Pressable>
           </View>
