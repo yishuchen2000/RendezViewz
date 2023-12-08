@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   text: {
-    fontFamily: "HelveticaNeue",
     color: "white",
   },
   title: {
