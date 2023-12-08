@@ -253,6 +253,8 @@ const styles = StyleSheet.create({
   clapboard: {
     height: windowHeight * 0.03,
     width: windowWidth,
+    position: "absolute",
+    bottom: windowHeight * 0,
     alignSelf: "center",
   },
   item: {

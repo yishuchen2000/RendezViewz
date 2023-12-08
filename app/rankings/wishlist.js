@@ -1,3 +1,4 @@
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -7,36 +8,144 @@ import {
   Dimensions,
   FlatList,
   Image,
+  TextInput,
+  Keyboard,
+  LayoutAnimation,
+  ScrollView,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome, MaterialIcons, Entypo } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Dropdown } from "react-native-element-dropdown";
+import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../Supabase";
-import Ranking from "../../components/Movie";
-
-import { Link } from "expo-router";
+import Ranking from "../../components/Ranking";
+import getMovieDetails from "../../components/getMovieDetails";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-export default function Rankings() {
-  const [modalVisible, setModalVisible] = useState(false);
+const UNDERLINE = require("../../assets/underline.png");
 
-  const [data, setData] = useState(null);
+export default function Wishlist() {
+  const navigation = useNavigation();
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [data, setData] = useState([]);
+  const [possibleEntries, setPossibleEntries] = useState(null);
+  const [entry, setEntry] = useState(null);
+  const [entryPic, setEntryPic] = useState(null);
+  const [rankValue, setRankValue] = useState(null);
+  const [rankCount, setRankCount] = useState(null);
+  const [modalValid, setModalValid] = useState(false);
+  const [renderSwitch, flipRenderSwitch] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("wishlist").select("*");
-      setData(response.data);
+      const sortedData = response.data.sort((a, b) => a.index - b.index);
+
+      setData(sortedData);
+      setRankCount(response.data.length);
+    };
+    fetchData();
+  }, [renderSwitch, entry]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await supabase.from("rankable").select("*");
+      const sortedMovies = response.data.sort((a, b) => {
+        return a.title.localeCompare(b.title);
+      });
+
+      setPossibleEntries(sortedMovies);
     };
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (entry && rankValue) {
+      setModalValid(true);
+    } else {
+      setModalValid(false);
+    }
+  }, [entry, rankValue]);
+
+  const handleRank = async () => {
+    setModalVisible(!modalVisible); //close modal
+    const movieDetails = await getMovieDetails(entry);
+
+    let newId = Date.now();
+    let adjustedRank = parseInt(rankValue);
+
+    let response = await supabase.from("wishlist").select("*");
+    let sortedData = response.data.sort((a, b) => a.index - b.index);
+
+    if (adjustedRank > rankCount + 1) {
+      adjustedRank = rankCount + 1;
+    } else {
+      const updatedRankings = sortedData.map((item) => {
+        if (item.index >= adjustedRank) {
+          item.index += 1;
+        }
+        return item;
+      });
+      await supabase.from("wishlist").upsert(updatedRankings);
+    }
+
+    const { data } = await supabase.from("wishlist").upsert([
+      {
+        id: newId,
+        title: movieDetails.Title,
+        index: adjustedRank,
+        url: movieDetails.Poster,
+      },
+    ]);
+    flipRenderSwitch(!renderSwitch);
+  };
+  //Animation for delete
+  const layoutAnimConfig = {
+    duration: 300,
+    update: {
+      type: LayoutAnimation.Types.easeInEaseOut,
+    },
+    delete: {
+      duration: 100,
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.opacity,
+    },
+  };
+
+  const handleDelete = async (id, index) => {
+    await supabase.from("wishlist").delete().eq("id", id);
+
+    let response = await supabase.from("wishlist").select("*");
+    sortedData = response.data.sort((a, b) => a.index - b.index);
+
+    const updatedRankings = sortedData.map((item) => {
+      if (item.index > index) {
+        item.index -= 1;
+      }
+      return item;
+    });
+    await supabase.from("wishlist").upsert(updatedRankings);
+
+    setData(updatedRankings);
+    LayoutAnimation.configureNext(layoutAnimConfig);
+    setRankCount(updatedRankings.length);
+  };
+
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient
+      colors={["#361866", "#E29292"]}
+      style={styles.container}
+      onTouchStart={() => {
+        Keyboard.dismiss();
+      }}
+    >
       {modalVisible && (
         <BlurView
           intensity={100}
@@ -44,6 +153,7 @@ export default function Rankings() {
           style={StyleSheet.absoluteFill}
         ></BlurView>
       )}
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -55,35 +165,92 @@ export default function Rankings() {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={styles.modalHeader}>
-              <View style={styles.buttonCloseContainer}>
-                <Pressable
-                  style={styles.buttonClose}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <MaterialIcons name="cancel" size={35} color={"black"} />
-                </Pressable>
-              </View>
-
               <Text style={styles.modalTitle}>Add Show</Text>
+              <Image style={styles.underline} source={UNDERLINE} />
+              <Pressable
+                style={styles.buttonCloseContainer}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <View style={styles.buttonClose}>
+                  <MaterialIcons name="cancel" size={30} color={"black"} />
+                </View>
+              </Pressable>
             </View>
-            <Pressable style={styles.addButton}>
-              <Text style={{ color: "white", fontSize: 15 }}>Add Show</Text>
-            </Pressable>
+
+            <ScrollView style={styles.questionsContainer}>
+              <View style={styles.titleSelectContainer}>
+                <Text style={styles.titleQuestion}> Select Title:</Text>
+                <Dropdown
+                  style={styles.titleDropdown}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  data={possibleEntries}
+                  search
+                  value={entry}
+                  maxHeight={260}
+                  labelField="title"
+                  valueField="title"
+                  placeholder="Choose content"
+                  searchPlaceholder="Search..."
+                  onChange={(item) => {
+                    setEntry(item.title);
+                    setEntryPic(item.url); //unneeded?
+                  }}
+                />
+              </View>
+              <View style={styles.titleSelectContainer}>
+                <Text style={styles.titleQuestion}> Enter Rank:</Text>
+                <TextInput
+                  style={styles.rankingInput}
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  placeholder="Enter a number"
+                  onChangeText={(text) => setRankValue(text)}
+                />
+                <View style={styles.space}></View>
+              </View>
+            </ScrollView>
+
+            <View style={styles.bottom}>
+              <Pressable
+                style={[
+                  styles.addButton,
+                  { backgroundColor: modalValid ? "#602683" : "gray" },
+                ]}
+                onPress={handleRank}
+                disabled={!modalValid}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
+                >
+                  Update Wishlist
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
       <FlatList
         data={data}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <Ranking index={item.index} title={item.title} coverPic={item.url} />
+          <Ranking
+            index={item.index}
+            title={item.title}
+            coverPic={item.url}
+            onDelete={() => handleDelete(item.id, item.index)}
+          />
         )}
         style={styles.rankList}
-        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 10, paddingBottom: 80 }}
       />
       <View style={styles.buttonContainer}>
         <Pressable
           style={styles.plusButton}
-          onPress={() => setModalVisible(!modalVisible)}
+          onPress={() => {
+            setModalVisible(!modalVisible);
+            setEntry(null);
+          }}
         >
           <AntDesign name="pluscircle" size={60} color="#602683" />
         </Pressable>
@@ -107,12 +274,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
-  },
-  clapboard: {
-    height: windowHeight * 0.03,
-    width: windowWidth,
-    alignSelf: "center",
+    // marginTop: 22,
+    borderWidth: 1,
+    padding: windowHeight * 0.2,
   },
   buttonContainer: {
     position: "absolute",
@@ -125,61 +289,137 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   plusButton: {
-    borderRadius: 50,
+    borderRadius: 100,
     backgroundColor: "white", // Adjust as needed
     justifyContent: "center",
     alignItems: "center",
   },
   modalView: {
     width: windowWidth * 0.8,
-    height: windowHeight * 0.65,
-    margin: 20,
-    backgroundColor: "pink",
+    flex: 1,
+    flexDirection: "column",
+    // alignItems: "stretch",
+    justifyContent: "center",
+    // margin: 20,
+    backgroundColor: "white",
     borderRadius: 20,
-    padding: 0,
-    alignItems: "center",
+    // alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: "#361866",
   },
   modalHeader: {
     flexDirection: "row",
     width: windowWidth * 0.8,
     justifyContent: "space-between",
+    paddingBottom: 42,
+    // flex: 1,
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
   modalTitle: {
     flex: 1,
     fontSize: 32, // Adjust the font size as needed
     fontWeight: "bold",
-    marginTop: 20,
-    color: "black",
+    marginTop: 30,
+    color: "#361866",
     textAlign: "center",
+  },
+  underline: {
+    transform: [{ scaleX: -1 }, { rotate: "4deg" }],
+    alignSelf: "center",
+    position: "absolute",
+    top: 45,
+    left: 48,
+    width: "70%",
+    height: 90,
+    tintColor: "#361866",
   },
   buttonCloseContainer: {
     position: "absolute",
-    paddingTop: 5,
-    paddingLeft: 5,
+    color: "white",
+    padding: 5,
+    width: 80,
+    height: 50,
+  },
+  questionsContainer: {
+    // width: "90%",
+    // height: windowHeight * 0.0,
+    // marginTop: 60,
+    // marginBottom: windowHeight * 0.09,
+    flex: 8,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  titleSelectContainer: {
+    width: "100%",
+    gap: 8,
+    marginBottom: 20,
+  },
+  titleQuestion: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#361866",
+    marginLeft: 17,
+  },
+  titleDropdown: {
+    marginHorizontal: 20,
+    paddingLeft: 15,
+    backgroundColor: "lavender",
+    color: "purple",
+    height: 50,
+    borderRadius: 15,
+    borderWidth: 0.5,
+  },
+  space: {
+    marginBottom: 90,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color: "gray",
+  },
+  selectedTextStyle: {
+    color: "#602683",
+    marginRight: 5,
+    fontSize: 16,
+    alignSelf: "center",
+  },
+  rankingInput: {
+    marginHorizontal: 20,
+    paddingLeft: 15,
+    backgroundColor: "lavender",
+    color: "#602683",
+    height: 50,
+    borderRadius: 15,
+    borderWidth: 0.5,
+  },
+  bottom: {
+    // flex: 1,
+    alignItems: "center", // Center items along the primary axis (horizontal if flexDirection is 'row', vertical if 'column')
+    justifyContent: "center",
+    padding: 20,
   },
   addButton: {
     alignSelf: "center",
-    position: "absolute",
-    backgroundColor: "#602683",
-    width: 200,
-    padding: 10,
+    // position: "absolute",
+    width: 190,
+    height: 50,
+    // padding: 10,
     borderRadius: 50,
     alignItems: "center",
-    bottom: 30,
-  },
-  plusButton: {
-    borderRadius: 100,
-    backgroundColor: "white", // Adjust as needed
     justifyContent: "center",
-    alignItems: "center",
+    // bottom: 30,
+    // borderWidth: 1,
   },
   container: {
     paddingHorizontal: windowWidth * 0.02,

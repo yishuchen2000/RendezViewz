@@ -1,24 +1,9 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  ScrollView,
-  SafeAreaView,
-  FlatList,
-  TextInput,
-  Pressable,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
 import { useState, useEffect } from "react";
 import Post from "../components/Post";
 import supabase from "../Supabase";
-import { FontAwesome } from "@expo/vector-icons";
-import theme from "../assets/theme";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -46,8 +31,6 @@ export default function Page() {
   };
 
   useEffect(() => {
-    // Listen for changes to db
-    // From https://supabase.com/docs/guides/realtime/concepts#postgres-changes
     supabase
       .channel("schema-db-changes")
       .on(
@@ -69,7 +52,6 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    // Fetch data on initial load
     const fetchData = async () => {
       const response = await supabase.from("posts").select("*");
       setData(response.data);
@@ -100,7 +82,7 @@ export default function Page() {
         </TouchableOpacity>
       </View> */}
 
-      <View>
+      <View style={styles.postList}>
         <FlatList
           data={data}
           showsVerticalScrollIndicator={false}
@@ -119,7 +101,7 @@ export default function Page() {
           )}
           keyExtractor={(item) => item.text}
           style={styles.posts}
-          contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
+          contentContainerStyle={{ paddingTop: 10 }}
         />
       </View>
       <View style={styles.clapboard}>
@@ -147,7 +129,10 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   posts: {
-    marginTop: 12,
+    // marginTop: 12,
+  },
+  postList: {
+    flex: 8,
   },
   composer: {
     flexDirection: "row",
@@ -161,8 +146,8 @@ const styles = StyleSheet.create({
   },
 
   clapboard: {
-    position: "abolute",
-    bottom: windowHeight * 0.015,
+    // position: "abolute",
+    // bottom: windowHeight * 0.015,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
@@ -172,7 +157,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 30,
     paddingHorizontal: 8,
-    backgroundColor: "rgba(173, 216, 230, 0.5)", // CSS 'lightblue' with 50% opacity
+    backgroundColor: "rgba(173, 216, 230, 0.5)",
     borderRadius: 999,
   },
   send: {

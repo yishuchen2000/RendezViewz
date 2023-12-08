@@ -38,7 +38,8 @@ const styles = StyleSheet.create({
     //borderWidth: 0.5,
     // height: 70,
     borderRadius: 15,
-    padding: 8,
+    padding: 10,
+    paddingLeft: 14,
     width: "100%",
     // marginBottom: 10,
     // gap: 4,
@@ -61,10 +62,10 @@ const styles = StyleSheet.create({
     // borderBottomLeftRadius: '100%'
   },
   profilePicContainer: {
-    width: 32,
-    height: 32,
-    margin: 5,
-    marginRight: 8,
+    width: 45,
+    height: 45,
+    // margin: 5,
+    marginRight: 15,
   },
   profile: {
     flexDirection: "row",
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontWeight: "bold",
+    fontSize: 17,
     // fontFamily: "CaladeaRegular",
   },
 });
