@@ -22,7 +22,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../Supabase";
-import Ranking from "../../components/Ranking";
+import Ranking from "../../components/friendRanking";
 import getMovieDetails from "../../components/getMovieDetails";
 
 const windowWidth = Dimensions.get("window").width;
@@ -234,28 +234,12 @@ export default function Wishlist() {
         data={data}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <Ranking
-            index={item.index}
-            title={item.title}
-            coverPic={item.url}
-            onDelete={() => handleDelete(item.id, item.index)}
-            goesTo={"Wishlist Details"}
-          />
+          <Ranking index={item.index} title={item.title} coverPic={item.url} />
         )}
         style={styles.rankList}
         contentContainerStyle={{ paddingTop: 10, paddingBottom: 80 }}
       />
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={styles.plusButton}
-          onPress={() => {
-            setModalVisible(!modalVisible);
-            setEntry(null);
-          }}
-        >
-          <AntDesign name="pluscircle" size={60} color="#602683" />
-        </Pressable>
-      </View>
+      <View style={styles.buttonContainer}></View>
       <View style={styles.clapboard}>
         <Image
           source={require("../../assets/Clapboard2.png")}

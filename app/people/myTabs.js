@@ -1,14 +1,13 @@
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import Rankings from "./rankings";
-import Wishlist from "./wishlist";
-import RankingDetails from "./ranking_details";
-import WishlistDetails from "./wishlist_details";
+import Rankings from "./friendRankings";
+import Wishlist from "./friendWishlist";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 
+/*
 const RankingsStack = () => (
   <Stack.Navigator>
     <Stack.Screen
@@ -50,6 +49,7 @@ const WishlistStack = () => {
     </Stack.Navigator>
   );
 };
+*/
 
 export default function MyTabs() {
   return (
@@ -61,8 +61,8 @@ export default function MyTabs() {
         tabBarIndicatorStyle: { backgroundColor: "white" },
       }}
     >
-      <Tab.Screen name="My Rankings" component={RankingsStack} />
-      <Tab.Screen name="My Wishlist" component={WishlistStack} />
+      <Tab.Screen name="Friend Rankings" component={Rankings} />
+      <Tab.Screen name="Friend Wishlist" component={Wishlist} />
     </Tab.Navigator>
   );
 }

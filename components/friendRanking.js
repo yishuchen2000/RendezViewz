@@ -6,9 +6,7 @@ import {
   Image,
   Dimensions,
   Pressable,
-  Alert,
 } from "react-native";
-import { EvilIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import getMovieDetails from "./getMovieDetails";
@@ -16,7 +14,7 @@ import getMovieDetails from "./getMovieDetails";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Ranking = ({ index, title, coverPic, onDelete, goesTo }) => {
+const Ranking = ({ index, title, coverPic, goesTo }) => {
   const navigation = useNavigation();
   const [movieDetails, setMovieDetails] = useState(null);
 
@@ -34,48 +32,14 @@ const Ranking = ({ index, title, coverPic, onDelete, goesTo }) => {
       <View style={styles.indexBox}>
         <Text style={styles.index}>{index}.</Text>
       </View>
-      <Pressable
-        onPress={() =>
-          navigation.navigate(goesTo, {
-            details: movieDetails,
-          })
-        }
-      >
-        <View style={styles.entry}>
-          <View style={styles.coverPicContainer}>
-            <Image style={styles.coverPic} source={{ uri: coverPic }} />
-          </View>
-          <Text numberOfLines={1} style={styles.title}>
-            {title}
-          </Text>
+      <View style={styles.entry}>
+        <View style={styles.coverPicContainer}>
+          <Image style={styles.coverPic} source={{ uri: coverPic }} />
         </View>
-      </Pressable>
-      <Pressable style={styles.deleteButtonContainer}>
-        <EvilIcons
-          style={styles.deleteButton}
-          onPress={() => {
-            Alert.alert(
-              "Delete Entry?",
-              `Are you sure you want to remove ${title} from this list?`,
-
-              [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                {
-                  text: "Delete",
-                  onPress: onDelete,
-                },
-              ],
-              { cancelable: false }
-            );
-          }}
-          name="trash"
-          size={25}
-          color="#602683"
-        />
-      </Pressable>
+        <Text numberOfLines={1} style={styles.title}>
+          {title}
+        </Text>
+      </View>
     </View>
   );
 };

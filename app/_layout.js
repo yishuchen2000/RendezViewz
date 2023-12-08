@@ -1,8 +1,6 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { FontAwesome, MaterialIcons, Entypo } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Image } from "react-native";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
 
 import {
   useFonts,

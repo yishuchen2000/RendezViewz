@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import Friend from "../components/Friend";
-import supabase from "../Supabase";
+import Friend from "../../components/Friend";
+import supabase from "../../Supabase";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import filter from "lodash.filter";
@@ -19,7 +19,7 @@ import filter from "lodash.filter";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-export default function Page() {
+export default function People() {
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,11 +58,13 @@ export default function Page() {
         <View style={styles.searchBar}>
           <TextInput
             numberOfLines={1}
-            style={{ color: "black", textAlign: "left" }}
+            style={{ flex: 1, color: "black", textAlign: "left" }}
             placeholder="Search friend"
             placeholderTextColor="gray"
             value={searchQuery}
             onChangeText={(query) => setSearchQuery(query)}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
           />
 
           <View style={styles.buttons}>
@@ -108,7 +110,7 @@ export default function Page() {
       </View>
       <View style={styles.clapboard}>
         <Image
-          source={require("../assets/Clapboard2.png")}
+          source={require("../../assets/Clapboard2.png")}
           style={{
             flex: 1,
             width: windowWidth,

@@ -10,22 +10,32 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const Friend = ({ id, user, profilePic }) => {
+import getMovieDetails from "./getMovieDetails";
+
+const Friend = ({ id, user, profilePic, goesTo }) => {
+  const navigation = useNavigation();
   const [inputText, setInputText] = useState("");
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.profile}>
-          <View style={styles.profilePicContainer}>
-            <Image style={styles.profilePic} source={{ uri: profilePic }} />
+    <Pressable
+      onPress={() =>
+        navigation.navigate("PeoplePage", { screen: "Friend Movies" })
+      }
+    >
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.profile}>
+            <View style={styles.profilePicContainer}>
+              <Image style={styles.profilePic} source={{ uri: profilePic }} />
+            </View>
+            <Text style={styles.username}>{user}</Text>
           </View>
-          <Text style={styles.username}>{user}</Text>
+          {/* <Text>{timestamp}</Text> */}
         </View>
-        {/* <Text>{timestamp}</Text> */}
       </View>
-    </View>
+    </Pressable>
   );
 };
 

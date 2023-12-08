@@ -239,6 +239,7 @@ export default function Rankings() {
             title={item.title}
             coverPic={item.url}
             onDelete={() => handleDelete(item.id, item.index)}
+            goesTo={"Ranking Details"}
           />
         )}
         style={styles.rankList}
