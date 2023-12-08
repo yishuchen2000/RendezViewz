@@ -7,12 +7,18 @@ import {
   SafeAreaView,
   Image,
   FlatList,
+  Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from "@expo/vector-icons";
 import ProfilePost from "../components/ProfilePost";
+//import Rankings from "./rankings/rankings";
+import { useNavigation } from "@react-navigation/native";
+import MyTabs from "./rankings/_layout";
+//import MyTabs from "./rankings";
 
 export default function Me() {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -40,10 +46,16 @@ export default function Me() {
         </View>
 
         <View style={styles.statsContainer}>
-          <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>15</Text>
-            <Text style={[styles.text, styles.subText]}>Ranked</Text>
-          </View>
+          <Pressable
+            style={styles.statsBox}
+            onPress={() => navigation.navigate("rankings")}
+          >
+            <View style={styles.statsBox}>
+              <Text style={[styles.text, { fontSize: 24 }]}>15</Text>
+              <Text style={[styles.text, styles.subText]}>Ranked</Text>
+            </View>
+          </Pressable>
+
           <View
             style={[
               styles.statsBox,
@@ -54,12 +66,25 @@ export default function Me() {
               },
             ]}
           >
-            <Text style={[styles.text, { fontSize: 24 }]}>11</Text>
-            <Text style={[styles.text, styles.subText]}>Friends</Text>
+            <Pressable
+              style={[styles.statsBox]}
+              onPress={() => navigation.navigate("people")}
+            >
+              <Text style={[styles.text, { fontSize: 24 }]}>11</Text>
+              <Text style={[styles.text, styles.subText]}>Friends</Text>
+            </Pressable>
           </View>
+
           <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>8</Text>
-            <Text style={[styles.text, styles.subText]}>Wishlist</Text>
+            <Pressable
+              style={styles.new}
+              onPress={() =>
+                navigation.navigate("rankings", { screen: "My Wishlist" })
+              }
+            >
+              <Text style={[styles.text, { fontSize: 24 }]}>8</Text>
+              <Text style={[styles.text, styles.subText]}>Wishlist</Text>
+            </Pressable>
           </View>
         </View>
 
@@ -161,6 +186,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "500",
     color: "white",
+  },
+  new: {
+    alignItems: "center",
   },
   image: {
     flex: 1,
