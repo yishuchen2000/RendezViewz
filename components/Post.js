@@ -199,7 +199,7 @@ const Post = ({
                 value={inputText}
                 onChangeText={(text) => setInputText(text)}
                 placeholder={"Write a comment..."}
-                placeholderTextColor="rgba(0, 0, 0, 0.6)"
+                placeholderTextColor="rgba(0, 0, 0, 0.4)"
               />
               <TouchableOpacity style={styles.send} onPress={onCommentSend}>
                 <FontAwesome name="send" size={18} color="#361866" />
@@ -251,7 +251,7 @@ const Post = ({
               style={styles.closeComment}
               onPress={onCloseComment}
             >
-              <AntDesign name="up" size={18} color="rgba(0, 0, 0, 0.5)" />
+              <AntDesign name="up" size={18} color="rgba(0, 0, 0, 0.4)" />
               <Text style={styles.close}>close comments</Text>
             </TouchableOpacity>
           </View>
@@ -267,7 +267,7 @@ export default Post;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(217, 217, 217, 0.8)",
+    backgroundColor: "rgba(217, 217, 217, 0.6)",
     // borderColor: "black",
     // borderWidth: 1,
     borderRadius: 15,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     // opacity: "20%",
-    backgroundColor: "rgba(217, 217, 217, 1)",
+    backgroundColor: "rgba(217, 217, 217, 0.6)",
     borderRadius: 15,
     padding: 6,
     flex: 1,

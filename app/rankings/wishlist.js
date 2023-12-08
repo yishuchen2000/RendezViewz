@@ -165,7 +165,7 @@ export default function Wishlist() {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>New Wishlist Item</Text>
+              <Text style={styles.modalTitle}>Add Show</Text>
               <Image style={styles.underline} source={UNDERLINE} />
               <Pressable
                 style={styles.buttonCloseContainer}
@@ -176,6 +176,7 @@ export default function Wishlist() {
                 </View>
               </Pressable>
             </View>
+
             <ScrollView style={styles.questionsContainer}>
               <View style={styles.titleSelectContainer}>
                 <Text style={styles.titleQuestion}> Select Title:</Text>
@@ -189,7 +190,7 @@ export default function Wishlist() {
                   maxHeight={260}
                   labelField="title"
                   valueField="title"
-                  placeholder="Choose Content"
+                  placeholder="Choose content"
                   searchPlaceholder="Search..."
                   onChange={(item) => {
                     setEntry(item.title);
@@ -203,24 +204,29 @@ export default function Wishlist() {
                   style={styles.rankingInput}
                   keyboardType="numeric"
                   returnKeyType="done"
+                  placeholder="Enter a number"
                   onChangeText={(text) => setRankValue(text)}
                 />
+                <View style={styles.space}></View>
               </View>
             </ScrollView>
-            <Pressable
-              style={[
-                styles.addButton,
-                { backgroundColor: modalValid ? "#602683" : "gray" },
-              ]}
-              onPress={handleRank}
-              disabled={!modalValid}
-            >
-              <Text
-                style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
+
+            <View style={styles.bottom}>
+              <Pressable
+                style={[
+                  styles.addButton,
+                  { backgroundColor: modalValid ? "#602683" : "gray" },
+                ]}
+                onPress={handleRank}
+                disabled={!modalValid}
               >
-                Update Wishlist
-              </Text>
-            </Pressable>
+                <Text
+                  style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
+                >
+                  Update Wishlist
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
@@ -236,7 +242,7 @@ export default function Wishlist() {
           />
         )}
         style={styles.rankList}
-        contentContainerStyle={{ paddingTop: 20, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingTop: 10, paddingBottom: 80 }}
       />
       <View style={styles.buttonContainer}>
         <Pressable
@@ -268,7 +274,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+    // marginTop: 22,
+    borderWidth: 1,
+    padding: windowHeight * 0.2,
   },
   buttonContainer: {
     position: "absolute",
@@ -288,11 +296,14 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: windowWidth * 0.8,
-    height: windowHeight * 0.55,
-    margin: 20,
+    flex: 1,
+    flexDirection: "column",
+    // alignItems: "stretch",
+    justifyContent: "center",
+    // margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    alignItems: "center",
+    // alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -308,6 +319,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: windowWidth * 0.8,
     justifyContent: "space-between",
+    paddingBottom: 42,
+    // flex: 1,
   },
   clapboard: {
     height: windowHeight * 0.03,
@@ -316,9 +329,9 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     flex: 1,
-    fontSize: 26, // Adjust the font size as needed
+    fontSize: 32, // Adjust the font size as needed
     fontWeight: "bold",
-    marginTop: 20,
+    marginTop: 30,
     color: "#361866",
     textAlign: "center",
   },
@@ -340,20 +353,24 @@ const styles = StyleSheet.create({
     height: 50,
   },
   questionsContainer: {
-    width: "90%",
-    height: windowHeight * 0.0,
-    marginTop: 80,
-    marginBottom: windowHeight * 0.09,
+    // width: "90%",
+    // height: windowHeight * 0.0,
+    // marginTop: 60,
+    // marginBottom: windowHeight * 0.09,
+    flex: 8,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   titleSelectContainer: {
     width: "100%",
     gap: 8,
-    marginBottom: 50,
+    marginBottom: 20,
   },
   titleQuestion: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#361866",
+    marginLeft: 17,
   },
   titleDropdown: {
     marginHorizontal: 20,
@@ -361,8 +378,11 @@ const styles = StyleSheet.create({
     backgroundColor: "lavender",
     color: "purple",
     height: 50,
-    borderRadius: 10,
+    borderRadius: 15,
     borderWidth: 0.5,
+  },
+  space: {
+    marginBottom: 90,
   },
   placeholderStyle: {
     fontSize: 16,
@@ -378,21 +398,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingLeft: 15,
     backgroundColor: "lavender",
-    color: "purple",
+    color: "#602683",
     height: 50,
-    borderRadius: 10,
+    borderRadius: 15,
     borderWidth: 0.5,
+  },
+  bottom: {
+    // flex: 1,
+    alignItems: "center", // Center items along the primary axis (horizontal if flexDirection is 'row', vertical if 'column')
+    justifyContent: "center",
+    padding: 20,
   },
   addButton: {
     alignSelf: "center",
-    position: "absolute",
-    width: 200,
+    // position: "absolute",
+    width: 190,
     height: 50,
-    padding: 10,
+    // padding: 10,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
-    bottom: 30,
+    // bottom: 30,
+    // borderWidth: 1,
   },
   container: {
     paddingHorizontal: windowWidth * 0.02,

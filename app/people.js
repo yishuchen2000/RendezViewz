@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   Dimensions,
-  SafeAreaView,
   TextInput,
   FlatList,
   Image,
   Pressable,
 } from "react-native";
-import { Calendar, LocaleConfig, Agenda } from "react-native-calendars";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Friend from "../components/Friend";
 import supabase from "../Supabase";
 import { Entypo } from "@expo/vector-icons";
-import { Dropdown } from "react-native-element-dropdown";
 import { AntDesign } from "@expo/vector-icons";
 import filter from "lodash.filter";
 
@@ -36,14 +32,6 @@ export default function Page() {
     };
     fetchData();
   }, []);
-
-  // const handleSearch = async () => {
-  //   // create a drop down and return friend that matches
-  //   // after selection of the friend clear up the input
-  //   setDisplaySearch(true);
-  //   const response = await supabase.from("friends").select("*");
-  //   setData(response.data);
-  // };
 
   const clearSearch = () => {
     setFilteredData(data);
@@ -141,22 +129,18 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     paddingTop: 10,
-    borderWidth: 1,
   },
   container1: {
     // paddingTop: 10,
     backgroundColor: "transparent",
-    // borderWidth: 1,
     flex: 1,
   },
   friendbox: {
     backgroundColor: "rgba(50, 50, 50, 0.1)",
-    // borderWidth: 1,
   },
   friendList: {
     backgroundColor: "transpar",
     flex: 8,
-    borderWidth: 1,
   },
   buttons: {
     flexDirection: "row",
