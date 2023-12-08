@@ -145,7 +145,9 @@ const Events = ({ route, navigation }) => {
             placeholder="Search event by movie/show/people"
             placeholderTextColor="gray"
             value={searchInput}
+            returnKeyType="search"
             onChangeText={handleSearchInput}
+            onSubmitEditing={handleSearch}
           />
           <View style={styles.buttons}>
             <Pressable onPress={clearSearch} style={styles.searchbutton}>
