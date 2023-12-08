@@ -12,6 +12,7 @@ import {
   Keyboard,
   LayoutAnimation,
   ScrollView,
+  Alert,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
@@ -33,6 +34,7 @@ const UNDERLINE = require("../../assets/underline.png");
 export default function Wishlist() {
   const navigation = useNavigation();
 
+  const [isDuplicateEntry, setIsDuplicateEntry] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [possibleEntries, setPossibleEntries] = useState(null);
@@ -68,16 +70,23 @@ export default function Wishlist() {
 
   useEffect(() => {
     if (entry && rankValue) {
+      const isDuplicate = data.some((item) => item.title === entry);
+      setIsDuplicateEntry(isDuplicate);
       setModalValid(true);
     } else {
+      setIsDuplicateEntry(false);
       setModalValid(false);
     }
-  }, [entry, rankValue]);
+  }, [entry, rankValue, data]);
 
   const handleRank = async () => {
     setModalVisible(!modalVisible); //close modal
     const movieDetails = await getMovieDetails(entry);
 
+    if (isDuplicateEntry) {
+      Alert.alert(`${entry} is already ranked on this list.`);
+      return;
+    }
     let newId = Date.now();
     let adjustedRank = parseInt(rankValue);
 
@@ -165,7 +174,7 @@ export default function Wishlist() {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add Show</Text>
+              <Text style={styles.modalTitle}>Add Content</Text>
               <Image style={styles.underline} source={UNDERLINE} />
               <Pressable
                 style={styles.buttonCloseContainer}
