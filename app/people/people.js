@@ -98,7 +98,7 @@ export default function People() {
                 />
               </View>
             )}
-            keyExtractor={(item) => item.text}
+            keyExtractor={(item) => item.id}
             style={styles.posts}
           />
         </View>

@@ -53,7 +53,10 @@ export default function Page() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await supabase.from("posts").select("*");
+      const response = await supabase
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
       setData(response.data);
     };
     fetchData();
@@ -90,7 +93,7 @@ export default function Page() {
             <Post
               id={item.id}
               user={item.user}
-              timestamp={item.timestamp}
+              timestamp={item.created_at}
               text={item.text}
               liked={item.liked}
               imageUrl={item.show_poster_url}

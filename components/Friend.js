@@ -85,5 +85,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 17,
     // fontFamily: "CaladeaRegular",
+    color: "white",
   },
 });
