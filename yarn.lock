@@ -2191,6 +2191,18 @@
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.14.tgz"
   integrity sha512-U3PUjAudAdJBeC2pgN8uTIKgxrb4nlDF3SF0++EldXQvQBGkpFZMSnwQiIoDU77tv45VgNkl/L4ouD+rEomujw==
 
+"@types/lodash.filter@^4.6.9":
+  version "4.6.9"
+  resolved "https://registry.npmjs.org/@types/lodash.filter/-/lodash.filter-4.6.9.tgz"
+  integrity sha512-5e9JoILIQ6b30IFwHqWeGTDeEe9obQd5QD98UY9NAhMm3S2S94KOT4ist3+VtzemDnxaGY9b9kVJADI41YNlsw==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*", "@types/lodash@^4.14.202":
+  version "4.14.202"
+  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.202.tgz"
+  integrity sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==
+
 "@types/node@*":
   version "20.8.10"
   resolved "https://registry.npmjs.org/@types/node/-/node-20.8.10.tgz"
@@ -4600,10 +4612,10 @@ leven@^3.1.0:
   resolved "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz"
   integrity sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==
 
-lightningcss-darwin-x64@1.19.0:
+lightningcss-darwin-arm64@1.19.0:
   version "1.19.0"
-  resolved "https://registry.npmjs.org/lightningcss-darwin-x64/-/lightningcss-darwin-x64-1.19.0.tgz"
-  integrity sha512-Lif1wD6P4poaw9c/4Uh2z+gmrWhw/HtXFoeZ3bEsv6Ia4tt8rOJBdkfVaUJ6VXmpKHALve+iTyP2+50xY1wKPw==
+  resolved "https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.19.0.tgz"
+  integrity sha512-wIJmFtYX0rXHsXHSr4+sC5clwblEMji7HHQ4Ub1/CznVRxtCFha6JIt5JZaNf8vQrfdZnBxLLC6R8pC818jXqg==
 
 lightningcss@~1.19.0:
   version "1.19.0"
@@ -4652,6 +4664,11 @@ lodash.debounce@^4.0.8, lodash.debounce@4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
   integrity sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==
+
+lodash.filter@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.npmjs.org/lodash.filter/-/lodash.filter-4.6.0.tgz"
+  integrity sha512-pXYUy7PR8BCLwX5mgJ/aNtyOvuJTdZAo9EQFUvMIYugqmJxnrYaANvTbgndOzHSCSR0wnlBBfRXJL5SbWxo3FQ==
 
 lodash.throttle@^4.1.1:
   version "4.1.1"

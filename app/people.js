@@ -16,44 +16,78 @@ import { LinearGradient } from "expo-linear-gradient";
 import Friend from "../components/Friend";
 import supabase from "../Supabase";
 import { Entypo } from "@expo/vector-icons";
+import { Dropdown } from "react-native-element-dropdown";
 import { AntDesign } from "@expo/vector-icons";
+import filter from "lodash.filter";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function Page() {
   const [data, setData] = useState(null);
+  const [filteredData, setFilteredData] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("friends").select("*");
       setData(response.data);
+      setFilteredData(response.data);
     };
     fetchData();
   }, []);
 
-  const handleSearch = async () => {
-    // create a drop down and return friend that matches
-    // after selection of the friend clear up the input
-  };
+  // const handleSearch = async () => {
+  //   // create a drop down and return friend that matches
+  //   // after selection of the friend clear up the input
+  //   setDisplaySearch(true);
+  //   const response = await supabase.from("friends").select("*");
+  //   setData(response.data);
+  // };
 
   const clearSearch = async () => {
-    // create a drop down and return friend that matches
-    // after selection of the friend clear up the input
+    setFilteredData(data);
+    setSearchQuery("");
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const formattedQuery = query.toLowerCase();
+    const filteredData = filter(data, ({ id, profile_pic, user }) => {
+      console.log("formattedQuery", formattedQuery);
+      // console.log(contains({ id, profile_pic, user }, formattedQuery));
+      return contains({ id, profile_pic, user }, formattedQuery);
+    });
+    console.log("filteredData", filteredData);
+    setFilteredData(filteredData);
+  };
+
+  const contains = ({ id, profile_pic, user }, query) => {
+    console.log("current user!", user);
+    console.log("current query", query);
+
+    if (user.toLowerCase().includes(query)) {
+      return true;
+    }
+    return false;
   };
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
       <View style={styles.container1}>
+        <View style={styles.input}></View>
+
         <View style={styles.searchBar}>
           <TextInput
             numberOfLines={1}
-            style={{ color: "purple", textAlign: "left" }}
+            style={{ color: "black", textAlign: "left" }}
             placeholder="Search friend"
             placeholderTextColor="gray"
-            //value={searchInput}
-            //onChangeText={handleSearchInput}
+            // value={searchInput}
+            value={searchQuery}
+            onChangeText={(query) => handleSearch(query)}
           />
+
           <View style={styles.buttons}>
             <Pressable onPress={clearSearch} style={styles.searchbutton}>
               <View style={styles.searchbutton}>
@@ -75,7 +109,7 @@ export default function Page() {
         <View style={styles.friendList}>
           {/* <Text style={styles.title}>Add</Text> */}
           <FlatList
-            data={data}
+            data={filteredData}
             renderItem={({ item }) => (
               <View style={styles.friendbox}>
                 <Friend
@@ -108,26 +142,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
+    // justifyContent: "space-between",
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
-    paddingTop: 30,
-    // borderWidth: 1,
+    paddingTop: 10,
+    borderWidth: 1,
   },
   container1: {
-    paddingTop: 10,
+    // paddingTop: 10,
     backgroundColor: "transparent",
     // borderWidth: 1,
+    flex: 1,
   },
   friendbox: {
     backgroundColor: "rgba(50, 50, 50, 0.1)",
-
     // borderWidth: 1,
   },
   friendList: {
     backgroundColor: "transpar",
-
-    // borderWidth: 1,
+    flex: 8,
+    borderWidth: 1,
   },
   buttons: {
     flexDirection: "row",
@@ -145,9 +180,9 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
     paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "space-between",
@@ -188,8 +223,9 @@ const styles = StyleSheet.create({
     color: "#38434D",
   },
   clapboard: {
-    position: "abolute",
-    bottom: windowHeight * 0.042,
+    // position: "absolute",
+    // flex: 0.04,
+    // bottom: windowHeight * 0.04,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",

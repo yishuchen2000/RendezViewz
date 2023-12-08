@@ -68,6 +68,16 @@ const Post = ({
     }
   };
 
+  const onDeleteComment = async (index) => {
+    const response = await supabase
+      .from("posts")
+      .update({
+        comments: [...comments.slice(0, index), ...comments.slice(index + 1)],
+      })
+      .eq("id", id);
+    console.log(response);
+  };
+
   const onCloseComment = async () => {
     setshowComment(false);
   };
@@ -207,19 +217,32 @@ const Post = ({
           <View style={styles.commentSection}>
             <FlatList
               data={comments}
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <View style={styles.oneComment}>
-                  <View style={styles.commentAvatar}>
-                    <Image
-                      style={styles.profilePic}
-                      source={{ uri: item[2] }}
-                    />
+                  <View style={styles.leftContent}>
+                    <View style={styles.commentAvatar}>
+                      <Image
+                        style={styles.profilePic}
+                        source={{ uri: item[2] }}
+                      />
+                    </View>
+
+                    <View style={styles.commentText}>
+                      <Text style={styles.userName}>{item[0]}</Text>
+                      <Text style={styles.comment}>{item[1]}</Text>
+                    </View>
                   </View>
 
-                  <View style={styles.commentText}>
-                    <Text style={styles.userName}>{item[0]}</Text>
-                    <Text style={styles.comment}>{item[1]}</Text>
-                  </View>
+                  {item[3] === "true" ? (
+                    <View style={styles.delete}>
+                      <TouchableOpacity
+                        style={styles.delete}
+                        onPress={() => onDeleteComment(index)}
+                      >
+                        <AntDesign name="close" size={18} color="gray" />
+                      </TouchableOpacity>
+                    </View>
+                  ) : null}
                 </View>
               )}
               style={styles.flatList}
@@ -269,6 +292,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   inputText: {
+    width: "90%",
     // color: "red",
   },
   header: {
@@ -321,16 +345,24 @@ const styles = StyleSheet.create({
   oneComment: {
     // borderWidth: 1,
     flexDirection: "row", // To display items horizontally
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
-    // borderWidth: 1,
     margin: 4,
+  },
+  leftContent: {
+    flexDirection: "row",
+    // alignItems: "center",
   },
   commentAvatar: {
     width: 30,
     height: 30,
     // borderWidth: 1,
     marginRight: 5,
+    marginTop: 3,
+  },
+  commentText: {
+    // borderWidth: 1,
+    width: "80%",
   },
   userName: {
     fontWeight: "bold",
@@ -339,6 +371,10 @@ const styles = StyleSheet.create({
   comment: {
     color: "rgba(0, 0, 0, 0.7)",
     fontSize: 16,
+    // borderWidth: 1,
+  },
+  delete: {
+    // borderWidth: 1,
   },
   close: {
     // borderWidth: 1,
