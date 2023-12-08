@@ -111,7 +111,7 @@ const Post = ({
 
             <Text style={styles.username}>{user}</Text>
           </View>
-          <Text>{formattedTime}</Text>
+          <Text style={{ color: "white" }}>{formattedTime}</Text>
         </View>
 
         {/* <View style={styles.divider} /> */}
@@ -143,7 +143,7 @@ const Post = ({
                 value={inputText}
                 onChangeText={(text) => setInputText(text)}
                 placeholder={"Write a comment..."}
-                placeholderTextColor="rgba(0, 0, 0, 0.6)"
+                placeholderTextColor="rgba(255, 255, 255, 0.8)"
               />
               <TouchableOpacity style={styles.send} onPress={onCommentSend}>
                 <FontAwesome name="send" size={18} color="#361866" />
@@ -163,7 +163,7 @@ const Post = ({
               style={styles.closeComment}
               onPress={onShowComment}
             >
-              <AntDesign name="down" size={18} color="rgba(0, 0, 0, 0.5)" />
+              <AntDesign name="down" size={18} color="white" />
               <Text style={styles.close}>show comments</Text>
             </TouchableOpacity>
           </View>
@@ -181,7 +181,7 @@ const Post = ({
 
             <Text style={styles.username}>{user}</Text>
           </View>
-          <Text>{timestamp}</Text>
+          <Text style={{ color: "white" }}>{timestamp}</Text>
         </View>
 
         {/* <View style={styles.divider} /> */}
@@ -213,7 +213,7 @@ const Post = ({
                 value={inputText}
                 onChangeText={(text) => setInputText(text)}
                 placeholder={"Write a comment..."}
-                placeholderTextColor="rgba(0, 0, 0, 0.4)"
+                placeholderTextColor="rgba(255, 255, 255, 0.8)"
               />
               <TouchableOpacity style={styles.send} onPress={onCommentSend}>
                 <FontAwesome name="send" size={18} color="#361866" />
@@ -253,7 +253,7 @@ const Post = ({
                         style={styles.delete}
                         onPress={() => onDeleteComment(index)}
                       >
-                        <AntDesign name="close" size={18} color="gray" />
+                        <AntDesign name="close" size={18} color="white" />
                       </TouchableOpacity>
                     </View>
                   ) : null}
@@ -265,7 +265,7 @@ const Post = ({
               style={styles.closeComment}
               onPress={onCloseComment}
             >
-              <AntDesign name="up" size={18} color="rgba(0, 0, 0, 0.4)" />
+              <AntDesign name="up" size={18} color="white" />
               <Text style={styles.close}>close comments</Text>
             </TouchableOpacity>
           </View>
@@ -281,7 +281,9 @@ export default Post;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(217, 217, 217, 0.6)",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    // borderColor: "black",
+    // borderWidth: 1,
     borderRadius: 15,
     padding: 8,
     width: "100%",
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     // opacity: "20%",
-    backgroundColor: "rgba(217, 217, 217, 0.6)",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 15,
     padding: 6,
     flex: 1,
@@ -305,7 +307,7 @@ const styles = StyleSheet.create({
   },
   inputText: {
     width: "90%",
-    // color: "red",
+    color: "white",
   },
   header: {
     flexDirection: "row",
@@ -368,14 +370,16 @@ const styles = StyleSheet.create({
   userName: {
     fontWeight: "bold",
     fontSize: 13,
+    color: "white",
   },
   comment: {
-    color: "rgba(0, 0, 0, 0.7)",
+    color: "rgba(255, 255, 255, 0.8)",
     fontSize: 16,
   },
   delete: {},
   close: {
-    color: "rgba(0, 0, 0, 0.7)",
+    // borderWidth: 1,
+    color: "white",
     textAlign: "right",
   },
   profilePic: {
@@ -396,6 +400,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15,
     // fontFamily: "CaladeaRegular",
+    color: "white",
   },
   imageContainer: {
     width: 60,
@@ -410,6 +415,8 @@ const styles = StyleSheet.create({
   },
   action: {
     fontStyle: "italic",
+    // borderWidth: 1,
+    color: "white",
   },
   contentContainer: {
     flex: 1,
@@ -418,5 +425,7 @@ const styles = StyleSheet.create({
   content: {
     alignItems: "center",
     fontSize: 20,
+    // textAlign: "center",
+    color: "white",
   },
 });
