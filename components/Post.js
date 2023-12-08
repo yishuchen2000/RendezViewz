@@ -20,15 +20,9 @@ import {
   Caladea_italic,
 } from "@expo-google-fonts/imperial-script";
 import { FontAwesome } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-
-import AppLoading from "expo-app-loading";
 
 const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
 const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
-
-// const LIKE_ICON_OUTLINE = <AntDesign name="hearto" size={24} color="black" />;
-// const LIKE_ICON_FILLED = <AntDesign name="heart" size={24} color="black" />;
 
 const Post = ({
   id,
@@ -41,9 +35,6 @@ const Post = ({
   action,
   comments,
 }) => {
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
-
   const [inputText, setInputText] = useState("");
   const [showComment, setshowComment] = useState(false);
 
@@ -86,6 +77,29 @@ const Post = ({
     setshowComment(true);
   };
 
+  const getTimeDifference = (timestamp) => {
+    const currentTime = new Date();
+    const postTime = new Date(timestamp);
+    const timeDifference = Math.abs(currentTime - postTime);
+
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) {
+      return "now";
+    } else if (minutes < 60) {
+      return `${minutes}m ago`;
+    } else if (hours < 24) {
+      return `${hours}h ago`;
+    } else {
+      return `${days}d ago`;
+    }
+  };
+
+  const formattedTime = getTimeDifference(timestamp);
+
   if (!showComment) {
     contentDisplayed = (
       <View style={styles.container}>
@@ -97,7 +111,7 @@ const Post = ({
 
             <Text style={styles.username}>{user}</Text>
           </View>
-          <Text>{timestamp}</Text>
+          <Text>{formattedTime}</Text>
         </View>
 
         {/* <View style={styles.divider} /> */}
@@ -268,8 +282,6 @@ export default Post;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "rgba(217, 217, 217, 0.6)",
-    // borderColor: "black",
-    // borderWidth: 1,
     borderRadius: 15,
     padding: 8,
     width: "100%",
@@ -302,7 +314,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     flex: 1,
-    // borderWidth: 1,
     // borderColor: "#361866",
   },
   body: {
@@ -312,14 +323,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     marginLeft: 5,
     gap: 8,
-    // borderWidth: 1,
   },
   footer: {
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
     flex: 1,
-    // borderWidth: 1,
   },
   commentBar: {
     flexDirection: "row",
@@ -327,23 +336,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // backgroundColor: "rgba(217, 217, 217, 0.5)",
     // flex: 1,
-    // borderWidth: 1,
   },
   commentSection: {
-    // borderWidth: 1,
     width: "100%",
     padding: 5,
-
-    // height: 1,
   },
   closeComment: {
-    // borderWidth: 1,
     flexDirection: "row", // To display items horizontally
     justifyContent: "flex-end",
     marginTop: 4,
   },
   oneComment: {
-    // borderWidth: 1,
     flexDirection: "row", // To display items horizontally
     justifyContent: "space-between",
     alignItems: "center",
@@ -356,12 +359,10 @@ const styles = StyleSheet.create({
   commentAvatar: {
     width: 30,
     height: 30,
-    // borderWidth: 1,
     marginRight: 5,
     marginTop: 3,
   },
   commentText: {
-    // borderWidth: 1,
     width: "80%",
   },
   userName: {
@@ -371,26 +372,15 @@ const styles = StyleSheet.create({
   comment: {
     color: "rgba(0, 0, 0, 0.7)",
     fontSize: 16,
-    // borderWidth: 1,
   },
-  delete: {
-    // borderWidth: 1,
-  },
+  delete: {},
   close: {
-    // borderWidth: 1,
     color: "rgba(0, 0, 0, 0.7)",
     textAlign: "right",
-    // borderWidth: 1,
   },
   profilePic: {
-    // width: 32,
-    // height: 32,
     width: "100%",
     height: "100%",
-    // marginRight: 4,
-    // borderRadius: "50%",
-    // borderTopRightRadius: '100%',
-    // borderBottomLeftRadius: '100%'
   },
   profilePicContainer: {
     width: 35,
@@ -410,10 +400,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: 60,
     height: 90,
-    // aspectRatio: 1,
-    // flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   image: {
     width: "100%",
@@ -424,18 +410,13 @@ const styles = StyleSheet.create({
   },
   action: {
     fontStyle: "italic",
-    // borderWidth: 1,
   },
   contentContainer: {
     flex: 1,
     justifyContent: "center",
-    // borderWidth: 1,
-    // borderColor: "red",
   },
   content: {
-    // borderWidth: 1,
     alignItems: "center",
     fontSize: 20,
-    // textAlign: "center",
   },
 });
