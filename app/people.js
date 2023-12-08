@@ -45,31 +45,21 @@ export default function Page() {
   //   setData(response.data);
   // };
 
-  const clearSearch = async () => {
+  const clearSearch = () => {
     setFilteredData(data);
     setSearchQuery("");
   };
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    const formattedQuery = query.toLowerCase();
-    const filteredData = filter(data, ({ id, profile_pic, user }) => {
-      console.log("formattedQuery", formattedQuery);
-      // console.log(contains({ id, profile_pic, user }, formattedQuery));
-      return contains({ id, profile_pic, user }, formattedQuery);
+  const handleSearch = () => {
+    const formattedQuery = searchQuery.toLowerCase();
+    const filteredData = filter(data, ({ user }) => {
+      return contains({ user }, formattedQuery);
     });
-    console.log("filteredData", filteredData);
     setFilteredData(filteredData);
   };
 
-  const contains = ({ id, profile_pic, user }, query) => {
-    console.log("current user!", user);
-    console.log("current query", query);
-
-    if (user.toLowerCase().includes(query)) {
-      return true;
-    }
-    return false;
+  const contains = ({ user }, query) => {
+    return user.toLowerCase().includes(query);
   };
 
   return (
@@ -83,9 +73,8 @@ export default function Page() {
             style={{ color: "black", textAlign: "left" }}
             placeholder="Search friend"
             placeholderTextColor="gray"
-            // value={searchInput}
             value={searchQuery}
-            onChangeText={(query) => handleSearch(query)}
+            onChangeText={(query) => setSearchQuery(query)}
           />
 
           <View style={styles.buttons}>
@@ -123,6 +112,11 @@ export default function Page() {
             style={styles.posts}
           />
         </View>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.plusButton}>
+          <AntDesign name="pluscircle" size={60} color="#602683" />
+        </Pressable>
       </View>
       <View style={styles.clapboard}>
         <Image
@@ -229,6 +223,22 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
+  },
+  buttonContainer: {
+    position: "absolute",
+    height: 60,
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    bottom: windowHeight * 0.05,
+    right: windowWidth * 0.05,
+    backgroundColor: "transparent",
+  },
+  plusButton: {
+    borderRadius: 100,
+    backgroundColor: "white", // Adjust as needed
+    justifyContent: "center",
+    alignItems: "center",
   },
   posts: {
     backgroundColor: "rgba(255, 255, 255, 0.1)",
