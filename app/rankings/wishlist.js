@@ -213,7 +213,7 @@ export default function Wishlist() {
                   style={styles.rankingInput}
                   keyboardType="numeric"
                   returnKeyType="done"
-                  placeholder="Enter a number"
+                  // placeholder="Enter a number"
                   onChangeText={(text) => setRankValue(text)}
                 />
                 <View style={styles.space}></View>

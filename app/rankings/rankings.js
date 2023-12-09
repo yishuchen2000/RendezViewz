@@ -214,10 +214,10 @@ export default function Rankings() {
                   style={styles.rankingInput}
                   keyboardType="numeric"
                   returnKeyType="done"
-                  placeholder="Enter a number"
+                  // placeholder="Enter a number"
                   onChangeText={(text) => setRankValue(text)}
                 />
-                <View style={styles.space}></View>
+                {/* <View style={styles.space}></View> */}
               </View>
             </ScrollView>
 
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
   },
   space: {
-    marginBottom: 90,
+    // marginBottom: 90,
   },
   placeholderStyle: {
     fontSize: 16,

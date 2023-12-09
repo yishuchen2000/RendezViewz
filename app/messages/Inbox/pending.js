@@ -180,7 +180,7 @@ const Pending = ({ route, navigation }) => {
             placeholderTextColor="gray"
             value={searchInput}
             onChangeText={handleSearchInput}
-            returnKeyType="earch"
+            returnKeyType="search"
             onSubmitEditing={handleSearch}
           />
           <View style={styles.buttons}>

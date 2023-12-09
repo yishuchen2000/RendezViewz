@@ -121,10 +121,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 75,
     marginLeft: 0,
-    // aspectRatio: 1,
-    // flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
+    marginBottom: 2,
   },
   image: {
     width: "100%",

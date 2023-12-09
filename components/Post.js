@@ -144,6 +144,8 @@ const Post = ({
                 onChangeText={(text) => setInputText(text)}
                 placeholder={"Write a comment..."}
                 placeholderTextColor="rgba(255, 255, 255, 0.8)"
+                onSubmitEditing={onCommentSend}
+                returnKeyType="send"
               />
               <TouchableOpacity style={styles.send} onPress={onCommentSend}>
                 <FontAwesome name="send" size={18} color="#361866" />
@@ -181,7 +183,7 @@ const Post = ({
 
             <Text style={styles.username}>{user}</Text>
           </View>
-          <Text style={{ color: "white" }}>{timestamp}</Text>
+          <Text style={{ color: "white" }}>{formattedTime}</Text>
         </View>
 
         {/* <View style={styles.divider} /> */}
@@ -214,6 +216,8 @@ const Post = ({
                 onChangeText={(text) => setInputText(text)}
                 placeholder={"Write a comment..."}
                 placeholderTextColor="rgba(255, 255, 255, 0.8)"
+                onSubmitEditing={onCommentSend}
+                returnKeyType="send"
               />
               <TouchableOpacity style={styles.send} onPress={onCommentSend}>
                 <FontAwesome name="send" size={18} color="#361866" />
