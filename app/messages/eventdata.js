@@ -505,7 +505,7 @@ export const initialItems = {
   ],
   "2023-12-16": [
     {
-      name: "Four Chrismases",
+      name: "Four Christmases",
       people: ["Dave"],
       time: "22:00",
       date: "2023-12-16",

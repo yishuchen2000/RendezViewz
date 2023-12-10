@@ -1,8 +1,8 @@
 import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
 import { useState, useEffect } from "react";
-import Post from "../components/Post";
-import supabase from "../Supabase";
+import supabase from "../../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
+import Post from "../../components/Post";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -100,6 +100,8 @@ export default function Page() {
               profilePic={item.profile_pic}
               action={item.action}
               comments={item.comments}
+              title={item.movie_title}
+              goesTo={"ShowDetails"}
             />
           )}
           keyExtractor={(item) => item.text}
@@ -109,7 +111,7 @@ export default function Page() {
       </View>
       <View style={styles.clapboard}>
         <Image
-          source={require("../assets/Clapboard2.png")}
+          source={require("../../assets/Clapboard2.png")}
           style={{
             flex: 1,
             width: windowWidth,

@@ -7,6 +7,7 @@ import {
   ImperialScript_400Regular,
 } from "@expo-google-fonts/imperial-script";
 import AppLoading from "expo-app-loading";
+import Index from "./feed/index";
 
 export default function HomeLayout() {
   const [fontsLoaded] = useFonts({
@@ -37,7 +38,7 @@ export default function HomeLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="feed"
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ size, color }) => (

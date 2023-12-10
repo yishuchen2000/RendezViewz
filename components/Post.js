@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -10,16 +10,13 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import supabase from "../Supabase";
 import { AntDesign } from "@expo/vector-icons";
-import {
-  useFonts,
-  Caladea_400Regular,
-  Caladea_700Bold,
-  Caladea_italic,
-} from "@expo-google-fonts/imperial-script";
 import { FontAwesome } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import getMovieDetails from "./getMovieDetails";
 
 const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
 const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
@@ -34,9 +31,24 @@ const Post = ({
   profilePic,
   action,
   comments,
+  title,
+  goesTo,
 }) => {
   const [inputText, setInputText] = useState("");
   const [showComment, setshowComment] = useState(false);
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      const details = await getMovieDetails(title);
+      setMovieDetails(details);
+      setIsLoading(false);
+    };
+    fetchMovieDetails();
+  }, [title]);
 
   const onLikePressed = async () => {
     const response = await supabase
@@ -100,185 +112,142 @@ const Post = ({
 
   const formattedTime = getTimeDifference(timestamp);
 
+  let imageToRender;
+  if (isLoading) {
+    imageToRender = (
+      <ActivityIndicator
+        style={styles.imageContainer}
+        size="large"
+        color="#0000ff"
+      />
+    );
+  } else {
+    imageToRender = (
+      <Pressable
+        style={styles.imageContainer}
+        onPress={() =>
+          navigation.navigate(goesTo, {
+            details: movieDetails,
+          })
+        }
+      >
+        <Image
+          source={{
+            uri: movieDetails.Poster,
+            name: "Preview",
+          }}
+          style={styles.image}
+        />
+      </Pressable>
+    );
+  }
+
+  let contentToRender;
   if (!showComment) {
-    contentDisplayed = (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.profile}>
-            <View style={styles.profilePicContainer}>
-              <Image style={styles.profilePic} source={{ uri: profilePic }} />
-            </View>
-
-            <Text style={styles.username}>{user}</Text>
-          </View>
-          <Text style={{ color: "white" }}>{formattedTime}</Text>
-        </View>
-
-        {/* <View style={styles.divider} /> */}
-
-        <View style={styles.body}>
-          <View style={styles.postContent}>
-            <Text style={styles.action}>{action}</Text>
-            <View style={styles.contentContainer}>
-              <Text style={styles.content}>{text}</Text>
-            </View>
-          </View>
-
-          <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: imageUrl,
-                name: "Preview",
-              }}
-              style={styles.image}
-            />
-          </View>
-        </View>
-
-        <View style={styles.footer}>
-          <View style={styles.commentBar}>
-            <View style={styles.textInput}>
-              <TextInput
-                style={styles.inputText}
-                value={inputText}
-                onChangeText={(text) => setInputText(text)}
-                placeholder={"Write a comment..."}
-                placeholderTextColor="rgba(255, 255, 255, 0.8)"
-                onSubmitEditing={onCommentSend}
-                returnKeyType="send"
-              />
-              <TouchableOpacity style={styles.send} onPress={onCommentSend}>
-                <FontAwesome name="send" size={18} color="#361866" />
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity onPress={onLikePressed}>
-              <Image
-                style={styles.heart}
-                source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.commentSection}>
-            <TouchableOpacity
-              style={styles.closeComment}
-              onPress={onShowComment}
-            >
-              <AntDesign name="down" size={18} color="white" />
-              <Text style={styles.close}>show comments</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+    contentToRender = (
+      <View style={styles.commentSection}>
+        <TouchableOpacity style={styles.closeComment} onPress={onShowComment}>
+          <AntDesign name="down" size={18} color="white" />
+          <Text style={styles.close}>show comments</Text>
+        </TouchableOpacity>
       </View>
     );
   } else {
-    contentDisplayed = (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.profile}>
-            <View style={styles.profilePicContainer}>
-              <Image style={styles.profilePic} source={{ uri: profilePic }} />
-            </View>
-
-            <Text style={styles.username}>{user}</Text>
-          </View>
-          <Text style={{ color: "white" }}>{formattedTime}</Text>
-        </View>
-
-        {/* <View style={styles.divider} /> */}
-
-        <View style={styles.body}>
-          <View style={styles.postContent}>
-            <Text style={styles.action}>{action}</Text>
-            <View style={styles.contentContainer}>
-              <Text style={styles.content}>{text}</Text>
-            </View>
-          </View>
-
-          <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: imageUrl,
-                name: "Preview",
-              }}
-              style={styles.image}
-            />
-          </View>
-        </View>
-
-        <View style={styles.footer}>
-          <View style={styles.commentBar}>
-            <View style={styles.textInput}>
-              <TextInput
-                style={styles.inputText}
-                value={inputText}
-                onChangeText={(text) => setInputText(text)}
-                placeholder={"Write a comment..."}
-                placeholderTextColor="rgba(255, 255, 255, 0.8)"
-                onSubmitEditing={onCommentSend}
-                returnKeyType="send"
-              />
-              <TouchableOpacity style={styles.send} onPress={onCommentSend}>
-                <FontAwesome name="send" size={18} color="#361866" />
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity onPress={onLikePressed}>
-              <Image
-                style={styles.heart}
-                source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.commentSection}>
-            <FlatList
-              data={comments}
-              renderItem={({ item, index }) => (
-                <View style={styles.oneComment}>
-                  <View style={styles.leftContent}>
-                    <View style={styles.commentAvatar}>
-                      <Image
-                        style={styles.profilePic}
-                        source={{ uri: item[2] }}
-                      />
-                    </View>
-
-                    <View style={styles.commentText}>
-                      <Text style={styles.userName}>{item[0]}</Text>
-                      <Text style={styles.comment}>{item[1]}</Text>
-                    </View>
-                  </View>
-
-                  {item[3] === "true" ? (
-                    <View style={styles.delete}>
-                      <TouchableOpacity
-                        style={styles.delete}
-                        onPress={() => onDeleteComment(index)}
-                      >
-                        <AntDesign name="close" size={18} color="white" />
-                      </TouchableOpacity>
-                    </View>
-                  ) : null}
+    contentToRender = (
+      <View style={styles.commentSection}>
+        <FlatList
+          data={comments}
+          renderItem={({ item, index }) => (
+            <View style={styles.oneComment}>
+              <View style={styles.leftContent}>
+                <View style={styles.commentAvatar}>
+                  <Image style={styles.profilePic} source={{ uri: item[2] }} />
                 </View>
-              )}
-              style={styles.flatList}
-            />
-            <TouchableOpacity
-              style={styles.closeComment}
-              onPress={onCloseComment}
-            >
-              <AntDesign name="up" size={18} color="white" />
-              <Text style={styles.close}>close comments</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+
+                <View style={styles.commentText}>
+                  <Text style={styles.userName}>{item[0]}</Text>
+                  <Text style={styles.comment}>{item[1]}</Text>
+                </View>
+              </View>
+
+              {item[3] === "true" ? (
+                <View style={styles.delete}>
+                  <TouchableOpacity
+                    style={styles.delete}
+                    onPress={() => onDeleteComment(index)}
+                  >
+                    <AntDesign name="close" size={18} color="white" />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+            </View>
+          )}
+          style={styles.flatList}
+        />
+        <TouchableOpacity style={styles.closeComment} onPress={onCloseComment}>
+          <AntDesign name="up" size={18} color="white" />
+          <Text style={styles.close}>close comments</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
-  return <SafeAreaView>{contentDisplayed}</SafeAreaView>;
+  return (
+    <SafeAreaView>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.profile}>
+            <View style={styles.profilePicContainer}>
+              <Image style={styles.profilePic} source={{ uri: profilePic }} />
+            </View>
+
+            <Text style={styles.username}>{user}</Text>
+          </View>
+          <Text style={{ color: "white" }}>{formattedTime}</Text>
+        </View>
+
+        {/* <View style={styles.divider} /> */}
+
+        <View style={styles.body}>
+          <View style={styles.postContent}>
+            <Text style={styles.action}>{action}</Text>
+            <View style={styles.contentContainer}>
+              <Text style={styles.content}>{text}</Text>
+            </View>
+          </View>
+
+          {imageToRender}
+        </View>
+
+        <View style={styles.footer}>
+          <View style={styles.commentBar}>
+            <View style={styles.textInput}>
+              <TextInput
+                style={styles.inputText}
+                value={inputText}
+                onChangeText={(text) => setInputText(text)}
+                placeholder={"Write a comment..."}
+                placeholderTextColor="rgba(255, 255, 255, 0.8)"
+                onSubmitEditing={onCommentSend}
+                returnKeyType="send"
+              />
+              <TouchableOpacity style={styles.send} onPress={onCommentSend}>
+                <FontAwesome name="send" size={18} color="#361866" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity onPress={onLikePressed}>
+              <Image
+                style={styles.heart}
+                source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
+              />
+            </TouchableOpacity>
+          </View>
+          {contentToRender}
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 };
 
 export default Post;
@@ -289,7 +258,7 @@ const styles = StyleSheet.create({
     // borderColor: "black",
     // borderWidth: 1,
     borderRadius: 15,
-    padding: 8,
+    padding: 7,
     width: "100%",
     marginBottom: 10,
     gap: 4,
@@ -303,7 +272,7 @@ const styles = StyleSheet.create({
     // opacity: "20%",
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 15,
-    padding: 6,
+    padding: 9,
     flex: 1,
     marginRight: 8,
     flexDirection: "row",
