@@ -1,6 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Index from "./index";
+import Index from "../index";
 import ShowDetails from "./show_details";
 
 const Stack = createStackNavigator();

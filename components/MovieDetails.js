@@ -3,10 +3,8 @@ import {
   StyleSheet,
   View,
   Text,
-  Pressable,
   Dimensions,
   ScrollView,
-  Alert,
   Image,
 } from "react-native";
 

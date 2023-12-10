@@ -37,6 +37,7 @@ export default function HomeLayout() {
         tabBarInactiveTintColor: "#BBADD3",
       }}
     >
+      <Tabs.Screen name="index" options={{ href: null }} redirect />
       <Tabs.Screen
         name="feed"
         options={{
