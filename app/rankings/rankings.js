@@ -83,6 +83,11 @@ export default function Rankings() {
     setModalVisible(!modalVisible); //close modal
     const movieDetails = await getMovieDetails(entry);
 
+    if (!movieDetails || movieDetails.Response === "False") {
+      Alert.alert("Invalid title. Please enter a valid movie or show title.");
+      return;
+    }
+
     if (isDuplicateEntry) {
       Alert.alert(`${entry} is already ranked on this list.`);
       return;
@@ -115,6 +120,7 @@ export default function Rankings() {
       },
     ]);
     flipRenderSwitch(!renderSwitch);
+    setRankValue(null);
   };
   //Animation for delete
   const layoutAnimConfig = {
@@ -189,22 +195,14 @@ export default function Rankings() {
 
             <ScrollView style={styles.questionsContainer}>
               <View style={styles.titleSelectContainer}>
-                <Text style={styles.titleQuestion}> Select Title:</Text>
-                <Dropdown
+                <Text style={styles.titleQuestion}> Enter Title:</Text>
+                <TextInput
                   style={styles.titleDropdown}
-                  placeholderStyle={styles.placeholderStyle}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  data={possibleEntries}
-                  search
+                  placeholder="Enter a movie or show title..."
+                  placeholderTextColor="gray"
                   value={entry}
-                  maxHeight={260}
-                  labelField="title"
-                  valueField="title"
-                  placeholder="Choose content"
-                  searchPlaceholder="Search..."
-                  onChange={(item) => {
-                    setEntry(item.title);
-                    setEntryPic(item.url); //unneeded?
+                  onChangeText={(text) => {
+                    setEntry(text);
                   }}
                 />
               </View>
