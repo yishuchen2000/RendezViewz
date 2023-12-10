@@ -158,6 +158,7 @@ export default function Me() {
             <ScrollView style={styles.scroll} horizontal={false}>
               {myPostData.map((item) => (
                 <ProfilePost
+                  key={item.id}
                   id={item.id}
                   user={item.user}
                   timestamp={item.created_at}
@@ -172,7 +173,6 @@ export default function Me() {
                 />
               ))}
             </ScrollView>
-            {/* </View> */}
           </View>
 
           <View style={styles.activityBar}>

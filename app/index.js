@@ -104,7 +104,7 @@ export default function Page() {
               goesTo={"ShowDetails"}
             />
           )}
-          keyExtractor={(item) => item.text}
+          keyExtractor={(item) => item.id}
           style={styles.posts}
           contentContainerStyle={{ paddingTop: 10 }}
         />
