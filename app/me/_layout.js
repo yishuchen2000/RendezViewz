@@ -1,6 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Me from "./me";
+import Profile from "./profile";
 import ShowDetails from "./show_details";
 
 const Stack = createStackNavigator();
@@ -8,7 +8,11 @@ const Stack = createStackNavigator();
 export default function Feed() {
   return (
     <Stack.Navigator initialRouteName="Index">
-      <Stack.Screen name="me" component={Me} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="profile"
+        component={Profile}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="ShowDetails"
         component={ShowDetails}

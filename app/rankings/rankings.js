@@ -13,6 +13,7 @@ import {
   LayoutAnimation,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
@@ -84,7 +85,7 @@ export default function Rankings() {
     const movieDetails = await getMovieDetails(entry);
 
     if (!movieDetails || movieDetails.Response === "False") {
-      Alert.alert("Invalid title. Please enter a valid movie or show title.");
+      Alert.alert("Invalid Title", "Please enter a valid movie or show title.");
       return;
     }
 

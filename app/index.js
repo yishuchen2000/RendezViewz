@@ -1,4 +1,12 @@
-import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  FlatList,
+  Dimensions,
+  ActivityIndicator,
+  Text,
+} from "react-native";
 import { useState, useEffect } from "react";
 import supabase from "../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
@@ -69,6 +77,21 @@ export default function Page() {
   //     text: input,
   //   });
   // };
+  if (!data) {
+    return (
+      <LinearGradient
+        colors={["#361866", "#E29292"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="blue" />
+          <Text>Loading...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>

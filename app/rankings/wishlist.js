@@ -84,7 +84,7 @@ export default function Wishlist() {
     const movieDetails = await getMovieDetails(entry);
 
     if (!movieDetails || movieDetails.Response === "False") {
-      Alert.alert("Invalid title. Please enter a valid movie or show title.");
+      Alert.alert("Invalid Title", "Please enter a valid movie or show title.");
       return;
     }
 

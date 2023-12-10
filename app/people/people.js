@@ -7,6 +7,8 @@ import {
   FlatList,
   Image,
   Pressable,
+  ActivityIndicator,
+  Text,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -49,6 +51,22 @@ export default function People() {
   const contains = ({ user }, query) => {
     return user.toLowerCase().includes(query);
   };
+
+  if (!data) {
+    return (
+      <LinearGradient
+        colors={["#361866", "#E29292"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="blue" />
+          <Text>Loading...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>

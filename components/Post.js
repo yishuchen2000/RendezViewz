@@ -73,6 +73,7 @@ const Post = ({
       setInputText("");
     } else {
       Alert.alert("Please enter a comment before sending.");
+      setInputText("");
       return;
     }
   };

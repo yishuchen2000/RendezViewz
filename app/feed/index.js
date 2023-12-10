@@ -9,7 +9,7 @@ const windowHeight = Dimensions.get("window").height;
 
 export default function Page() {
   const [data, setData] = useState(null);
-  const [input, setInput] = useState("");
+  // const [input, setInput] = useState("");
 
   const handleRecordUpdated = (payload) => {
     setData((oldData) => {
@@ -69,6 +69,22 @@ export default function Page() {
   //     text: input,
   //   });
   // };
+
+  if (!data) {
+    return (
+      <LinearGradient
+        colors={["#361866", "#E29292"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="blue" />
+          <Text>Loading...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
