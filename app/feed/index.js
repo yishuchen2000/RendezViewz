@@ -1,8 +1,8 @@
 import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
 import { useState, useEffect } from "react";
-import supabase from "../Supabase";
+import supabase from "../../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
-import Post from "../components/Post";
+import Post from "../../components/Post";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -111,7 +111,7 @@ export default function Page() {
       </View>
       <View style={styles.clapboard}>
         <Image
-          source={require("../assets/Clapboard2.png")}
+          source={require("../../assets/Clapboard2.png")}
           style={{
             flex: 1,
             width: windowWidth,
@@ -126,16 +126,13 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
     justifyContent: "center",
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     paddingRight: 8,
     paddingLeft: 8,
   },
-  posts: {
-    // marginTop: 12,
-  },
+  posts: {},
   postList: {
     flex: 8,
   },
@@ -151,8 +148,6 @@ const styles = StyleSheet.create({
   },
 
   clapboard: {
-    // position: "abolute",
-    // bottom: windowHeight * 0.015,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",

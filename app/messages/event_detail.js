@@ -1,6 +1,6 @@
 //This file is the webview page for song details.
 //This page is opened when clicking anywhere on the row of a song on first_screen
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -14,10 +14,21 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import getMovieDetails from "../../components/getMovieDetails";
 
 const EventDetail = ({ route }) => {
   const { date, name, time, people } = route.params;
   const [showAllPeople, setShowAllPeople] = useState(false);
+  const [showURL, setShowURL] = useState(null);
+
+  useEffect(() => {
+    const showPoster = async () => {
+      const movieDetails = await getMovieDetails(name);
+      setShowURL(movieDetails.Poster);
+    };
+    showPoster();
+  }, []);
+
   const renderAllPeopleCircles = () => {
     return people.map((person, index) => (
       <View key={index} style={styles.personCircle}>
@@ -78,7 +89,9 @@ const EventDetail = ({ route }) => {
           <View style={styles.time}>
             <Text style={styles.show}>{name}</Text>
           </View>
-          <View style={styles.image}></View>
+          <View style={styles.image}>
+            <Image source={{ uri: showURL }} style={styles.poster} />
+          </View>
           <View style={styles.peopleContainer}>{renderPeopleCircles()}</View>
           {showAllPeople ? (
             <Pressable
@@ -149,10 +162,14 @@ const styles = StyleSheet.create({
   },
   image: {
     height: windowHeight * 0.3,
-    width: windowHeight * 0.25,
-    borderRadius: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    width: windowHeight * 0.22,
+    // borderRadius: 15,
+    // backgroundColor: "rgba(255, 255, 255, 0.5)",
     marginBottom: 10,
+    padding: 5,
+  },
+  poster: {
+    flex: 1,
   },
   peopleContainer: {
     flexDirection: "row",

@@ -63,6 +63,11 @@ const AddEvent = ({ route, navigation }) => {
       Alert.alert("Error", "Please select a show before adding an event.");
       return;
     }
+    if (person.length === 0) {
+      // Show an alert for missing show name
+      Alert.alert("Error", "Please select people before adding an event.");
+      return;
+    }
     // Create a new event object with the entered data
     const newEvent = {
       name: show,
@@ -104,6 +109,8 @@ const AddEvent = ({ route, navigation }) => {
         <View style={styles.eachBox1}>
           <DateTimePicker
             value={value}
+            style={{ resizeMode: "contain" }}
+            height={10}
             onValueChange={(date) => {
               const formattedDate = dayjs(date);
               const datePart = formattedDate.format("YYYY-MM-DD"); // Extract date part
@@ -143,7 +150,7 @@ const AddEvent = ({ route, navigation }) => {
                   iconStyle={styles.iconStyle}
                   data={shows}
                   search
-                  maxHeight={300}
+                  maxHeight={200}
                   labelField="label"
                   valueField="label"
                   placeholder="Select Content"
@@ -166,9 +173,11 @@ const AddEvent = ({ route, navigation }) => {
                     selectedTextStyle={styles.selectedTextStyle}
                     inputSearchStyle={styles.inputSearchStyle}
                     iconStyle={styles.iconStyle}
+                    dropdown={styles.dropdown1}
                     itemTextStyle={styles.selecttext}
                     activeColor="rgba(70, 10, 90, 0.3)"
                     data={people}
+                    maxHeight={170}
                     labelField="label"
                     valueField="label"
                     placeholder="Add People"
@@ -264,7 +273,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    width: 300,
+    width: "80%",
     height: 35,
     flexDirection: "row",
     justifyContent: "center",
@@ -273,18 +282,22 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingHorizontal: 10,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
+    //borderColor: "blue",
+    //borderWidth: 5,
   },
   input1: {
-    width: 300,
+    width: windowWidth * 0.7,
     height: 30,
     flexDirection: "column",
     justifyContent: "start",
     //paddingBottom: 30,
     //alignItems: "center",
-    borderRadius: 15,
+    //borderRadius: 15,
     //margin: 10,
     paddingHorizontal: 10,
     backgroundColor: "transparent",
+    //borderColor: "green",
+    //borderWidth: 5,
   },
   button: {
     alignSelf: "center",
@@ -303,11 +316,16 @@ const styles = StyleSheet.create({
   },
   eachBox: {
     height: windowHeight * 0.05,
+    width: windowWidth * 0.85,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    margin: 5,
+    //borderColor: "purple",
+    //borderWidth: 5,
   },
   eachBox1: {
+    felx: 1,
     padding: 5,
     width: windowWidth * 0.88,
     height: windowHeight * 0.41,
@@ -316,24 +334,30 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 5,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
+    //borderColor: "red",
+    //borderWidth: 5,
   },
   dropdown: {
     color: "purple",
     height: 50,
-    width: 275,
+    width: windowWidth * 0.7,
     borderRadius: 50,
   },
   dropdown1: {
     color: "purple",
-    height: 50,
-    width: 275,
+    //height: windowHeight * 0.3,
+    width: windowWidth * 0.65,
     borderRadius: 50,
+    //borderColor: "gray",
+    //borderWidth: 5,
   },
   dropdown2: {
     color: "purple",
     height: 30,
-    width: 275,
-    borderRadius: 50,
+    width: windowWidth * 0.65,
+    //borderRadius: 50,
+    //borderColor: "black",
+    //borderWidth: 5,
   },
   icon: {
     marginRight: 2,

@@ -125,15 +125,11 @@ export default function People() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
-    // justifyContent: "center",
-    // justifyContent: "space-between",
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     paddingTop: 10,
   },
   container1: {
-    // paddingTop: 10,
     backgroundColor: "transparent",
     flex: 1,
   },
@@ -152,11 +148,8 @@ const styles = StyleSheet.create({
   searchbutton: {
     alignItems: "center",
     justifyContent: "center",
-    //borderColor: "red",
-    //borderWidth: 5,
   },
   searchBar: {
-    // flex: 1,
     marginLeft: 5,
     marginRight: 5,
     flexDirection: "row",
@@ -203,9 +196,6 @@ const styles = StyleSheet.create({
     color: "#38434D",
   },
   clapboard: {
-    // position: "absolute",
-    // flex: 0.04,
-    // bottom: windowHeight * 0.04,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
@@ -222,7 +212,7 @@ const styles = StyleSheet.create({
   },
   plusButton: {
     borderRadius: 100,
-    backgroundColor: "white", // Adjust as needed
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
   },

@@ -1,4 +1,5 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -9,13 +10,14 @@ import {
   FlatList,
   Pressable,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from "@expo/vector-icons";
-import ProfilePost from "../components/ProfilePost";
+import ProfilePost from "../../components/ProfilePost";
 //import Rankings from "./rankings/rankings";
 import { useNavigation } from "@react-navigation/native";
-import MyTabs from "./rankings/_layout";
+import MyTabs from "../rankings/_layout";
 //import MyTabs from "./rankings";
 
 const windowWidth = Dimensions.get("window").width;
@@ -23,6 +25,56 @@ const windowHeight = Dimensions.get("window").height;
 
 export default function Me() {
   const navigation = useNavigation();
+  const [rankedNumber, setRankedNumber] = useState(null);
+  const [friendNumber, setFriendNumber] = useState(null);
+  const [wishlistNumber, setWishlistNumber] = useState(null);
+  const [myPostData, setMyPostData] = useState(null);
+  const [numbersFetched, setNumbersFetched] = useState(false);
+
+  useEffect(() => {
+    const fetchNumbers = async () => {
+      const rankings = await supabase
+        .from("rankings")
+        .select("*", { count: "exact", head: true });
+
+      const friends = await supabase
+        .from("friends")
+        .select("*", { count: "exact", head: true });
+
+      const wishlist = await supabase
+        .from("wishlist")
+        .select("*", { count: "exact", head: true });
+
+      const response = await supabase
+        .from("posts")
+        .select("*")
+        .eq("user", "Yishu C.");
+
+      setRankedNumber(rankings.count);
+      setFriendNumber(friends.count);
+      setWishlistNumber(wishlist.count);
+      setMyPostData(response.data);
+      setNumbersFetched(true);
+    };
+    fetchNumbers();
+  }, []);
+
+  if (!numbersFetched) {
+    return (
+      <LinearGradient
+        colors={["#361866", "#E29292"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="blue" />
+          <Text>Loading...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -55,7 +107,9 @@ export default function Me() {
               onPress={() => navigation.navigate("rankings")}
             >
               <View style={styles.statsBox}>
-                <Text style={[styles.text, { fontSize: 18 }]}>15</Text>
+                <Text style={[styles.text, { fontSize: 18 }]}>
+                  {rankedNumber}
+                </Text>
                 <Text style={[styles.text, styles.subText]}>Ranked</Text>
               </View>
             </Pressable>
@@ -74,7 +128,9 @@ export default function Me() {
                 style={[styles.statsBox]}
                 onPress={() => navigation.navigate("people")}
               >
-                <Text style={[styles.text, { fontSize: 18 }]}>11</Text>
+                <Text style={[styles.text, { fontSize: 18 }]}>
+                  {friendNumber}
+                </Text>
                 <Text style={[styles.text, styles.subText]}>Friends</Text>
               </Pressable>
             </View>
@@ -86,7 +142,9 @@ export default function Me() {
                   navigation.navigate("rankings", { screen: "My Wishlist" })
                 }
               >
-                <Text style={[styles.text, { fontSize: 18 }]}>8</Text>
+                <Text style={[styles.text, { fontSize: 18 }]}>
+                  {wishlistNumber}
+                </Text>
                 <Text style={[styles.text, styles.subText]}>Wishlist</Text>
               </Pressable>
             </View>
@@ -98,30 +156,21 @@ export default function Me() {
             <Text style={[styles.subText, styles.recent]}>My posts</Text>
             {/* <View style={styles.scroll}> */}
             <ScrollView style={styles.scroll} horizontal={false}>
-              <View>
+              {myPostData.map((item) => (
                 <ProfilePost
-                  id={1}
-                  user={"Yishu C."}
-                  timestamp={"now"}
-                  text={"Anything with Margot Robbie hitsss"}
-                  liked={false}
-                  imageSource={require("../assets/barbieposter.jpg")}
-                  profilePic={require("../assets/YishuDog.jpg")}
-                  action={'Ranked "Barbie" #2'}
-                  // comments={item.comments}
+                  id={item.id}
+                  user={item.user}
+                  timestamp={item.created_at}
+                  text={item.text}
+                  liked={item.liked}
+                  imageUrl={item.show_poster_url}
+                  profilePic={item.profile_pic}
+                  action={item.action}
+                  comments={item.comments}
+                  title={item.movie_title}
+                  goesTo={"ShowDetails"}
                 />
-                <ProfilePost
-                  id={1}
-                  user={"Yishu C."}
-                  timestamp={"2h "}
-                  text={"I can't believe Rachel"}
-                  liked={false}
-                  imageSource={require("../assets/friendsposter.jpeg")}
-                  profilePic={require("../assets/YishuDog.jpg")}
-                  action={'Now on episode 6 of "Friends"'}
-                  // comments={item.comments}
-                />
-              </View>
+              ))}
             </ScrollView>
             {/* </View> */}
           </View>
@@ -188,7 +237,7 @@ export default function Me() {
 
         <View style={styles.clapboard}>
           <Image
-            source={require("../assets/Clapboard2.png")}
+            source={require("../../assets/Clapboard2.png")}
             style={{
               flex: 1,
               width: windowWidth,
@@ -204,7 +253,7 @@ export default function Me() {
 const styles = StyleSheet.create({
   header: {
     borderColor: "red",
-    flex: 0.7,
+    flex: 0.6,
   },
   info: {
     borderColor: "green",
