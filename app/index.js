@@ -62,13 +62,13 @@ export default function Page() {
     fetchData();
   }, []);
 
-  const onMessageSend = async () => {
-    const response = await supabase.from("posts").insert({
-      user: "James Landay",
-      timestamp: "now",
-      text: input,
-    });
-  };
+  // const onMessageSend = async () => {
+  //   const response = await supabase.from("posts").insert({
+  //     user: "James Landay",
+  //     timestamp: "now",
+  //     text: input,
+  //   });
+  // };
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>

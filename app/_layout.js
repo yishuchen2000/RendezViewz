@@ -1,21 +1,45 @@
 import { Tabs } from "expo-router";
+import { View, Text, ActivityIndicator } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
+import React, { useEffect } from "react";
 
 import {
   useFonts,
   ImperialScript_400Regular,
 } from "@expo-google-fonts/imperial-script";
-import AppLoading from "expo-app-loading";
-import Index from "./feed/index";
+// import AppLoading from "expo-app-loading";
+import * as SplashScreen from "expo-splash-screen";
 
 export default function HomeLayout() {
   const [fontsLoaded] = useFonts({
     ImperialScript: ImperialScript_400Regular,
   });
 
+  useEffect(() => {
+    const loadFontsAndNavigate = async () => {
+      try {
+        await SplashScreen.preventAutoHideAsync(); // Prevent splash screen from auto-hiding
+        await fontsLoaded; // Wait until fonts are loaded
+
+        // Now that fonts are loaded, hide the splash screen
+        await SplashScreen.hideAsync();
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+
+    loadFontsAndNavigate();
+  }, [fontsLoaded]);
+
+  // Ensure the splash screen remains visible until fonts are loaded
   if (!fontsLoaded) {
-    return <AppLoading />;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="blue" />
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   return (

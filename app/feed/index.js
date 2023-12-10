@@ -62,13 +62,13 @@ export default function Page() {
     fetchData();
   }, []);
 
-  const onMessageSend = async () => {
-    const response = await supabase.from("posts").insert({
-      user: "James Landay",
-      timestamp: "now",
-      text: input,
-    });
-  };
+  // const onMessageSend = async () => {
+  //   const response = await supabase.from("posts").insert({
+  //     user: "James Landay",
+  //     timestamp: "now",
+  //     text: input,
+  //   });
+  // };
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
@@ -126,16 +126,13 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
     justifyContent: "center",
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     paddingRight: 8,
     paddingLeft: 8,
   },
-  posts: {
-    // marginTop: 12,
-  },
+  posts: {},
   postList: {
     flex: 8,
   },
@@ -151,8 +148,6 @@ const styles = StyleSheet.create({
   },
 
   clapboard: {
-    // position: "abolute",
-    // bottom: windowHeight * 0.015,
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",

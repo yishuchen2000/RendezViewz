@@ -11,6 +11,7 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import supabase from "../Supabase";
 import { AntDesign } from "@expo/vector-icons";
@@ -59,15 +60,20 @@ const Post = ({
   };
 
   const onCommentSend = async () => {
-    if (inputText !== "") {
+    const trimmedInput = inputText.trim();
+
+    if (trimmedInput !== "") {
       const url =
         "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/me.png";
       const response = await supabase
         .from("posts")
-        .update({ comments: [...comments, ["Yishu C", inputText, url, true]] })
+        .update({ comments: [...comments, ["Yishu C.", inputText, url, true]] })
         .eq("id", id);
       console.log(response);
       setInputText("");
+    } else {
+      Alert.alert("Please enter a comment before sending.");
+      return;
     }
   };
 
