@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
   username: {
     fontWeight: "bold",
     fontSize: 17,
-    // fontFamily: "CaladeaRegular",
     color: "white",
   },
 });

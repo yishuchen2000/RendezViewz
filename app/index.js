@@ -70,13 +70,6 @@ export default function Page() {
     fetchData();
   }, []);
 
-  // const onMessageSend = async () => {
-  //   const response = await supabase.from("posts").insert({
-  //     user: "James Landay",
-  //     timestamp: "now",
-  //     text: input,
-  //   });
-  // };
   if (!data) {
     return (
       <LinearGradient
@@ -86,8 +79,8 @@ export default function Page() {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <ActivityIndicator size="large" color="blue" />
-          <Text>Loading...</Text>
+          <ActivityIndicator size="large" color="purple" />
+          <Text style={{ color: "white" }}>Loading...</Text>
         </View>
       </LinearGradient>
     );

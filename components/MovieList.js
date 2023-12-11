@@ -13,7 +13,6 @@ import {
   LayoutAnimation,
   ScrollView,
   Alert,
-  ActivityIndicator,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { useState, useEffect } from "react";
@@ -32,7 +31,7 @@ const windowHeight = Dimensions.get("window").height;
 
 const UNDERLINE = require("../../assets/underline.png");
 
-export default function Rankings() {
+const MovieList = ({ listName }) => {
   const navigation = useNavigation();
 
   const [isDuplicateEntry, setIsDuplicateEntry] = useState(false);
@@ -56,6 +55,18 @@ export default function Rankings() {
     };
     fetchData();
   }, [renderSwitch, entry]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await supabase.from("rankable").select("*");
+      const sortedMovies = response.data.sort((a, b) => {
+        return a.title.localeCompare(b.title);
+      });
+
+      setPossibleEntries(sortedMovies);
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (entry && rankValue) {
@@ -85,7 +96,7 @@ export default function Rankings() {
     let newId = Date.now();
     let adjustedRank = parseInt(rankValue);
 
-    let response = await supabase.from("rankings").select("*");
+    let response = await supabase.from(listName).select("*");
     let sortedData = response.data.sort((a, b) => a.index - b.index);
 
     if (adjustedRank > rankCount + 1) {
@@ -97,10 +108,10 @@ export default function Rankings() {
         }
         return item;
       });
-      await supabase.from("rankings").upsert(updatedRankings);
+      await supabase.from(listName).upsert(updatedRankings);
     }
 
-    const { data } = await supabase.from("rankings").upsert([
+    const { data } = await supabase.from(listName).upsert([
       {
         id: newId,
         title: movieDetails.Title,
@@ -125,9 +136,9 @@ export default function Rankings() {
   };
 
   const handleDelete = async (id, index) => {
-    await supabase.from("rankings").delete().eq("id", id);
+    await supabase.from(listName).delete().eq("id", id);
 
-    let response = await supabase.from("rankings").select("*");
+    let response = await supabase.from(listName).select("*");
     sortedData = response.data.sort((a, b) => a.index - b.index);
 
     const updatedRankings = sortedData.map((item) => {
@@ -136,28 +147,12 @@ export default function Rankings() {
       }
       return item;
     });
-    await supabase.from("rankings").upsert(updatedRankings);
+    await supabase.from(listName).upsert(updatedRankings);
 
     setData(updatedRankings);
     LayoutAnimation.configureNext(layoutAnimConfig);
     setRankCount(updatedRankings.length);
   };
-
-  if (!data) {
-    return (
-      <LinearGradient
-        colors={["#361866", "#E29292"]}
-        style={[styles.container, { paddingHorizontal: 8 }]}
-      >
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" color="purple" />
-          <Text style={{ color: "white" }}>Loading...</Text>
-        </View>
-      </LinearGradient>
-    );
-  }
 
   return (
     <LinearGradient
@@ -236,7 +231,7 @@ export default function Rankings() {
                 <Text
                   style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
                 >
-                  Update Ranking
+                  Update {listName}
                 </Text>
               </Pressable>
             </View>
@@ -281,7 +276,7 @@ export default function Rankings() {
       </View>
     </LinearGradient>
   );
-}
+};
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -423,3 +418,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default MovieList;

@@ -68,8 +68,8 @@ export default function Me() {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <ActivityIndicator size="large" color="blue" />
-          <Text>Loading...</Text>
+          <ActivityIndicator size="large" color="purple" />
+          <Text style={{ color: "white" }}>Loading...</Text>
         </View>
       </LinearGradient>
     );

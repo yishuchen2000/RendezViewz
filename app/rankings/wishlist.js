@@ -281,7 +281,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // marginTop: 22,
     borderWidth: 1,
     padding: windowHeight * 0.2,
   },
@@ -297,7 +296,7 @@ const styles = StyleSheet.create({
   },
   plusButton: {
     borderRadius: 100,
-    backgroundColor: "white", // Adjust as needed
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -305,12 +304,9 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.8,
     flex: 1,
     flexDirection: "column",
-    // alignItems: "stretch",
     justifyContent: "center",
-    // margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    // alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -327,7 +323,6 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.8,
     justifyContent: "space-between",
     paddingBottom: 42,
-    // flex: 1,
   },
   clapboard: {
     height: windowHeight * 0.03,
@@ -336,7 +331,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     flex: 1,
-    fontSize: 32, // Adjust the font size as needed
+    fontSize: 32,
     fontWeight: "bold",
     marginTop: 30,
     color: "#361866",
@@ -411,22 +406,17 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
   },
   bottom: {
-    // flex: 1,
-    alignItems: "center", // Center items along the primary axis (horizontal if flexDirection is 'row', vertical if 'column')
+    alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
   addButton: {
     alignSelf: "center",
-    // position: "absolute",
     width: 190,
     height: 50,
-    // padding: 10,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
-    // bottom: 30,
-    // borderWidth: 1,
   },
   container: {
     paddingHorizontal: windowWidth * 0.02,
