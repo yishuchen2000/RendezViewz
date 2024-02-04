@@ -16,33 +16,91 @@ import {
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { LinearGradient } from "expo-linear-gradient";
-import { initialItems } from "../eventdata";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import supabase from "../../../Supabase";
 
 const Events = ({ route, navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [flatListData, setFlatListData] = useState([]);
+  const [items, setItems] = useState({});
 
-  const handleDelete = (key) => {
-    const updatedData = flatListData.filter((data) => data.key !== key);
-    setFlatListData(updatedData);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from("party")
+        .select("*")
+        .order("date", { ascending: false });
 
-    const isDeletedInFiltered = filteredData.find((item) => item.key === key);
-    if (isDeletedInFiltered) {
-      const updatedFilteredData = filteredData.filter(
-        (data) => data.key !== key
-      );
-      setFilteredData(updatedFilteredData);
+      if (error) {
+        console.error("Error fetching data:", error.message);
+      } else {
+        const fData = {};
+
+        // Add events to the formattedData object
+        data.forEach((event) => {
+          const { date, show, people, time } = event;
+
+          if (!fData[date]) {
+            fData[date] = [];
+          }
+
+          fData[date].push({
+            name: show,
+            people: people,
+            time: time,
+            date: date,
+          });
+        });
+
+        setItems(fData);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleDelete = async (key) => {
+    try {
+      // Split the key into its components
+      const parts = key.split("-");
+      const newKey = parts.slice(0, -1).join("-");
+      const showname = parts.slice(-1)[0];
+
+      // Perform the delete operation using the extracted date
+      const { error } = await supabase
+        .from("party")
+        .delete()
+        .eq("date", newKey)
+        .eq("show", showname);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Update the UI after successful deletion
+      const updatedData = flatListData.filter((data) => data.key !== key);
+      setFlatListData(updatedData);
+
+      const isDeletedInFiltered = filteredData.some((item) => item.key === key);
+      if (isDeletedInFiltered) {
+        const updatedFilteredData = filteredData.filter(
+          (data) => data.key !== key
+        );
+        setFilteredData(updatedFilteredData);
+      }
+
+      Alert.alert("Success", "Event deleted successfully!");
+    } catch (error) {
+      Alert.alert("Error", `Failed to delete event: ${error.message}`);
     }
   };
 
   useEffect(() => {
-    const formattedData = Object.keys(initialItems).reduce((acc, date) => {
-      const movies = initialItems[date];
+    const formattedData = Object.keys(items).reduce((acc, date) => {
+      const movies = items[date];
       movies.forEach((movie) => {
         acc.push({
           key: `${date}-${movie.name}`,
@@ -55,7 +113,7 @@ const Events = ({ route, navigation }) => {
       return acc;
     }, []);
     setFlatListData(formattedData);
-  }, [initialItems]);
+  }, [items]);
 
   const handleSearchInput = (text) => {
     setSearchInput(text); // Update temporary search input

@@ -1,5 +1,4 @@
-//This is the original authentication and top tracks page.
-//It is the first page that shows upon opening app
+//landing page of calendar
 import {
   StyleSheet,
   SafeAreaView,
@@ -19,24 +18,98 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import supabase from "../../Supabase";
+import AddEvent from "./add_event";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function FirstScreen({ navigation }) {
   const [selected, setSelected] = useState("");
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState({});
 
-  const removeEvent = (date, eventName) => {
-    // Create a copy of the items
-    const updatedItems = { ...items };
-    // Find the index of the event to remove
-    const index = updatedItems[date].findIndex(
-      (event) => event.name === eventName
-    );
-    // Remove the event if found
-    if (index !== -1) {
-      updatedItems[date].splice(index, 1);
-      setItems(updatedItems);
+  const fetchData = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("party")
+        .select("*")
+        .order("date", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching data:", error.message);
+      } else {
+        const formattedData = {};
+
+        // Get the current date
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
+        // Loop through each day of the year
+        for (let month = 0; month < 12; month++) {
+          for (let day = 1; day <= 31; day++) {
+            const date = new Date(currentYear, month, day)
+              .toISOString()
+              .split("T")[0];
+            formattedData[date] = [];
+          }
+        }
+
+        // Add events to the formattedData object
+        data.forEach((event) => {
+          const { date, show, people, time } = event;
+
+          if (!formattedData[date]) {
+            formattedData[date] = [];
+          }
+
+          formattedData[date].push({
+            name: show,
+            people: people,
+            time: time,
+            date: date,
+          });
+        });
+
+        setItems(formattedData);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const removeEvent = async (date, eventName) => {
+    try {
+      // Delete the event from Supabase
+      const { error } = await supabase
+        .from("party")
+        .delete()
+        .eq("date", date)
+        .eq("show", eventName);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Update the UI after successful deletion
+      const updatedItems = { ...items };
+      const index = updatedItems[date].findIndex(
+        (event) => event.name === eventName
+      );
+      if (index !== -1) {
+        updatedItems[date].splice(index, 1);
+        setItems(updatedItems);
+      }
+
+      Alert.alert("Success", "Event deleted successfully!");
+    } catch (error) {
+      Alert.alert("Error", `Failed to delete event: ${error.message}`);
     }
   };
 
@@ -131,7 +204,7 @@ export default function FirstScreen({ navigation }) {
             setSelected(day.dateString);
             console.log("selected day", day);
           }}
-          items={initialItems}
+          items={items}
           renderItem={renderItem}
         />
         <View style={styles.buttonContainer1}>

@@ -613,19 +613,18 @@ export const initialItems = {
       date: "2023-12-30",
     },
   ],
-  "2023-12-31": [
-    {
-      name: "Poseidon",
-      people: ["Jake"],
-      time: "19:30",
-      date: "2023-12-31",
-    },
-  ],
+  "2023-12-31": [],
   "2024-01-01": [
     {
       name: "Carol",
       people: ["Grace"],
       time: "21:30",
+      date: "2024-01-01",
+    },
+    {
+      name: "Poseidon",
+      people: ["Jake"],
+      time: "19:30",
       date: "2024-01-01",
     },
   ],

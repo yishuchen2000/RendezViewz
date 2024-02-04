@@ -57,7 +57,29 @@ const AddEvent = ({ route, navigation }) => {
   const [time, setTime] = useState("00:00");
   const [items, setItems] = useState(initialItems);
 
-  const handleAddEvent = () => {
+  const handleAddEvent = async () => {
+    const newEvent = {
+      name: show,
+      people: person,
+      time: time,
+      date: date,
+    };
+
+    try {
+      // Send a request to insert the new event data into the 'party' table
+      const { error } = await supabase
+        .from("party")
+        .insert([{ date: date, people: person, show: show, time: time }]);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Show success message to the user
+    } catch (error) {
+      // Handle any errors that occur during the insertion process
+      Alert.alert("Error", `Failed to add event: ${error.message}`);
+    }
     if (!show) {
       // Show an alert for missing show name
       Alert.alert("Error", "Please select a show before adding an event.");
@@ -68,25 +90,6 @@ const AddEvent = ({ route, navigation }) => {
       Alert.alert("Error", "Please select people before adding an event.");
       return;
     }
-    // Create a new event object with the entered data
-    const newEvent = {
-      name: show,
-      people: person,
-      time: time,
-      date: date,
-    };
-
-    setItems((prevItems) => {
-      const updatedItems = { ...prevItems };
-      if (!updatedItems[value]) {
-        updatedItems[value] = [newEvent];
-      } else {
-        updatedItems[value].push(newEvent);
-      }
-      console.log("Updated Items:", updatedItems);
-      return updatedItems;
-    });
-
     navigation.navigate("success", {
       date: newEvent.date,
       name: newEvent.name,
