@@ -33,7 +33,7 @@ const Events = ({ route, navigation }) => {
       const { data, error } = await supabase
         .from("party")
         .select("*")
-        .order("date", { ascending: false });
+        .order("date", { ascending: true });
 
       if (error) {
         console.error("Error fetching data:", error.message);
