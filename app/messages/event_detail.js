@@ -20,6 +20,28 @@ const EventDetail = ({ route }) => {
   const { date, name, time, people } = route.params;
   const [showAllPeople, setShowAllPeople] = useState(false);
   const [showURL, setShowURL] = useState(null);
+  const [all, setall] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await supabase.from("friends").select("*");
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        const peopleData = response.data.map((person) => ({
+          label: person.user,
+          value: person.id.toString(), // Assuming you want to use the person's ID as the value
+          photo: person.profile_pic,
+        }));
+        setall(peopleData);
+        console.log(peopleData);
+        //setPeople(peopleData); // Update the people array with the fetched data
+      } catch (error) {
+        console.error("Error fetching people:", error.message);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const showPoster = async () => {
@@ -29,20 +51,6 @@ const EventDetail = ({ route }) => {
     showPoster();
   }, []);
 
-  const renderAllPeopleCircles = () => {
-    return people.map((person, index) => (
-      <View key={index} style={styles.personCircle}>
-        <Ionicons
-          name="person-circle-outline"
-          size={45}
-          color="rgba(255, 255, 255, 0.8)"
-        />
-        <Text numberOfLines={1} style={styles.circletext}>
-          {person}
-        </Text>
-      </View>
-    ));
-  };
   const renderPeopleCircles = () => {
     const maxPeopleToShow = 4;
     const abbreviatedPeople = showAllPeople
@@ -50,16 +58,33 @@ const EventDetail = ({ route }) => {
       : people.slice(0, maxPeopleToShow);
     const remainingPeopleCount = people.length - maxPeopleToShow;
 
-    const abbreviatedNames = abbreviatedPeople.map((person, index) => (
-      <View key={index} style={styles.personCircle}>
-        <Ionicons
-          name="person-circle-outline"
-          size={45}
-          color="rgba(255, 255, 255, 0.8)"
-        />
-        <Text style={styles.circletext}>{person}</Text>
-      </View>
-    ));
+    const abbreviatedNames = abbreviatedPeople.map((personName, index) => {
+      // Check if the person exists in the 'all' array and has a photo
+      const personData = all.find((person) => person.label === personName);
+      if (personData && personData.photo) {
+        return (
+          <View key={index} style={styles.personCircle}>
+            <Image
+              source={{ uri: personData.photo }}
+              style={{ width: 45, height: 45, borderRadius: 22.5 }}
+            />
+            <Text style={styles.circletext}>{personName}</Text>
+          </View>
+        );
+      } else {
+        // Render the current icon if no photo is available
+        return (
+          <View key={index} style={styles.personCircle}>
+            <Ionicons
+              name="person-circle-outline"
+              size={45}
+              color="rgba(255, 255, 255, 0.8)"
+            />
+            <Text style={styles.circletext}>{personName}</Text>
+          </View>
+        );
+      }
+    });
 
     if (remainingPeopleCount > 0 && !showAllPeople) {
       abbreviatedNames.push(
@@ -73,6 +98,7 @@ const EventDetail = ({ route }) => {
 
     return abbreviatedNames;
   };
+
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
       <ScrollView

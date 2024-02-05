@@ -15,21 +15,29 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 const Success = ({ navigation, route }) => {
-  const { date, name, time, people } = route.params;
+  const { date, name, time, people, all } = route.params;
+  const photoMap = {};
+  all.forEach((person) => {
+    if (person.label && person.photo) {
+      photoMap[person.label] = person.photo;
+    }
+  });
   const [showAllPeople, setShowAllPeople] = useState(false);
   const renderAllPeopleCircles = () => {
-    return people.map((person, index) => (
-      <View key={index} style={styles.personCircle}>
-        <Ionicons
-          name="person-circle-outline"
-          size={45}
-          color="rgba(255, 255, 255, 0.8)"
-        />
-        <Text numberOfLines={1} style={styles.circletext}>
-          {person}
-        </Text>
-      </View>
-    ));
+    return people.map((personName, index) => {
+      const photoUri = photoMap[personName];
+      return (
+        <View key={index} style={styles.personCircle}>
+          <Image
+            source={{ uri: photoUri }}
+            style={{ width: 45, height: 45, borderRadius: 22.5 }}
+          />
+          <Text numberOfLines={1} style={styles.circletext}>
+            {personName}
+          </Text>
+        </View>
+      );
+    });
   };
 
   const renderPeopleCircles = () => {
@@ -39,23 +47,27 @@ const Success = ({ navigation, route }) => {
       : people.slice(0, maxPeopleToShow);
     const remainingPeopleCount = people.length - maxPeopleToShow;
 
-    const abbreviatedNames = abbreviatedPeople.map((person, index) => (
-      <View key={index} style={styles.personCircle}>
-        <Ionicons
-          name="person-circle-outline"
-          size={45}
-          color="rgba(255, 255, 255, 0.8)"
-        />
-        <Text style={styles.circletext}>{person}</Text>
-      </View>
-    ));
+    const abbreviatedNames = abbreviatedPeople.map((personName, index) => {
+      const photoUri = photoMap[personName];
+      return (
+        <View key={index} style={styles.personCircle}>
+          <Image
+            source={{ uri: photoUri }}
+            style={{ width: 45, height: 45, borderRadius: 22.5 }}
+          />
+          <Text style={styles.circletext}>{personName}</Text>
+        </View>
+      );
+    });
 
     if (remainingPeopleCount > 0 && !showAllPeople) {
       abbreviatedNames.push(
         <Pressable key={maxPeopleToShow} onPress={() => setShowAllPeople(true)}>
           <Text
             style={[styles.circletext1, { textDecorationLine: "underline" }]}
-          >{`Show ${remainingPeopleCount} others`}</Text>
+          >
+            {`Show ${remainingPeopleCount} others`}
+          </Text>
         </Pressable>
       );
     }

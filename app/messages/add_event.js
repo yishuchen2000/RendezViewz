@@ -38,29 +38,11 @@ const shows = [
   { label: "Titanic", value: "7" },
 ];
 
-const people = [
-  { label: "Dave", value: "1" },
-  { label: "Victoria", value: "2" },
-  { label: "Zach", value: "3" },
-  { label: "Mona", value: "4" },
-  { label: "Sean", value: "5" },
-  { label: "Aaron", value: "6" },
-  { label: "Natalie", value: "7" },
-  { label: "Jessie", value: "8" },
-  { label: "Maya", value: "9" },
-  { label: "Avery", value: "10" },
-  { label: "Monique", value: "11" },
-  { label: "Zion", value: "12" },
-  { label: "Paige", value: "13" },
-  { label: "Jack", value: "14" },
-];
-
 const AddEvent = ({ route, navigation }) => {
   const [show, setShow] = useState(null);
   const [person, setPerson] = useState([]);
-  //const [value, setValue] = useState(dayjs().format("YYYY-MM-DD"));
 
-  const [items, setItems] = useState(initialItems);
+  //const [items, setItems] = useState(initialItems);
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(dayjs().format("YYYY-MM-DD"));
   //const [mode, setMode] = useState("date");
@@ -72,6 +54,29 @@ const AddEvent = ({ route, navigation }) => {
   const [pickedtime, setpickedtime] = useState(true);
   const [text, setText] = useState(false);
   const [textT, setTextT] = useState(false);
+
+  const [Plist, setPlist] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await supabase.from("friends").select("*");
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        const peopleData = response.data.map((person) => ({
+          label: person.user,
+          value: person.id.toString(), // Assuming you want to use the person's ID as the value
+          photo: person.profile_pic,
+        }));
+        setPlist(peopleData);
+        console.log(peopleData);
+        //setPeople(peopleData); // Update the people array with the fetched data
+      } catch (error) {
+        console.error("Error fetching people:", error.message);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // Set the initial date state to today's date when the component mounts
@@ -178,6 +183,7 @@ const AddEvent = ({ route, navigation }) => {
         name: show,
         people: person,
         time: time,
+        all: Plist,
       });
     } catch (error) {
       Alert.alert("Error", `Failed to add event: ${error.message}`);
@@ -326,7 +332,7 @@ const AddEvent = ({ route, navigation }) => {
                   dropdown={styles.dropdown1}
                   itemTextStyle={styles.selecttext}
                   activeColor="rgba(70, 10, 90, 0.3)"
-                  data={people}
+                  data={Plist}
                   maxHeight={170}
                   labelField="label"
                   valueField="label"
@@ -342,6 +348,16 @@ const AddEvent = ({ route, navigation }) => {
                   renderSelectedItem={(item, unSelect) => (
                     <Pressable onPress={() => unSelect && unSelect(item)}>
                       <View style={styles.selectedStyle}>
+                        <View style={styles.photo}>
+                          <Image
+                            source={{ uri: item.photo }} // Make sure item.photo contains the correct URI
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              resizeMode: "cover",
+                            }} // Adjust image style
+                          />
+                        </View>
                         <Text style={styles.textSelectedStyle}>
                           {item.label}
                         </Text>
@@ -522,8 +538,8 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   selectedStyle: {
-    flexDirection: "row",
-    height: 35,
+    flexDirection: "column",
+    height: 100,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 14,
@@ -613,6 +629,12 @@ const styles = StyleSheet.create({
   },
   hooray: {
     color: "purple",
+  },
+  photo: {
+    //borderWidth: 5,
+    //borderColor: "purple",
+    width: 50,
+    height: 50,
   },
 });
 
