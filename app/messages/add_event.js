@@ -15,13 +15,18 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { initialItems } from "./eventdata";
 import { Ionicons } from "@expo/vector-icons";
-import { MultiSelect } from "react-native-element-dropdown";
+//import { MultiSelect } from "react-native-element-dropdown";
 import { Dropdown } from "react-native-element-dropdown";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/MaterialIcons";
 //import DateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-modern-datepicker";
+import MultiSelect from "react-native-multiple-select";
+//import DropDownPicker from "react-native-dropdown-listpicker";
+import { MultipleSelectList } from "react-native-dropdown-select-list";
+import CustomModal from "./custommodal";
 
 import dayjs from "dayjs";
 
@@ -54,7 +59,82 @@ const AddEvent = ({ route, navigation }) => {
   const [pickedtime, setpickedtime] = useState(true);
   const [text, setText] = useState(false);
   const [textT, setTextT] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
+  const testinglist = [
+    {
+      label: "Alexa P.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/alexa.png",
+      value: "6",
+    },
+    {
+      label: "David Z.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/david.png",
+      value: "3",
+    },
+    {
+      label: "Ryan R.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/ryan.png",
+      value: "5",
+    },
+    {
+      label: "Zoe C.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/zoe.png",
+      value: "2",
+    },
+    {
+      label: "Jess",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Jess.png",
+      value: "8",
+    },
+    {
+      label: "Mary A.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Mary.png",
+      value: "10",
+    },
+    {
+      label: "Crystal Z.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Crystal.png",
+      value: "1",
+    },
+    {
+      label: "Deven",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Deven.png",
+      value: "7",
+    },
+    {
+      label: "Bob G.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Bob.png",
+      value: "9",
+    },
+    {
+      label: "Frank H.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Frank.png",
+      value: "12",
+    },
+    {
+      label: "Alex B.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Alex.png",
+      value: "11",
+    },
+    {
+      label: "Charlotte Z.",
+      photo:
+        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/charlotte.png",
+      value: "13",
+    },
+  ];
   const [Plist, setPlist] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +149,7 @@ const AddEvent = ({ route, navigation }) => {
           photo: person.profile_pic,
         }));
         setPlist(peopleData);
-        console.log(peopleData);
+        //console.log(peopleData);
         //setPeople(peopleData); // Update the people array with the fetched data
       } catch (error) {
         console.error("Error fetching people:", error.message);
@@ -88,7 +168,7 @@ const AddEvent = ({ route, navigation }) => {
     setOpen(!open);
   }
   function handleOnPressClose() {
-    console.log(date);
+    //console.log(date);
     setOpen(!open);
     //setpickeddate(false);
     //console.log(pickeddate);
@@ -101,9 +181,9 @@ const AddEvent = ({ route, navigation }) => {
   function handleChange(selectedDate) {
     // Format the selected date
     setDate(dayjs(selectedDate).format("YYYY-MM-DD"));
-    console.log(selectedDate);
+    //console.log(selectedDate);
     setText(selectedDate);
-    console.log(text);
+    //console.log(text);
     setpickeddate(false);
     // Update the state with the selected date
   }
@@ -113,17 +193,26 @@ const AddEvent = ({ route, navigation }) => {
     setShowTimePicker(!showTimePicker);
   }
   function handleTimePickerPressClose() {
-    console.log(time);
+    //console.log(time);
     setShowTimePicker(!showTimePicker);
     //setpickedtime(false);
   }
   function handleTimePress(selectedTime) {
     setTime(selectedTime);
-    console.log(selectedTime);
+    //console.log(selectedTime);
     setTextT(selectedTime);
-    console.log(textT);
+    //console.log(textT);
     setpickedtime(false);
   }
+  const handleSelectedPeople = (selectedPeople) => {
+    // Extracting only the labels from the Plist array based on the selected values
+    const personLabels = Plist.filter((person) =>
+      selectedPeople.includes(person.value)
+    ).map((person) => person.label);
+    // Setting the person state with the extracted labels
+    setPerson(personLabels);
+    //console.log("main doc set people:", personLabels);
+  };
 
   const handleAddEvent = async () => {
     if (pickeddate) {
@@ -190,12 +279,35 @@ const AddEvent = ({ route, navigation }) => {
     }
   };
 
-  const renderItem = (item) => {
-    return (
-      <View style={styles.item}>
-        <Text style={styles.selectedTextStyle}>{item.label}</Text>
-      </View>
-    );
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const renderPeopleCircles = () => {
+    return person.map((personName, index) => {
+      // Find the corresponding person object in the Plist array
+      const selectedPerson = Plist.find((item) => item.label === personName);
+      // Check if the person is found
+      if (selectedPerson) {
+        const photoUri = selectedPerson.photo;
+        return (
+          <View key={index} style={styles.personCircle}>
+            <Image
+              source={{ uri: photoUri }}
+              style={{ width: 45, height: 45, borderRadius: 22.5 }}
+            />
+            <Text numberOfLines={1} style={styles.circletext}>
+              {personName}
+            </Text>
+          </View>
+        );
+      }
+      return null; // Return null if the person is not found
+    });
   };
 
   return (
@@ -209,6 +321,12 @@ const AddEvent = ({ route, navigation }) => {
                 {pickeddate ? "Select Date" : text}
               </Text>
             </Pressable>
+            <CustomModal
+              modalVisible={modalVisible}
+              closeModal={closeModal}
+              handleSelectedPeople={handleSelectedPeople} // Make sure you're passing it here
+              plist={Plist}
+            />
           </View>
           <View style={styles.wicon}>
             <FontAwesome5 name="clock" size={27} color="white" />
@@ -221,7 +339,6 @@ const AddEvent = ({ route, navigation }) => {
               </Text>
             </Pressable>
           </View>
-          {/* Date picker modal */}
           <Modal animationType="slide" transparent={true} visible={open}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
@@ -262,7 +379,6 @@ const AddEvent = ({ route, navigation }) => {
               </View>
             </View>
           </Modal>
-          {/* Time picker modal */}
           <Modal
             animationType="slide"
             transparent={true}
@@ -270,7 +386,6 @@ const AddEvent = ({ route, navigation }) => {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                {/* Implement the time picker component here */}
                 <DatePicker
                   options={{
                     backgroundColor: "white",
@@ -295,7 +410,6 @@ const AddEvent = ({ route, navigation }) => {
         <View style={styles.ccontainer}>
           <View style={styles.eachBox}>
             <Ionicons name="ios-film-outline" size={30} color="white" />
-
             <View style={styles.input}>
               <Dropdown
                 style={styles.dropdown1}
@@ -314,65 +428,31 @@ const AddEvent = ({ route, navigation }) => {
                 value={show}
                 onChange={(item) => {
                   setShow(item.label);
-                  console.log(item.label);
+                  //console.log(item.label);
                 }}
               />
             </View>
           </View>
           <View style={styles.eachBox}>
             <Ionicons name="ios-people" size={30} color="white" />
-            <View style={styles.input}>
+            <Pressable onPress={openModal} style={styles.input}>
               <View style={styles.input1}>
-                <MultiSelect
-                  style={styles.dropdown2}
-                  placeholderStyle={styles.placeholderStyle2}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  inputSearchStyle={styles.inputSearchStyle}
-                  iconStyle={styles.iconStyle}
-                  dropdown={styles.dropdown1}
-                  itemTextStyle={styles.selecttext}
-                  activeColor="rgba(70, 10, 90, 0.3)"
-                  data={Plist}
-                  maxHeight={170}
-                  labelField="label"
-                  valueField="label"
-                  placeholder="Add People"
-                  value={person}
-                  search
-                  searchPlaceholder="Search..."
-                  onChange={(item) => {
-                    setPerson(item);
-                    console.log(item);
-                  }}
-                  renderItem={renderItem}
-                  renderSelectedItem={(item, unSelect) => (
-                    <Pressable onPress={() => unSelect && unSelect(item)}>
-                      <View style={styles.selectedStyle}>
-                        <View style={styles.photo}>
-                          <Image
-                            source={{ uri: item.photo }} // Make sure item.photo contains the correct URI
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              resizeMode: "cover",
-                            }} // Adjust image style
-                          />
-                        </View>
-                        <Text style={styles.textSelectedStyle}>
-                          {item.label}
-                        </Text>
-                        <Entypo name="cross" size={15} color="purple" />
-                      </View>
-                    </Pressable>
-                  )}
-                />
+                <Text
+                  style={[styles.replaceText, { fontSize: 17, color: "grey" }]}
+                >
+                  {person.length > 0
+                    ? "Click here to edit people list"
+                    : "Select people"}
+                </Text>
               </View>
-            </View>
+            </Pressable>
           </View>
+
+          <View style={styles.peopleContainer}>{renderPeopleCircles()}</View>
+
           <View style={styles.space}></View>
         </View>
       </ScrollView>
-
       <Pressable style={styles.button} onPress={handleAddEvent}>
         <Text style={{ color: "purple", fontSize: 15 }}>Send Invites</Text>
       </Pressable>
@@ -394,6 +474,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     height: "90%",
+    //alignItems: "center",
     //borderWidth: 5,
     //borderColor: "red",
   },
@@ -451,7 +532,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.7,
     height: 30,
     flexDirection: "column",
-    justifyContent: "start",
+    justifyContent: "center",
     //paddingBottom: 30,
     //alignItems: "center",
     //borderRadius: 15,
@@ -588,12 +669,14 @@ const styles = StyleSheet.create({
   },
   top: {
     height: windowHeight * 0.075,
-    width: windowWidth * 0.82,
+    width: windowWidth * 0.85,
+    paddingRight: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     margin: 5,
     //borderWidth: 5,
     //borderColor: "blue",
+    alignSelf: "center",
   },
   modalView: {
     margin: 10,
@@ -635,6 +718,30 @@ const styles = StyleSheet.create({
     //borderColor: "purple",
     width: 50,
     height: 50,
+  },
+  peopleContainer: {
+    width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "start",
+    paddingLeft: 25,
+    margin: 10,
+    flexWrap: "wrap",
+    //borderWidth: 5,
+    //borderColor: "purple",
+  },
+  personCircle: {
+    margin: 5,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    aspectRatio: 1,
+    backgroundColor: "transparent",
+  },
+  circletext: {
+    fontSize: 15,
+    color: "white",
+    textAlign: "center",
   },
 });
 
