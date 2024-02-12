@@ -16,7 +16,7 @@ import getMovieDetails from "./getMovieDetails";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Ranking = ({ index, title, coverPic, onDelete, goesTo }) => {
+const Ranking = ({ index, title, coverPic, onDelete, goesTo, rating }) => {
   const navigation = useNavigation();
   const [movieDetails, setMovieDetails] = useState(null);
 
@@ -45,9 +45,18 @@ const Ranking = ({ index, title, coverPic, onDelete, goesTo }) => {
           <View style={styles.coverPicContainer}>
             <Image style={styles.coverPic} source={{ uri: coverPic }} />
           </View>
-          <Text numberOfLines={1} style={styles.title}>
-            {title}
-          </Text>
+          <View style={styles.words}>
+            <Text numberOfLines={1} style={styles.title}>
+              {title}
+            </Text>
+            <View style={styles.subtitle}>
+              <Text style={styles.rating}>{rating}/10 </Text>
+              <Image
+                source={require("../assets/star.png")}
+                style={styles.star}
+              ></Image>
+            </View>
+          </View>
         </View>
       </Pressable>
       <Pressable style={styles.deleteButtonContainer}>
@@ -124,6 +133,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     width: windowWidth * 0.55,
+  },
+  subtitle: {
+    flexDirection: "row",
+    paddingTop: 2,
+    paddingLeft: 5,
+    alignItems: "center",
+  },
+  rating: {
+    color: "lightgrey",
+  },
+  star: {
+    width: 17,
+    height: 17,
+    resizeMode: "contain",
+    tintColor: "purple",
   },
   deleteButtonContainer: {
     position: "absolute",

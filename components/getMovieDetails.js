@@ -7,6 +7,7 @@ const getMovieDetails = async (movieTitle) => {
     const data = await response.json();
 
     if (response.ok) {
+      data.Genre = data.Genre.split(",").map((genre) => genre.trim());
       return data;
     } else {
       console.error("Failed to fetch data");

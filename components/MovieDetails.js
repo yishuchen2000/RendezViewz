@@ -38,7 +38,7 @@ const MovieDetails = ({ item }) => {
       return null;
     }
 
-    const genres = item.Genre.split(",").map((genre, index) => (
+    const genres = item.Genre.map((genre, index) => (
       <View key={index} style={styles.genreItem}>
         {index > 0 && <Text style={styles.genreText}> • </Text>}
         <Text style={styles.genreText}>{genre.trim()}</Text>
@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
   genreText: {
     color: "white",
     marginHorizontal: 5,
-
     fontSize: 15,
     fontWeight: "bold",
   },

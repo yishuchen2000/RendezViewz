@@ -15,16 +15,19 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { BlurView } from "expo-blur";
+import Slider from "@react-native-community/slider";
+import { debounce } from "lodash";
 import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Dropdown } from "react-native-element-dropdown";
+import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../Supabase";
 import Ranking from "../../components/Ranking";
+import FilterModal from "../../components/filterModal";
+import FilterCell from "../../components/FilterCell";
 import getMovieDetails from "../../components/getMovieDetails";
 
 const windowWidth = Dimensions.get("window").width;
@@ -37,19 +40,24 @@ export default function Rankings() {
 
   const [isDuplicateEntry, setIsDuplicateEntry] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [filterModal, setFilterModal] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState([]);
   const [data, setData] = useState([]);
-  const [possibleEntries, setPossibleEntries] = useState(null);
   const [entry, setEntry] = useState(null);
-  const [entryPic, setEntryPic] = useState(null);
-  const [rankValue, setRankValue] = useState(null);
+  const [rankValue, setRankValue] = useState(5);
   const [rankCount, setRankCount] = useState(null);
   const [modalValid, setModalValid] = useState(false);
   const [renderSwitch, flipRenderSwitch] = useState(false);
+  const [genreList, setGenreList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase.from("rankings").select("*");
-      const sortedData = response.data.sort((a, b) => a.index - b.index);
+      const sortedData = response.data.sort((a, b) => b.rating - a.rating);
+
+      sortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
 
       setData(sortedData);
       setRankCount(response.data.length);
@@ -58,7 +66,7 @@ export default function Rankings() {
   }, [renderSwitch, entry]);
 
   useEffect(() => {
-    if (entry && rankValue) {
+    if (entry && rankValue <= 10 && rankValue >= 0) {
       const isDuplicate = data.some((item) => item.title === entry);
       setIsDuplicateEntry(isDuplicate);
       setModalValid(true);
@@ -82,35 +90,31 @@ export default function Rankings() {
       return;
     }
 
-    let newId = Date.now();
-    let adjustedRank = parseInt(rankValue);
-
-    let response = await supabase.from("rankings").select("*");
-    let sortedData = response.data.sort((a, b) => a.index - b.index);
-
-    if (adjustedRank > rankCount + 1) {
-      adjustedRank = rankCount + 1;
-    } else {
-      const updatedRankings = sortedData.map((item) => {
-        if (item.index >= adjustedRank) {
-          item.index += 1;
-        }
-        return item;
-      });
-      await supabase.from("rankings").upsert(updatedRankings);
-    }
+    newId = Date.now();
 
     const { data } = await supabase.from("rankings").upsert([
       {
         id: newId,
         title: movieDetails.Title,
-        index: adjustedRank,
+        index: 0,
         url: movieDetails.Poster,
+        rating: parseFloat(rankValue),
+        genres: movieDetails.Genre,
       },
     ]);
+
+    let response = await supabase.from("rankings").select("*");
+    let sortedData = response.data.sort((a, b) => b.rating - a.rating);
+
+    sortedData.forEach((item, index = 0) => {
+      item.index = index + 1;
+    });
+
+    await supabase.from("rankings").upsert(sortedData);
     flipRenderSwitch(!renderSwitch);
-    setRankValue(null);
+    setRankValue(5);
   };
+
   //Animation for delete
   const layoutAnimConfig = {
     duration: 300,
@@ -128,21 +132,60 @@ export default function Rankings() {
     await supabase.from("rankings").delete().eq("id", id);
 
     let response = await supabase.from("rankings").select("*");
-    sortedData = response.data.sort((a, b) => a.index - b.index);
+    sortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    const updatedRankings = sortedData.map((item) => {
-      if (item.index > index) {
-        item.index -= 1;
-      }
-      return item;
+    sortedData.forEach((item, index = 0) => {
+      item.index = index + 1;
     });
-    await supabase.from("rankings").upsert(updatedRankings);
+    await supabase.from("rankings").upsert(sortedData);
 
-    setData(updatedRankings);
+    setData(sortedData);
     LayoutAnimation.configureNext(layoutAnimConfig);
-    setRankCount(updatedRankings.length);
+    setRankCount(sortedData.length);
   };
 
+  //for rating slider in modal
+  const debouncedSetRankValue = debounce((value) => {
+    setRankValue(value / 10);
+  }, 100);
+
+  //create filter list
+  const createFilterList = async () => {
+    let response = await supabase.from("rankings").select("*");
+
+    const genreSet = new Set();
+
+    response.data.forEach((item) => {
+      item.genres.forEach((genre) => genreSet.add(genre));
+    });
+
+    setGenreList(Array.from(genreSet).sort());
+    console.log(genreList);
+  };
+
+  const filterByGenres = (data) => {
+    let filteredData = data;
+    if (selectedGenres.length > 0) {
+      filteredData = data.filter((item) =>
+        item.genres.some((genre) => selectedGenres.includes(genre))
+      );
+    }
+
+    filteredData.sort((a, b) => b.rating - a.rating);
+
+    filteredData.forEach((item, index) => {
+      item.index = index + 1;
+    });
+    return filteredData;
+  };
+
+  const removeGenre = (genreToRemove) => {
+    setSelectedGenres((prevGenres) =>
+      prevGenres.filter((genre) => genre !== genreToRemove)
+    );
+  };
+
+  //loading icon
   if (!data) {
     return (
       <LinearGradient
@@ -167,14 +210,6 @@ export default function Rankings() {
         Keyboard.dismiss();
       }}
     >
-      {modalVisible && (
-        <BlurView
-          intensity={100}
-          tint={"dark"}
-          style={StyleSheet.absoluteFill}
-        ></BlurView>
-      )}
-
       <Modal
         animationType="slide"
         transparent={true}
@@ -190,7 +225,7 @@ export default function Rankings() {
               <Image style={styles.underline} source={UNDERLINE} />
               <Pressable
                 style={styles.buttonCloseContainer}
-                onPress={() => setModalVisible(!modalVisible)}
+                onPress={() => setModalVisible(!modalVisible) & setRankValue(5)}
               >
                 <View style={styles.buttonClose}>
                   <MaterialIcons name="cancel" size={30} color={"black"} />
@@ -198,7 +233,7 @@ export default function Rankings() {
               </Pressable>
             </View>
 
-            <ScrollView style={styles.questionsContainer}>
+            <View style={styles.questionsContainer}>
               <View style={styles.titleSelectContainer}>
                 <Text style={styles.titleQuestion}> Enter Title:</Text>
                 <TextInput
@@ -212,17 +247,22 @@ export default function Rankings() {
                 />
               </View>
               <View style={styles.titleSelectContainer}>
-                <Text style={styles.titleQuestion}> Enter Rank:</Text>
-                <TextInput
-                  style={styles.rankingInput}
-                  keyboardType="numeric"
-                  returnKeyType="done"
-                  // placeholder="Enter a number"
-                  onChangeText={(text) => setRankValue(text)}
-                />
-                {/* <View style={styles.space}></View> */}
+                <Text style={styles.titleQuestion}> Your Rating:</Text>
+                <View style={styles.slider}>
+                  <Slider
+                    style={{ width: windowWidth * 0.7, height: 40 }}
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={1}
+                    minimumTrackTintColor="purple"
+                    maximumTrackTintColor="grey"
+                    value={50}
+                    onValueChange={(value) => debouncedSetRankValue(value)}
+                  />
+                  <Text style={styles.sliderDisplay}>{rankValue}</Text>
+                </View>
               </View>
-            </ScrollView>
+            </View>
 
             <View style={styles.bottom}>
               <Pressable
@@ -243,8 +283,38 @@ export default function Rankings() {
           </View>
         </View>
       </Modal>
+      <View style={styles.filterContainer}>
+        <View style={styles.genreBox}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {selectedGenres.map((genre) => (
+              <FilterCell
+                key={genre}
+                genre={genre}
+                onPressRemove={() => removeGenre(genre)}
+              />
+            ))}
+          </ScrollView>
+        </View>
+        <Pressable
+          style={styles.filterButton}
+          onPress={() => {
+            setFilterModal(!filterModal);
+            createFilterList();
+          }}
+        >
+          <FontAwesome name="filter" size={18} color="white" />
+          <Text style={{ color: "white" }}> Filters</Text>
+        </Pressable>
+        <FilterModal
+          modalVisible={filterModal}
+          setModalVisible={setFilterModal}
+          genreList={genreList}
+          exportGenres={setSelectedGenres}
+        />
+      </View>
+
       <FlatList
-        data={data}
+        data={filterByGenres(data)}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <Ranking
@@ -252,11 +322,15 @@ export default function Rankings() {
             title={item.title}
             coverPic={item.url}
             onDelete={() => handleDelete(item.id, item.index)}
+            rating={item.rating}
             goesTo={"Ranking Details"}
           />
         )}
         style={styles.rankList}
-        contentContainerStyle={{ paddingTop: 10, paddingBottom: 80 }}
+        contentContainerStyle={{
+          paddingHorizontal: windowWidth * 0.02,
+          paddingBottom: 80,
+        }}
       />
       <View style={styles.buttonContainer}>
         <Pressable
@@ -290,6 +364,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     padding: windowHeight * 0.2,
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   buttonContainer: {
     position: "absolute",
@@ -309,7 +384,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: windowWidth * 0.8,
-    flex: 1,
     flexDirection: "column",
     justifyContent: "center",
     backgroundColor: "white",
@@ -362,14 +436,13 @@ const styles = StyleSheet.create({
     height: 50,
   },
   questionsContainer: {
-    flex: 8,
     paddingTop: 10,
     paddingBottom: 10,
   },
   titleSelectContainer: {
     width: "100%",
     gap: 8,
-    marginBottom: 20,
+    marginBottom: 30,
   },
   titleQuestion: {
     fontSize: 20,
@@ -382,13 +455,17 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     backgroundColor: "lavender",
     color: "purple",
-    height: 50,
+    height: 60,
     borderRadius: 15,
     borderWidth: 0.5,
   },
-  placeholderStyle: {
-    fontSize: 16,
-    color: "gray",
+  slider: {
+    alignItems: "center",
+  },
+  sliderDisplay: {
+    paddingTop: 10,
+    fontSize: 28,
+    color: "purple",
   },
   selectedTextStyle: {
     color: "#602683",
@@ -418,8 +495,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  container: {
+  filterContainer: {
+    backgroundColor: "#361866",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    height: windowHeight * 0.05,
     paddingHorizontal: windowWidth * 0.02,
+  },
+  filterButton: {
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    gap: 3,
+    marginLeft: "auto",
+    backgroundColor: "#361866",
+    borderColor: "white",
+    borderWidth: 1,
+    padding: 10,
+    marginVertical: 3,
+    borderRadius: "100%",
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  genreBox: {
+    flexDirection: "row",
+    marginRight: 10,
+    width: "72%",
+  },
+  container: {
     flex: 1,
   },
 });
