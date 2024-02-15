@@ -22,18 +22,48 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function People() {
+  const [session, setSession] = useState(null);
+  const [friendIDs, setFriendIDs] = useState(null);
+
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await supabase.from("friends").select("*");
-      setData(response.data);
-      setFilteredData(response.data);
-    };
-    fetchData();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+
+      const fetchFriendID = async () => {
+        const friends = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
+
+        // console.log("this is the current session", session);
+        // console.log("this is the friend IDs", friends.data[0].friend_ids);
+        setFriendIDs(friends.data[0].friend_ids);
+      };
+      fetchFriendID();
+    });
   }, []);
+
+  useEffect(() => {
+    if (friendIDs) {
+      // console.log("TYPE", typeof friendIDs);
+      const fetchFriends = async () => {
+        // console.log("searching matched friends!");
+        const response = await supabase
+          .from("profiles")
+          .select("*")
+          .in("id", friendIDs);
+        // console.log("out", response);
+        // console.log("error", error);
+        setData(response.data);
+        setFilteredData(response.data);
+      };
+      fetchFriends();
+    }
+  }, [friendIDs]);
 
   const clearSearch = () => {
     setFilteredData(data);
@@ -42,14 +72,14 @@ export default function People() {
 
   const handleSearch = () => {
     const formattedQuery = searchQuery.toLowerCase();
-    const filteredData = filter(data, ({ user }) => {
-      return contains({ user }, formattedQuery);
+    const filteredData = filter(data, ({ username }) => {
+      return contains({ username }, formattedQuery);
     });
     setFilteredData(filteredData);
   };
 
-  const contains = ({ user }, query) => {
-    return user.toLowerCase().includes(query);
+  const contains = ({ username }, query) => {
+    return username.toLowerCase().includes(query);
   };
 
   if (!data) {
@@ -111,8 +141,8 @@ export default function People() {
               <View style={styles.friendbox}>
                 <Friend
                   id={item.id}
-                  user={item.user}
-                  profilePic={item.profile_pic}
+                  user={item.username}
+                  profilePic={item.avatar_url}
                 />
               </View>
             )}
