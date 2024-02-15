@@ -12,11 +12,14 @@ import {
   Dimensions,
   ActivityIndicator,
 } from "react-native";
+import supabase from "../../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from "@expo/vector-icons";
 import ProfilePost from "../../components/ProfilePost";
 //import Rankings from "./rankings/rankings";
 import { useNavigation } from "@react-navigation/native";
+import Account from "../../components/Account";
+import { Session } from "@supabase/supabase-js";
 import MyTabs from "../rankings/_layout";
 //import MyTabs from "./rankings";
 
@@ -30,6 +33,34 @@ export default function Me() {
   const [wishlistNumber, setWishlistNumber] = useState(null);
   const [myPostData, setMyPostData] = useState(null);
   const [numbersFetched, setNumbersFetched] = useState(false);
+  const [infoFetched, setInfoFetched] = useState(false);
+  const [showAccountPage, setShowAccountPage] = useState(false);
+  const [session, setSession] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      // console.log("id info in profile!", session.user.id);
+      const fetchData = async () => {
+        const profileInfo = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
+        setProfileData(profileInfo.data);
+        setFriendNumber(profileInfo.data[0]["friend_ids"].length);
+
+        const myPosts = await supabase
+          .from("posts")
+          .select("*")
+          .eq("user_id", session.user.id);
+        setMyPostData(myPosts.data);
+
+        setInfoFetched(true);
+      };
+      fetchData();
+    });
+  }, []);
 
   useEffect(() => {
     const fetchNumbers = async () => {
@@ -45,21 +76,28 @@ export default function Me() {
         .from("wishlist")
         .select("*", { count: "exact", head: true });
 
-      const response = await supabase
-        .from("posts")
-        .select("*")
-        .eq("user", "Yishu C.");
-
       setRankedNumber(rankings.count);
-      setFriendNumber(friends.count);
+      // setFriendNumber(friends.count);
       setWishlistNumber(wishlist.count);
-      setMyPostData(response.data);
       setNumbersFetched(true);
     };
     fetchNumbers();
   }, []);
 
-  if (!numbersFetched) {
+  async function accountPage() {
+    setShowAccountPage(true);
+  }
+
+  if (showAccountPage) {
+    return (
+      <View>
+        <Account key={session.user.id} session={session} />
+      </View>
+    );
+  }
+
+  //
+  if (!numbersFetched || !infoFetched) {
     return (
       <LinearGradient
         colors={["#361866", "#E29292"]}
@@ -82,14 +120,14 @@ export default function Me() {
         style={[styles.container, { paddingHorizontal: 8 }]}
       >
         <View style={styles.header}>
-          <View style={styles.titleBar}>
+          <Pressable onPress={accountPage} style={styles.titleBar}>
             <FontAwesome name="gear" size={24} color="white" />
-          </View>
+          </Pressable>
 
           <View style={styles.profileImage}>
             <Image
               source={{
-                uri: "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/me.png",
+                uri: profileData[0].avatar_url,
               }}
               style={styles.image}
             ></Image>
@@ -97,7 +135,7 @@ export default function Me() {
 
           <View style={styles.infoContainer}>
             <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
-              Yishu C.
+              {profileData[0].username}
             </Text>
           </View>
 
@@ -252,25 +290,32 @@ export default function Me() {
 
 const styles = StyleSheet.create({
   header: {
-    borderColor: "red",
+    borderColor: "green",
+    // borderWidth: 1,
     flex: 0.6,
   },
   info: {
-    borderColor: "green",
+    borderColor: "blue",
+    // borderWidth: 1,
     flex: 1,
   },
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    // borderWidth: 1,
   },
   postBar: {
     flex: 1,
+    // borderWidth: 1,
   },
   activityBar: {
     flex: 1,
+    // borderWidth: 1,
   },
   scroll: {
     flex: 1,
+    // borderWidth: 1,
+    borderColor: "red",
   },
   text: {
     color: "white",
@@ -285,9 +330,6 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    // resizeMode: "contain",
-    // width: 100,
-    // height: 100,
     maxWidth: "100%", // Maximum width as the container's width
     maxHeight: "100%", // Maximum height as the container's height
     resizeMode: "contain",
@@ -296,36 +338,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    // marginTop: 24,
-    // marginHorizontal: 16,
-    // marginBottom: -32,
     // borderWidth: 1,
     flex: 0.32,
   },
   profileImage: {
-    // width: 150,
-    // height: 150,
-    // borderRadius: 100,
     flex: 1,
-    // padding: 10,
     overflow: "hidden",
-    // alignItems: "center",
     justifyContent: "center",
   },
   infoContainer: {
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
-    // marginTop: 12,
     flex: 0.3,
+    // borderWidth: 1,
   },
   statsContainer: {
     flexDirection: "row",
-    // alignSelf: "center",
-    // marginTop: 16,
     justifyContent: "center",
     alignItems: "center",
     flex: 0.4,
+    // borderWidth: 1,
   },
   statsBox: {
     alignItems: "center",

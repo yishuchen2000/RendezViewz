@@ -6,11 +6,14 @@ import {
   Dimensions,
   ActivityIndicator,
   Text,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { useState, useEffect } from "react";
 import supabase from "../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
 import Post from "../components/Post";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -36,6 +39,14 @@ export default function Page() {
 
   const handleRecordDeleted = (payload) => {
     setData((oldData) => oldData.filter((item) => item.id !== payload.old.id));
+  };
+
+  const onMessageSend = async () => {
+    const response = await supabase.from("posts").insert({
+      user: "James Landay",
+      timestamp: "now",
+      text: input,
+    });
   };
 
   useEffect(() => {
