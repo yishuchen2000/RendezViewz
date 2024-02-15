@@ -13,20 +13,17 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import Friend from "../../components/Friend";
+import NewFriend from "../../components/NewFriend";
 import supabase from "../../Supabase";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import filter from "lodash.filter";
 import { useNavigation } from "@react-navigation/native";
-import AddFriendPage from "./AddFriendPage";
-import { MaterialIcons } from "@expo/vector-icons";
-import Slider from "@react-native-community/slider";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-export default function People() {
+const AddFriendPage = ({ route, navigation }) => {
   const [session, setSession] = useState(null);
   const [friendIDs, setFriendIDs] = useState(null);
 
@@ -38,8 +35,6 @@ export default function People() {
   const [entry, setEntry] = useState(null);
   const [modalValid, setModalValid] = useState(false);
 
-  const navigation = useNavigation();
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -49,9 +44,6 @@ export default function People() {
           .from("profiles")
           .select("*")
           .eq("id", session.user.id);
-
-        // console.log("this is the current session", session);
-        // console.log("this is the friend IDs", friends.data[0].friend_ids);
         setFriendIDs(friends.data[0].friend_ids);
       };
       fetchFriendID();
@@ -61,20 +53,40 @@ export default function People() {
   useEffect(() => {
     if (friendIDs) {
       // console.log("TYPE", typeof friendIDs);
-      const fetchFriends = async () => {
-        // console.log("searching matched friends!");
+      console.log("friendID", friendIDs);
+
+      const fetchNewFreinds = async () => {
+        const filterIDs = friendIDs.push(session.user.id);
         const response = await supabase
           .from("profiles")
           .select("*")
-          .in("id", friendIDs);
+          .not("id", "in", `(${friendIDs.join(",")})`);
+
+        // console.log("out", response.data);
         // console.log("out", response);
-        // console.log("error", error);
+        console.log("error", response.error);
         setData(response.data);
         setFilteredData(response.data);
       };
-      fetchFriends();
+      fetchNewFreinds();
     }
   }, [friendIDs]);
+
+  const handleAddFriend = async () => {
+    const findFriend = await supabase
+      .from("profiles")
+      .update({ friend_ids: [...friendIDs, ["Yishu C.", newFriendID]] })
+      .eq("id", id);
+
+    const addFriend = await supabase
+      .from("profiles")
+      .update({ friend_ids: [...friendIDs, ["Yishu C.", newFriendID]] })
+      .eq("id", id);
+  };
+
+  const contains = ({ username }, query) => {
+    return username.toLowerCase().includes(query);
+  };
 
   const clearSearch = () => {
     setFilteredData(data);
@@ -88,26 +100,6 @@ export default function People() {
     });
     setFilteredData(filteredData);
   };
-
-  const contains = ({ username }, query) => {
-    return username.toLowerCase().includes(query);
-  };
-
-  if (!data) {
-    return (
-      <LinearGradient
-        colors={["#361866", "#E29292"]}
-        style={[styles.container, { paddingHorizontal: 8 }]}
-      >
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" color="purple" />
-          <Text style={{ color: "white" }}>Loading...</Text>
-        </View>
-      </LinearGradient>
-    );
-  }
 
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
@@ -150,7 +142,7 @@ export default function People() {
             data={filteredData}
             renderItem={({ item }) => (
               <View style={styles.friendbox}>
-                <Friend
+                <NewFriend
                   id={item.id}
                   user={item.username}
                   profilePic={item.avatar_url}
@@ -170,14 +162,6 @@ export default function People() {
             setEntry(null);
           }}
         > */}
-        <Pressable
-          style={styles.plusButton}
-          onPress={() =>
-            navigation.navigate("AddFriendPage", { screen: "AddFriendPage" })
-          }
-        >
-          <AntDesign name="pluscircle" size={60} color="#602683" />
-        </Pressable>
       </View>
       <View style={styles.clapboard}>
         <Image
@@ -191,7 +175,7 @@ export default function People() {
       </View>
     </LinearGradient>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -291,3 +275,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
 });
+
+export default AddFriendPage;

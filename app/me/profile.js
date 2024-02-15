@@ -48,7 +48,10 @@ export default function Me() {
           .select("*")
           .eq("id", session.user.id);
         setProfileData(profileInfo.data);
-        setFriendNumber(profileInfo.data[0]["friend_ids"].length);
+        const friendNumber = profileInfo.data[0]["friend_ids"]
+          ? profileInfo.data[0]["friend_ids"].length
+          : 0;
+        setFriendNumber(friendNumber);
 
         const myPosts = await supabase
           .from("posts")
