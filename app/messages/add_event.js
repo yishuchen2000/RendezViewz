@@ -60,6 +60,7 @@ const AddEvent = ({ route, navigation }) => {
   const [text, setText] = useState(false);
   const [textT, setTextT] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalon, setModalon] = useState(false);
 
   const [Plist, setPlist] = useState([]);
   useEffect(() => {
@@ -94,6 +95,7 @@ const AddEvent = ({ route, navigation }) => {
   // functions for date modal
   function handleOnPressOpen() {
     setOpen(!open);
+    setModalon(!modalon);
   }
   function handleChange(selectedDate) {
     // Set date to pressed date
@@ -106,11 +108,13 @@ const AddEvent = ({ route, navigation }) => {
     //console.log(text);
     setpickeddate(false);
     setOpen(!open);
+    setModalon(!modalon);
   }
 
   // functions for time modal
   function handleTimePickerPressOpen() {
     setShowTimePicker(!showTimePicker);
+    setModalon(!modalon);
   }
 
   function handleTimeChange(selectedTime) {
@@ -119,7 +123,9 @@ const AddEvent = ({ route, navigation }) => {
     setTextT(selectedTime);
     //console.log(textT);
     setpickedtime(false);
+
     setShowTimePicker(!showTimePicker);
+    setModalon(!modalon);
   }
 
   const handleSelectedPeople = (selectedPeople) => {
@@ -199,10 +205,12 @@ const AddEvent = ({ route, navigation }) => {
 
   const openModal = () => {
     setModalVisible(true);
+    setModalon(!modalon);
   };
 
   const closeModal = () => {
     setModalVisible(false);
+    setModalon(!modalon);
   };
 
   const renderPeopleCircles = () => {
@@ -257,39 +265,48 @@ const AddEvent = ({ route, navigation }) => {
               </Text>
             </Pressable>
           </View>
+
           <Modal animationType="slide" transparent={true} visible={open}>
             <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <DatePicker
-                  options={{
-                    backgroundColor: "white",
-                    textHeaderColor: "purple",
-                    textDefaultColor: "rgba(230, 70, 150, 1)",
-                    selectedTextColor: "white",
-                    mainColor: "purple",
-                    textSecondaryColor: "purple",
-                  }}
-                  testID="dateTimePicker"
-                  value={date}
-                  mode="calendar"
-                  selected={date}
-                  onDateChange={handleChange}
-                />
+              {modalon && (
                 <View
-                  style={{
-                    backgroundColor: "purple",
-                    borderRadius: 10,
-                    marginBottom: 10,
-                  }}
+                  //activeOpacity={1}
+                  //onPress={closeModal}
+                  style={styles.blur}
                 >
-                  {/* Call handleDateSelect when the "Select" button is pressed */}
-                  <Button
-                    title="Select"
-                    color="white"
-                    onPress={() => handleChange1(date)}
-                  />
+                  <View style={styles.modalView}>
+                    <DatePicker
+                      options={{
+                        backgroundColor: "white",
+                        textHeaderColor: "purple",
+                        textDefaultColor: "rgba(230, 70, 150, 1)",
+                        selectedTextColor: "white",
+                        mainColor: "purple",
+                        textSecondaryColor: "purple",
+                      }}
+                      testID="dateTimePicker"
+                      value={date}
+                      mode="calendar"
+                      selected={date}
+                      onDateChange={handleChange}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: "purple",
+                        borderRadius: 10,
+                        marginBottom: 10,
+                      }}
+                    >
+                      {/* Call handleDateSelect when the "Select" button is pressed */}
+                      <Button
+                        title="Select"
+                        color="white"
+                        onPress={() => handleChange1(date)}
+                      />
+                    </View>
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           </Modal>
           <Modal
@@ -298,20 +315,28 @@ const AddEvent = ({ route, navigation }) => {
             visible={showTimePicker}
           >
             <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <DatePicker
-                  options={{
-                    backgroundColor: "white",
-                    textHeaderColor: "purple",
-                    textDefaultColor: "rgba(230, 70, 150, 1)",
-                    selectedTextColor: "white",
-                    mainColor: "purple",
-                    textSecondaryColor: "purple",
-                  }}
-                  mode="time"
-                  onTimeChange={handleTimeChange}
-                />
-              </View>
+              {modalon && (
+                <View
+                  //activeOpacity={1}
+                  //onPress={closeModal}
+                  style={styles.blur}
+                >
+                  <View style={styles.modalView}>
+                    <DatePicker
+                      options={{
+                        backgroundColor: "white",
+                        textHeaderColor: "purple",
+                        textDefaultColor: "rgba(230, 70, 150, 1)",
+                        selectedTextColor: "white",
+                        mainColor: "purple",
+                        textSecondaryColor: "purple",
+                      }}
+                      mode="time"
+                      onTimeChange={handleTimeChange}
+                    />
+                  </View>
+                </View>
+              )}
             </View>
           </Modal>
         </View>
@@ -493,6 +518,16 @@ const styles = StyleSheet.create({
     height: 50,
     width: windowWidth * 0.7,
     borderRadius: 50,
+  },
+  blur: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust the alpha value for the darkness
+    justifyContent: "center",
+    alignItems: "center",
   },
   dropdown1: {
     color: "purple",
