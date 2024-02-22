@@ -61,80 +61,6 @@ const AddEvent = ({ route, navigation }) => {
   const [textT, setTextT] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const testinglist = [
-    {
-      label: "Alexa P.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/alexa.png",
-      value: "6",
-    },
-    {
-      label: "David Z.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/david.png",
-      value: "3",
-    },
-    {
-      label: "Ryan R.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/ryan.png",
-      value: "5",
-    },
-    {
-      label: "Zoe C.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/zoe.png",
-      value: "2",
-    },
-    {
-      label: "Jess",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Jess.png",
-      value: "8",
-    },
-    {
-      label: "Mary A.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Mary.png",
-      value: "10",
-    },
-    {
-      label: "Crystal Z.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Crystal.png",
-      value: "1",
-    },
-    {
-      label: "Deven",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Deven.png",
-      value: "7",
-    },
-    {
-      label: "Bob G.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Bob.png",
-      value: "9",
-    },
-    {
-      label: "Frank H.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Frank.png",
-      value: "12",
-    },
-    {
-      label: "Alex B.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Alex.png",
-      value: "11",
-    },
-    {
-      label: "Charlotte Z.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/charlotte.png",
-      value: "13",
-    },
-  ];
   const [Plist, setPlist] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -164,46 +90,38 @@ const AddEvent = ({ route, navigation }) => {
     setTime(dayjs().format("HH:mm"));
   }, []);
   //Date
+
+  // functions for date modal
   function handleOnPressOpen() {
     setOpen(!open);
   }
-  function handleOnPressClose() {
-    //console.log(date);
-    setOpen(!open);
-    //setpickeddate(false);
-    //console.log(pickeddate);
-  }
-
-  function handleConfirm() {
-    setpickeddate(false);
-  }
-
   function handleChange(selectedDate) {
-    // Format the selected date
+    // Set date to pressed date
     setDate(dayjs(selectedDate).format("YYYY-MM-DD"));
     //console.log(selectedDate);
-    setText(selectedDate);
+  }
+  function handleChange1(date) {
+    // Format the selected date
+    setText(date);
     //console.log(text);
     setpickeddate(false);
-    // Update the state with the selected date
+    setOpen(!open);
   }
 
-  //Time
+  // functions for time modal
   function handleTimePickerPressOpen() {
     setShowTimePicker(!showTimePicker);
   }
-  function handleTimePickerPressClose() {
-    //console.log(time);
-    setShowTimePicker(!showTimePicker);
-    //setpickedtime(false);
-  }
-  function handleTimePress(selectedTime) {
+
+  function handleTimeChange(selectedTime) {
     setTime(selectedTime);
     //console.log(selectedTime);
     setTextT(selectedTime);
     //console.log(textT);
     setpickedtime(false);
+    setShowTimePicker(!showTimePicker);
   }
+
   const handleSelectedPeople = (selectedPeople) => {
     // Extracting only the labels from the Plist array based on the selected values
     const personLabels = Plist.filter((person) =>
@@ -364,18 +282,13 @@ const AddEvent = ({ route, navigation }) => {
                     marginBottom: 10,
                   }}
                 >
+                  {/* Call handleDateSelect when the "Select" button is pressed */}
                   <Button
                     title="Select"
                     color="white"
-                    onPress={handleConfirm}
+                    onPress={() => handleChange1(date)}
                   />
                 </View>
-                <Button
-                  title="Close"
-                  onPress={handleOnPressClose}
-                  color="purple"
-                  marginTop={10}
-                />
               </View>
             </View>
           </Modal>
@@ -396,12 +309,7 @@ const AddEvent = ({ route, navigation }) => {
                     textSecondaryColor: "purple",
                   }}
                   mode="time"
-                  onTimeChange={handleTimePress}
-                />
-                <Button
-                  title="Close"
-                  onPress={handleTimePickerPressClose}
-                  color="purple"
+                  onTimeChange={handleTimeChange}
                 />
               </View>
             </View>
