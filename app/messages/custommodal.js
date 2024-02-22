@@ -85,7 +85,7 @@ const CustomModal = ({
 
   return (
     <Modal
-      animationType="slide"
+      animationType="none"
       transparent={true}
       visible={modalVisible}
       onRequestClose={closeModal}

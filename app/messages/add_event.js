@@ -266,7 +266,7 @@ const AddEvent = ({ route, navigation }) => {
             </Pressable>
           </View>
 
-          <Modal animationType="slide" transparent={true} visible={open}>
+          <Modal animationType="none" transparent={true} visible={open}>
             <View style={styles.centeredView}>
               {modalon && (
                 <View
@@ -310,7 +310,7 @@ const AddEvent = ({ route, navigation }) => {
             </View>
           </Modal>
           <Modal
-            animationType="slide"
+            animationType="none"
             transparent={true}
             visible={showTimePicker}
           >
