@@ -19,6 +19,7 @@ import ProfilePost from "../../components/ProfilePost";
 import { useNavigation } from "@react-navigation/native";
 import MyTabs from "../rankings/_layout";
 //import MyTabs from "./rankings";
+import { EvilIcons } from '@expo/vector-icons';
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -30,8 +31,14 @@ export default function Me() {
   const [wishlistNumber, setWishlistNumber] = useState(null);
   const [myPostData, setMyPostData] = useState(null);
   const [numbersFetched, setNumbersFetched] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(false);
 
+
+  const toggleFollow = () => {
+    setIsFollowed(!isFollowed); // Toggle the follow status
+  }; 
   useEffect(() => {
+    
     const fetchNumbers = async () => {
       const rankings = await supabase
         .from("rankings")
@@ -49,6 +56,8 @@ export default function Me() {
         .from("posts")
         .select("*")
         .eq("user", "Yishu C.");
+
+      
 
       setRankedNumber(rankings.count);
       setFriendNumber(friends.count);
@@ -86,14 +95,20 @@ export default function Me() {
             <FontAwesome name="gear" size={24} color="white" />
           </View>
 
-          <View style={styles.profileImage}>
+          <View style={styles.centeredView}>
+          <View style={styles.profileImageContainer}>
             <Image
-              source={{
-                uri: "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/me.png",
-              }}
-              style={styles.image}
-            ></Image>
+              source={{ uri: "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/me.png" }}
+              style={styles.profileImage}
+            />
+            <Pressable
+              style={styles.cameraIcon}
+              onPress={() => console.log('Camera icon pressed')}
+            >
+              <EvilIcons name="camera" size={24} color="black" />
+            </Pressable>
           </View>
+        </View>
 
           <View style={styles.infoContainer}>
             <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
@@ -151,6 +166,24 @@ export default function Me() {
           </View>
         </View>
 
+        <View style={styles.buttonsContainer}>
+      <Pressable
+        style={[styles.button, styles.followButton]}
+        onPress={toggleFollow}
+      >
+        <Text style={[styles.text, styles.followButtonText]}>
+          {isFollowed ? 'Added' : 'Add'}
+        </Text>
+      </Pressable>
+
+  <Pressable
+    style={[styles.button, styles.messageButton]}
+    onPress={() => console.log('Message button pressed')}
+  >
+    <Text style={[styles.text, styles.messageButtonText]}>Rankings</Text>
+  </Pressable>
+</View>
+
         <View style={styles.info}>
           <View style={styles.postBar}>
             <Text style={[styles.subText, styles.recent]}>My posts</Text>
@@ -174,77 +207,8 @@ export default function Me() {
               ))}
             </ScrollView>
           </View>
-
-          <View style={styles.activityBar}>
-            <Text style={[styles.subText, styles.recent]}>Recent Activity</Text>
-
-            <ScrollView
-              style={styles.scroll}
-              showsVerticalScrollIndicator={true}
-            >
-              <View style={styles.recentItemCard}>
-                {/* <View style={styles.activityIndicator}></View> */}
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    Now friends with{" "}
-                    <Text style={styles.boldName}>Allen N.</Text>,{" "}
-                    <Text style={styles.boldName}>Francis S.</Text>,{" "}
-                    <Text style={styles.boldName}>+1 more</Text>
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.recentItemCard}>
-                <View style={styles.activityIndicator}></View>
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    <Text style={styles.boldName}>Zach</Text> is inviting you to
-                    watch <Text style={styles.boldName}>Black Mirror</Text>
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.recentItemCard}>
-                <View style={styles.activityIndicator}></View>
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    <Text style={styles.boldName}>Charlotte Z.</Text> liked your
-                    post
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.recentItemCard}>
-                <View style={styles.activityIndicator}></View>
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    <Text style={styles.boldName}>Alexa</Text> is inviting you
-                    to watch <Text style={styles.boldName}>Invincible</Text>
-                  </Text>
-                </View>
-              </View>
-            </ScrollView>
-          </View>
         </View>
 
-        <View style={styles.clapboard}>
-          <Image
-            source={require("../../assets/Clapboard2.png")}
-            style={{
-              flex: 1,
-              width: windowWidth,
-              resizeMode: "stretch",
-            }}
-          />
-        </View>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -262,6 +226,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    // Adjust padding if needed, for example:
+    paddingTop: 10,
+  },
+  button: {
+    paddingVertical: 8, // Adjust as needed
+    paddingHorizontal: 16, // Adjust as needed
+    borderRadius: 5, // Adjust as needed
+    // Common button styles
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 110, // Adjust the width as needed
+    paddingHorizontal: 16,
+  },
+  followButton: {
+    textAlign: 'center',
+    backgroundColor: '#361866', // Yellow color for the Follow button
+    //marginRight: 10, // Adjust the space between buttons as needed
+    width: 100,
+  },
+  followButtonText: {
+    color: 'white', // Dark blue color for the Follow text
+    fontWeight: 'bold', // Adjust as needed
+    // Other text styles as needed
+  },
+  messageButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)', // Dark blue color for the Message button
+  },
+  messageButtonText: {
+    color: 'white', // Light blue color for the Message text
+    fontWeight: 'bold', // Adjust as needed
+    // Other text styles as needed
   },
   postBar: {
     flex: 1,
@@ -302,15 +302,39 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     flex: 0.32,
   },
-  profileImage: {
-    // width: 150,
-    // height: 150,
-    // borderRadius: 100,
+  container: {
     flex: 1,
-    // padding: 10,
-    overflow: "hidden",
-    // alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+  linearGradient: {
+    flex: 1,
+    justifyContent: 'center', // Center vertically in the safe area view
+    alignItems: 'center', // Center horizontally
+  },
+  centeredView: {
+    alignItems: 'center', // Ensure content is centered horizontally
+    justifyContent: 'center', // Ensure content is centered vertically
+    flex: 1, // Take up all available space
+  },
+  profileImageContainer: {
+    position: 'relative',
+    width: 120, // Adjust based on your profile image size
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 75, // Adjust this value to match half of the width/height to make it round
+  },
+  cameraIcon: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.6)', // Slight background to make it visible on any background
+    padding: 6,
+    borderRadius: 12, // Rounded corners for the icon's background
   },
   infoContainer: {
     alignSelf: "center",
