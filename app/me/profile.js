@@ -58,6 +58,7 @@ export default function Me() {
           .select("*")
           .eq("user_id", session.user.id);
         setMyPostData(myPosts.data);
+        // console.log(myPosts.data);
 
         setInfoFetched(true);
       };
@@ -336,6 +337,7 @@ const styles = StyleSheet.create({
     maxWidth: "100%", // Maximum width as the container's width
     maxHeight: "100%", // Maximum height as the container's height
     resizeMode: "contain",
+    borderWidth: 1,
   },
   titleBar: {
     flexDirection: "row",
@@ -346,6 +348,7 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     flex: 1,
+    borderWidth: 1,
     overflow: "hidden",
     justifyContent: "center",
   },

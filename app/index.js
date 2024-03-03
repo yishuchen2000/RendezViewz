@@ -6,6 +6,7 @@ import {
   Dimensions,
   ActivityIndicator,
   Text,
+  ScrollView,
   TextInput,
   TouchableOpacity,
 } from "react-native";
@@ -19,6 +20,9 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function Page() {
+  const [session, setSession] = useState(null);
+  const [friendIDs, setFriendIDs] = useState(null);
+
   const [data, setData] = useState(null);
   const [input, setInput] = useState("");
 
@@ -71,15 +75,65 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await supabase
-        .from("posts")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setData(response.data);
-    };
-    fetchData();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+
+      const fetchRankings = async () => {
+        const rankings = await supabase
+          .from("rankings")
+          .select("*")
+          .eq("user_id", session.user.id);
+
+        // console.log("this is the current session", session);
+        console.log(
+          "this is RANKINGS",
+          rankings.data.map((item) => item.genres)
+        );
+        // filter out the current user
+        // setFriendIDs(friends.data[0].friend_ids);
+      };
+      fetchRankings();
+
+      const fetchFriendID = async () => {
+        const friends = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
+
+        // console.log("this is the current session", session);
+        // console.log("this is the friend IDs", friends.data[0].friend_ids);
+        // filter out the current user
+        setFriendIDs(friends.data[0].friend_ids);
+      };
+      fetchFriendID();
+    });
   }, []);
+
+  useEffect(() => {
+    if (friendIDs) {
+      showPostIDs = [...friendIDs, session.user.id];
+      const fetchData = async () => {
+        const response = await supabase
+          .from("posts")
+          .select("*")
+          .in("user_id", showPostIDs)
+          .order("created_at", { ascending: false });
+        setData(response.data);
+      };
+      fetchData();
+    }
+  }, [friendIDs]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await supabase
+  //       .from("posts")
+  //       .select("*")
+  //       .order("created_at", { ascending: false });
+  //     setData(response.data);
+  //   };
+  //   fetchData();
+  // }, []);
 
   if (!data) {
     return (
@@ -100,6 +154,28 @@ export default function Page() {
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
       {/* <View style={styles.composer}>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => setInput(text)}
+          value={input}
+          placeholder="Write a post..."
+          placeholderTextColor="rgba(0, 0, 0, 0.5)"
+        />
+        <TouchableOpacity style={styles.send} onPress={onMessageSend}>
+          <FontAwesome name="send" size={20} color="#BBADD3" />
+        </TouchableOpacity>
+      </View> */}
+
+      <ScrollView horizontal={true}>
+        {/* Content inside the horizontal ScrollView */}
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ padding: 20 }}>Item 1</Text>
+          <Text style={{ padding: 20 }}>Item 2</Text>
+          {/* Add more items as needed */}
+        </View>
+      </ScrollView>
+
+      {/* <View style={styles.movies}>
         <TextInput
           style={styles.input}
           onChangeText={(text) => setInput(text)}
