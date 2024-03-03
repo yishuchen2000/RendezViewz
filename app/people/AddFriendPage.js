@@ -25,6 +25,7 @@ const windowHeight = Dimensions.get("window").height;
 
 const AddFriendPage = ({ route, navigation }) => {
   const [session, setSession] = useState(null);
+  const [currentUserID, setcurrentUserID] = useState(null);
   const [friendIDs, setFriendIDs] = useState(null);
 
   const [data, setData] = useState(null);
@@ -38,6 +39,8 @@ const AddFriendPage = ({ route, navigation }) => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      // setcurrentUserID(session.user.id);
+      console.log("currentUserID", currentUserID);
 
       const fetchFriendID = async () => {
         const friends = await supabase
@@ -56,33 +59,47 @@ const AddFriendPage = ({ route, navigation }) => {
       console.log("friendID", friendIDs);
 
       const fetchNewFreinds = async () => {
-        const filterIDs = friendIDs.push(session.user.id);
+        const filterIDs = [...friendIDs, session.user.id];
         const response = await supabase
           .from("profiles")
           .select("*")
-          .not("id", "in", `(${friendIDs.join(",")})`);
+          .not("id", "in", `(${filterIDs.join(",")})`);
 
         // console.log("out", response.data);
         // console.log("out", response);
-        console.log("error", response.error);
+        // console.log("error", response.error);
         setData(response.data);
+        console.log(response.data);
         setFilteredData(response.data);
       };
       fetchNewFreinds();
     }
   }, [friendIDs]);
 
-  const handleAddFriend = async () => {
-    const findFriend = await supabase
-      .from("profiles")
-      .update({ friend_ids: [...friendIDs, ["Yishu C.", newFriendID]] })
-      .eq("id", id);
+  const onAddFriend = async (id) => {
+    console.log("id to add", id);
+    const updatedFriendIDs = [...friendIDs, id];
+    console.log("Updated FriendIDs!", updatedFriendIDs);
 
     const addFriend = await supabase
       .from("profiles")
-      .update({ friend_ids: [...friendIDs, ["Yishu C.", newFriendID]] })
-      .eq("id", id);
+      .update({ friend_ids: updatedFriendIDs })
+      .eq("id", session.user.id);
+
+    setFriendIDs(updatedFriendIDs);
   };
+
+  // const handleAddFriend = async () => {
+  //   const findFriend = await supabase
+  //     .from("profiles")
+  //     .update({ friend_ids: [...friendIDs, ["Yishu C.", newFriendID]] })
+  //     .eq("id", id);
+
+  //   const addFriend = await supabase
+  //     .from("profiles")
+  //     .update({ friend_ids: [...friendIDs, ["Yishu C.", newFriendID]] })
+  //     .eq("id", id);
+  // };
 
   const contains = ({ username }, query) => {
     return username.toLowerCase().includes(query);
@@ -143,6 +160,9 @@ const AddFriendPage = ({ route, navigation }) => {
             renderItem={({ item }) => (
               <View style={styles.friendbox}>
                 <NewFriend
+                  onAddFriend={() => onAddFriend(item.id)}
+                  friendIDs={friendIDs}
+                  currentUserId={currentUserID}
                   id={item.id}
                   user={item.username}
                   profilePic={item.avatar_url}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -9,18 +9,51 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const NewFriend = ({ id, user, profilePic, goesTo }) => {
-  const navigation = useNavigation();
-  const [inputText, setInputText] = useState("");
+// friendIDs={friendIDs}
+//                 currentUserId={currentUserID}
+//                   id={item.id}
+//                   user={item.username}
+//                   profilePic={item.avatar_url}
+
+//id, user, profilePic, goesTo
+
+const NewFriend = ({ onAddFriend, id, user, profilePic }) => {
+  // console.log(friendIDs, id, user, profilePic);
+  // const [session, setSession] = useState(null);
+  // const navigation = useNavigation();
+  // const [inputText, setInputText] = useState("");
+
+  // useEffect(() => {
+  //   supabase.auth.getSession().then(({ data: { session } }) => {
+  //     console.log("current Session!!!", session);
+  //     setSession(session);
+  //   });
+  // }, []);
 
   return (
     <Pressable
-    // onPress={() =>
-    //   navigation.navigate("PeoplePage", { screen: "Friend Movies" })
-    // }
+      onPress={() => {
+        Alert.alert(
+          "Add Friend?",
+          `Do you want to add ${user} as a friend?`,
+
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Yes",
+              onPress: onAddFriend,
+            },
+          ],
+          { cancelable: false }
+        );
+      }}
     >
       <View style={styles.container}>
         <View style={styles.header}>

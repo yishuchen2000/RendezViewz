@@ -40,6 +40,30 @@ export default function People() {
 
   const navigation = useNavigation();
 
+  const handleFriendUpdated = (payload) => {
+    // setData((oldData) => {
+    //   return oldData.map((item) => {
+    //     if (item.id === payload.new.id) {
+    //       return payload.new;
+    //     }
+    //     return item;
+    //   });
+    // });
+    console.log("THIS IS PAYLOAD", payload.new.friend_ids);
+    setFriendIDs(payload.new.friend_ids);
+  };
+
+  useEffect(() => {
+    supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "profiles" },
+        handleFriendUpdated
+      )
+      .subscribe();
+  }, []);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -52,6 +76,7 @@ export default function People() {
 
         // console.log("this is the current session", session);
         // console.log("this is the friend IDs", friends.data[0].friend_ids);
+        // filter out the current user
         setFriendIDs(friends.data[0].friend_ids);
       };
       fetchFriendID();
@@ -91,6 +116,17 @@ export default function People() {
 
   const contains = ({ username }, query) => {
     return username.toLowerCase().includes(query);
+  };
+
+  const onDeleteFriend = async (idToDelete) => {
+    const updatedFriendIDs = friendIDs.filter((id) => id !== idToDelete);
+
+    const deleteFriend = await supabase
+      .from("profiles")
+      .update({ friend_ids: updatedFriendIDs })
+      .eq("id", session.user.id);
+
+    setFriendIDs(updatedFriendIDs);
   };
 
   if (!data) {
@@ -154,6 +190,7 @@ export default function People() {
                   id={item.id}
                   user={item.username}
                   profilePic={item.avatar_url}
+                  onDeleteFriend={() => onDeleteFriend(item.id)}
                 />
               </View>
             )}
