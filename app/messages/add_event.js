@@ -60,81 +60,8 @@ const AddEvent = ({ route, navigation }) => {
   const [text, setText] = useState(false);
   const [textT, setTextT] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalon, setModalon] = useState(false);
 
-  const testinglist = [
-    {
-      label: "Alexa P.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/alexa.png",
-      value: "6",
-    },
-    {
-      label: "David Z.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/david.png",
-      value: "3",
-    },
-    {
-      label: "Ryan R.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/ryan.png",
-      value: "5",
-    },
-    {
-      label: "Zoe C.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/zoe.png",
-      value: "2",
-    },
-    {
-      label: "Jess",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Jess.png",
-      value: "8",
-    },
-    {
-      label: "Mary A.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Mary.png",
-      value: "10",
-    },
-    {
-      label: "Crystal Z.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Crystal.png",
-      value: "1",
-    },
-    {
-      label: "Deven",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Deven.png",
-      value: "7",
-    },
-    {
-      label: "Bob G.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Bob.png",
-      value: "9",
-    },
-    {
-      label: "Frank H.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Frank.png",
-      value: "12",
-    },
-    {
-      label: "Alex B.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/Alex.png",
-      value: "11",
-    },
-    {
-      label: "Charlotte Z.",
-      photo:
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/charlotte.png",
-      value: "13",
-    },
-  ];
   const [Plist, setPlist] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -164,46 +91,43 @@ const AddEvent = ({ route, navigation }) => {
     setTime(dayjs().format("HH:mm"));
   }, []);
   //Date
+
+  // functions for date modal
   function handleOnPressOpen() {
     setOpen(!open);
+    setModalon(!modalon);
   }
-  function handleOnPressClose() {
-    //console.log(date);
-    setOpen(!open);
-    //setpickeddate(false);
-    //console.log(pickeddate);
-  }
-
-  function handleConfirm() {
-    setpickeddate(false);
-  }
-
   function handleChange(selectedDate) {
-    // Format the selected date
+    // Set date to pressed date
     setDate(dayjs(selectedDate).format("YYYY-MM-DD"));
     //console.log(selectedDate);
-    setText(selectedDate);
+  }
+  function handleChange1(date) {
+    // Format the selected date
+    setText(date);
     //console.log(text);
     setpickeddate(false);
-    // Update the state with the selected date
+    setOpen(!open);
+    setModalon(!modalon);
   }
 
-  //Time
+  // functions for time modal
   function handleTimePickerPressOpen() {
     setShowTimePicker(!showTimePicker);
+    setModalon(!modalon);
   }
-  function handleTimePickerPressClose() {
-    //console.log(time);
-    setShowTimePicker(!showTimePicker);
-    //setpickedtime(false);
-  }
-  function handleTimePress(selectedTime) {
+
+  function handleTimeChange(selectedTime) {
     setTime(selectedTime);
     //console.log(selectedTime);
     setTextT(selectedTime);
     //console.log(textT);
     setpickedtime(false);
+
+    setShowTimePicker(!showTimePicker);
+    setModalon(!modalon);
   }
+
   const handleSelectedPeople = (selectedPeople) => {
     // Extracting only the labels from the Plist array based on the selected values
     const personLabels = Plist.filter((person) =>
@@ -281,10 +205,12 @@ const AddEvent = ({ route, navigation }) => {
 
   const openModal = () => {
     setModalVisible(true);
+    setModalon(!modalon);
   };
 
   const closeModal = () => {
     setModalVisible(false);
+    setModalon(!modalon);
   };
 
   const renderPeopleCircles = () => {
@@ -339,71 +265,78 @@ const AddEvent = ({ route, navigation }) => {
               </Text>
             </Pressable>
           </View>
-          <Modal animationType="slide" transparent={true} visible={open}>
+
+          <Modal animationType="none" transparent={true} visible={open}>
             <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <DatePicker
-                  options={{
-                    backgroundColor: "white",
-                    textHeaderColor: "purple",
-                    textDefaultColor: "rgba(230, 70, 150, 1)",
-                    selectedTextColor: "white",
-                    mainColor: "purple",
-                    textSecondaryColor: "purple",
-                  }}
-                  testID="dateTimePicker"
-                  value={date}
-                  mode="calendar"
-                  selected={date}
-                  onDateChange={handleChange}
-                />
+              {modalon && (
                 <View
-                  style={{
-                    backgroundColor: "purple",
-                    borderRadius: 10,
-                    marginBottom: 10,
-                  }}
+                  //activeOpacity={1}
+                  //onPress={closeModal}
+                  style={styles.blur}
                 >
-                  <Button
-                    title="Select"
-                    color="white"
-                    onPress={handleConfirm}
-                  />
+                  <View style={styles.modalView}>
+                    <DatePicker
+                      options={{
+                        backgroundColor: "white",
+                        textHeaderColor: "purple",
+                        textDefaultColor: "rgba(230, 70, 150, 1)",
+                        selectedTextColor: "white",
+                        mainColor: "purple",
+                        textSecondaryColor: "purple",
+                      }}
+                      testID="dateTimePicker"
+                      value={date}
+                      mode="calendar"
+                      selected={date}
+                      onDateChange={handleChange}
+                    />
+                    <View
+                      style={{
+                        backgroundColor: "purple",
+                        borderRadius: 10,
+                        marginBottom: 10,
+                      }}
+                    >
+                      {/* Call handleDateSelect when the "Select" button is pressed */}
+                      <Button
+                        title="Select"
+                        color="white"
+                        onPress={() => handleChange1(date)}
+                      />
+                    </View>
+                  </View>
                 </View>
-                <Button
-                  title="Close"
-                  onPress={handleOnPressClose}
-                  color="purple"
-                  marginTop={10}
-                />
-              </View>
+              )}
             </View>
           </Modal>
           <Modal
-            animationType="slide"
+            animationType="none"
             transparent={true}
             visible={showTimePicker}
           >
             <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <DatePicker
-                  options={{
-                    backgroundColor: "white",
-                    textHeaderColor: "purple",
-                    textDefaultColor: "rgba(230, 70, 150, 1)",
-                    selectedTextColor: "white",
-                    mainColor: "purple",
-                    textSecondaryColor: "purple",
-                  }}
-                  mode="time"
-                  onTimeChange={handleTimePress}
-                />
-                <Button
-                  title="Close"
-                  onPress={handleTimePickerPressClose}
-                  color="purple"
-                />
-              </View>
+              {modalon && (
+                <View
+                  //activeOpacity={1}
+                  //onPress={closeModal}
+                  style={styles.blur}
+                >
+                  <View style={styles.modalView}>
+                    <DatePicker
+                      options={{
+                        backgroundColor: "white",
+                        textHeaderColor: "purple",
+                        textDefaultColor: "rgba(230, 70, 150, 1)",
+                        selectedTextColor: "white",
+                        mainColor: "purple",
+                        textSecondaryColor: "purple",
+                      }}
+                      mode="time"
+                      onTimeChange={handleTimeChange}
+                    />
+                  </View>
+                </View>
+              )}
             </View>
           </Modal>
         </View>
@@ -585,6 +518,16 @@ const styles = StyleSheet.create({
     height: 50,
     width: windowWidth * 0.7,
     borderRadius: 50,
+  },
+  blur: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust the alpha value for the darkness
+    justifyContent: "center",
+    alignItems: "center",
   },
   dropdown1: {
     color: "purple",

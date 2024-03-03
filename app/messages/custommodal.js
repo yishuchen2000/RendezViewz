@@ -85,11 +85,12 @@ const CustomModal = ({
 
   return (
     <Modal
-      animationType="slide"
+      animationType="none"
       transparent={true}
       visible={modalVisible}
       onRequestClose={closeModal}
     >
+      <View style={styles.overlay}></View>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <View style={styles.searchArea}>
@@ -220,6 +221,14 @@ const styles = {
     textAlign: "center",
     marginBottom: 10,
     color: "purple",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent dark background
   },
 };
 

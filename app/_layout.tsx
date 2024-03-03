@@ -12,7 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import "react-native-url-polyfill/auto";
 import supabase from "../Supabase";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import Auth from "../components/Auth";
+import Auth from "../components/Auth/Auth";
 import Account from "../components/Account";
 import { Session } from "@supabase/supabase-js";
 

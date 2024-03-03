@@ -12,16 +12,16 @@ import {
   Dimensions,
   ActivityIndicator,
 } from "react-native";
-import supabase from "../../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from "@expo/vector-icons";
 import ProfilePost from "../../components/ProfilePost";
 //import Rankings from "./rankings/rankings";
 import { useNavigation } from "@react-navigation/native";
+import MyTabs from "../rankings/_layout";
 import Account from "../../components/Account";
 import { Session } from "@supabase/supabase-js";
-import MyTabs from "../rankings/_layout";
 //import MyTabs from "./rankings";
+import { EvilIcons } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -37,6 +37,8 @@ export default function Me() {
   const [showAccountPage, setShowAccountPage] = useState(false);
   const [session, setSession] = useState(null);
   const [profileData, setProfileData] = useState(null);
+
+  const [isFollowed, setIsFollowed] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -65,6 +67,10 @@ export default function Me() {
       fetchData();
     });
   }, []);
+
+  const toggleFollow = () => {
+    setIsFollowed(!isFollowed);
+  };
 
   useEffect(() => {
     const fetchNumbers = async () => {
@@ -100,7 +106,6 @@ export default function Me() {
     );
   }
 
-  //
   if (!numbersFetched || !infoFetched) {
     return (
       <LinearGradient
@@ -128,13 +133,21 @@ export default function Me() {
             <FontAwesome name="gear" size={24} color="white" />
           </Pressable>
 
-          <View style={styles.profileImage}>
-            <Image
-              source={{
-                uri: profileData[0].avatar_url,
-              }}
-              style={styles.image}
-            ></Image>
+          <View style={styles.centeredView}>
+            <View style={styles.profileImageContainer}>
+              <Image
+                source={{
+                  uri: profileData[0].avatar_url,
+                }}
+                style={styles.profileImage}
+              />
+              <Pressable
+                style={styles.cameraIcon}
+                onPress={() => console.log("Camera icon pressed")}
+              >
+                <EvilIcons name="camera" size={24} color="black" />
+              </Pressable>
+            </View>
           </View>
 
           <View style={styles.infoContainer}>
@@ -193,9 +206,29 @@ export default function Me() {
           </View>
         </View>
 
+        <View style={styles.buttonsContainer}>
+          <Pressable
+            style={[styles.button, styles.followButton]}
+            onPress={toggleFollow}
+          >
+            <Text style={[styles.text, styles.followButtonText]}>
+              {isFollowed ? "Added" : "Add"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[styles.button, styles.messageButton]}
+            onPress={() => console.log("Message button pressed")}
+          >
+            <Text style={[styles.text, styles.messageButtonText]}>
+              Rankings
+            </Text>
+          </Pressable>
+        </View>
+
         <View style={styles.info}>
           <View style={styles.postBar}>
-            <Text style={[styles.subText, styles.recent]}>My posts</Text>
+            <Text style={[styles.subText, styles.recent]}>Posts</Text>
             {/* <View style={styles.scroll}> */}
             <ScrollView style={styles.scroll} horizontal={false}>
               {myPostData.map((item) => (
@@ -216,67 +249,7 @@ export default function Me() {
               ))}
             </ScrollView>
           </View>
-
-          <View style={styles.activityBar}>
-            <Text style={[styles.subText, styles.recent]}>Recent Activity</Text>
-
-            <ScrollView
-              style={styles.scroll}
-              showsVerticalScrollIndicator={true}
-            >
-              <View style={styles.recentItemCard}>
-                {/* <View style={styles.activityIndicator}></View> */}
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    Now friends with{" "}
-                    <Text style={styles.boldName}>Allen N.</Text>,{" "}
-                    <Text style={styles.boldName}>Francis S.</Text>,{" "}
-                    <Text style={styles.boldName}>+1 more</Text>
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.recentItemCard}>
-                <View style={styles.activityIndicator}></View>
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    <Text style={styles.boldName}>Zach</Text> is inviting you to
-                    watch <Text style={styles.boldName}>Black Mirror</Text>
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.recentItemCard}>
-                <View style={styles.activityIndicator}></View>
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    <Text style={styles.boldName}>Charlotte Z.</Text> liked your
-                    post
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.recentItemCard}>
-                <View style={styles.activityIndicator}></View>
-                <View style={{ width: 300 }}>
-                  <Text
-                    style={[styles.text, { color: "white", fontWeight: "300" }]}
-                  >
-                    <Text style={styles.boldName}>Alexa</Text> is inviting you
-                    to watch <Text style={styles.boldName}>Invincible</Text>
-                  </Text>
-                </View>
-              </View>
-            </ScrollView>
-          </View>
         </View>
-
         <View style={styles.clapboard}>
           <Image
             source={require("../../assets/Clapboard2.png")}
@@ -294,32 +267,61 @@ export default function Me() {
 
 const styles = StyleSheet.create({
   header: {
-    borderColor: "green",
-    // borderWidth: 1,
+    borderColor: "red",
     flex: 0.6,
   },
   info: {
-    borderColor: "blue",
-    // borderWidth: 1,
+    borderColor: "green",
     flex: 1,
   },
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // borderWidth: 1,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    // Adjust padding if needed, for example:
+    paddingTop: 10,
+  },
+  button: {
+    paddingVertical: 8, // Adjust as needed
+    paddingHorizontal: 16, // Adjust as needed
+    borderRadius: 5, // Adjust as needed
+    // Common button styles
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 110, // Adjust the width as needed
+    paddingHorizontal: 16,
+  },
+  followButton: {
+    textAlign: "center",
+    backgroundColor: "#361866", // Yellow color for the Follow button
+    //marginRight: 10, // Adjust the space between buttons as needed
+    width: 100,
+  },
+  followButtonText: {
+    color: "white", // Dark blue color for the Follow text
+    fontWeight: "bold", // Adjust as needed
+    // Other text styles as needed
+  },
+  messageButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)", // Dark blue color for the Message button
+  },
+  messageButtonText: {
+    color: "white", // Light blue color for the Message text
+    fontWeight: "bold", // Adjust as needed
+    // Other text styles as needed
   },
   postBar: {
     flex: 1,
-    // borderWidth: 1,
   },
   activityBar: {
     flex: 1,
-    // borderWidth: 1,
   },
   scroll: {
     flex: 1,
-    // borderWidth: 1,
-    borderColor: "red",
   },
   text: {
     color: "white",
@@ -334,37 +336,71 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
+    // resizeMode: "contain",
+    // width: 100,
+    // height: 100,
     maxWidth: "100%", // Maximum width as the container's width
     maxHeight: "100%", // Maximum height as the container's height
     resizeMode: "contain",
-    borderWidth: 1,
   },
   titleBar: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
+    // marginTop: 24,
+    // marginHorizontal: 16,
+    // marginBottom: -32,
     // borderWidth: 1,
     flex: 0.32,
   },
-  profileImage: {
+  container: {
     flex: 1,
-    borderWidth: 1,
-    overflow: "hidden",
+    backgroundColor: "#fff",
+  },
+  linearGradient: {
+    flex: 1,
+    justifyContent: "center", // Center vertically in the safe area view
+    alignItems: "center", // Center horizontally
+  },
+  centeredView: {
+    alignItems: "center", // Ensure content is centered horizontally
+    justifyContent: "center", // Ensure content is centered vertically
+    flex: 1, // Take up all available space
+  },
+  profileImageContainer: {
+    position: "relative",
+    width: 120, // Adjust based on your profile image size
+    height: 120,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  profileImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 75, // Adjust this value to match half of the width/height to make it round
+  },
+  cameraIcon: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255,255,255,0.6)", // Slight background to make it visible on any background
+    padding: 6,
+    borderRadius: 12, // Rounded corners for the icon's background
   },
   infoContainer: {
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
+    // marginTop: 12,
     flex: 0.3,
-    // borderWidth: 1,
   },
   statsContainer: {
     flexDirection: "row",
+    // alignSelf: "center",
+    // marginTop: 16,
     justifyContent: "center",
     alignItems: "center",
     flex: 0.4,
-    // borderWidth: 1,
   },
   statsBox: {
     alignItems: "center",

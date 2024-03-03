@@ -71,42 +71,37 @@ const MovieDetails = ({ item }) => {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ alignItems: "center" }}
-    >
-      <View style={styles.header}>
-        <Text style={styles.title}>{item.Title}</Text>
-        <Text style={styles.subheading}>
-          {item.Year} • {item.Rated}
-          {item.Runtime !== "N/A" &&
-            item.Runtime !== "1 min" &&
-            ` • ${item.Runtime}`}
-        </Text>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View style={styles.posterContainer}>
+        <Image source={{ uri: item.Poster }} style={styles.poster} />
       </View>
       <View style={styles.body}>
-        <View style={styles.upperBody}>
-          <View style={styles.posterContainer}>
-            <Image source={{ uri: item.Poster }} style={styles.poster} />
-          </View>
-          <View style={styles.peopleContainer}>
-            {item.Director !== "N/A" && (
-              <View style={styles.directorContainer}>
-                <Text style={styles.castPosition}> Director: </Text>
-                <Text style={styles.name} numberOfLines={1}>
-                  {item.Director}
-                </Text>
-              </View>
-            )}
-            {renderWriters()}
-            {renderCast()}
-          </View>
+        <View style={styles.detailsContainer}>
+          <Text style={styles.title}>{item.Title}</Text>
+          <View style={styles.genreContainer}>{renderGenreList()}</View>
         </View>
         <View style={styles.lowerBody}>
-          {renderGenreList()}
           <View style={styles.plotBox}>
+            <Text style={styles.subheading}>
+              {item.Year} • {item.Rated}
+              {item.Runtime !== "N/A" &&
+                item.Runtime !== "1 min" &&
+                ` • ${item.Runtime}`}
+            </Text>
             <Text style={styles.plotText}>{item.Plot}</Text>
           </View>
+        </View>
+        <View style={styles.peopleContainer}>
+          {item.Director !== "N/A" && (
+            <View style={styles.directorContainer}>
+              <Text style={styles.castPosition}> Director: </Text>
+              <Text style={styles.name} numberOfLines={1}>
+                {item.Director}
+              </Text>
+            </View>
+          )}
+          {renderWriters()}
+          {renderCast()}
         </View>
       </View>
     </ScrollView>
@@ -116,28 +111,38 @@ const MovieDetails = ({ item }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: windowHeight * 0.03,
+    borderWidth: 1,
+    backgroundColor: "transparent",
   },
   header: {
     justifyContent: "center",
     alignItems: "center",
-    padding: 5,
+    padding: 0,
   },
   title: {
-    textAlign: "center",
+    textAlign: "left",
     color: "white",
-    fontSize: 34,
+    fontSize: 40,
     fontWeight: "bold",
     borderColor: "white",
+    marginBottom: 5,
+  },
+  genreContainer: {
+    backgroundColor: "#311866",
+    borderRadius: 10,
+    padding: 5,
+    marginBottom: 13, // Adjust as needed
+    alignSelf: "flex-start",
   },
   subheading: {
     fontSize: 18,
-    color: "lightgrey",
+    color: "white",
     padding: 5,
   },
   body: {
-    width: windowWidth * 0.9,
+    width: windowWidth,
     flex: 1,
+    padding: 12,
   },
   upperBody: {
     flexDirection: "row",
@@ -146,21 +151,23 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   poster: {
-    height: windowHeight * 0.32,
-    width: windowWidth * 0.4,
+    height: windowHeight * 0.48,
+    width: windowWidth,
+    borderRadius: 20,
   },
+  scrollViewContent: {},
   posterContainer: {
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
+    overflow: "hidden",
   },
   peopleContainer: {
-    borderRadius: 10,
+    borderRadius: 30,
     backgroundColor: "rgba(0, 0, 0, 0.45)",
-    padding: 10,
-    flex: 1,
-    gap: 20,
+    padding: 20,
+    gap: windowHeight * 0.02,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
@@ -172,20 +179,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   castPosition: {
+    marginLeft: 5,
     color: "white",
     fontSize: 15,
     fontWeight: "bold",
   },
   lowerBody: {
     gap: windowHeight * 0.02,
-    borderRadius: 10,
+    borderRadius: 30,
     backgroundColor: "rgba(0, 0, 0, 0.45)",
-    padding: 10,
-    paddingBottom: 20,
+    padding: 20,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
+    marginBottom: 10,
   },
   genreBox: {
     flexDirection: "row",
