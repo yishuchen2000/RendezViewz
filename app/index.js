@@ -6,18 +6,60 @@ import {
   Dimensions,
   ActivityIndicator,
   Text,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Animated,
 } from "react-native";
 import { useState, useEffect } from "react";
 import supabase from "../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
 import Post from "../components/Post";
+import Poster from "../components/Poster";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function Page() {
+  const [session, setSession] = useState(null);
+  const [friendIDs, setFriendIDs] = useState(null);
+
   const [data, setData] = useState(null);
   const [input, setInput] = useState("");
+
+  const [recs, setRecs] = useState([
+    "Inception",
+    "The Godfather",
+    "Titanic",
+    "The Shawshank Redemption",
+    "Forrest Gump",
+    "Pulp Fiction",
+    "The Dark Knight",
+    "Schindler's List",
+    "Fight Club",
+    "The Matrix",
+    "The Lord of the Rings",
+    "Star Wars",
+    "Jurassic Park",
+    "Avatar",
+    "The Silence of the Lambs",
+    "Breaking Bad",
+    "Game of Thrones",
+    "Friends",
+    "Stranger Things",
+    "The Crown",
+    "The Office",
+    "Sherlock",
+    "Black Mirror",
+    "The Simpsons",
+    "Westworld",
+    "The Mandalorian",
+    "Doctor Who",
+    "The Big Bang Theory",
+    "Narcos",
+    "The Walking Dead",
+  ]);
 
   const handleRecordUpdated = (payload) => {
     setData((oldData) => {
@@ -36,6 +78,14 @@ export default function Page() {
 
   const handleRecordDeleted = (payload) => {
     setData((oldData) => oldData.filter((item) => item.id !== payload.old.id));
+  };
+
+  const onMessageSend = async () => {
+    const response = await supabase.from("posts").insert({
+      user: "James Landay",
+      timestamp: "now",
+      text: input,
+    });
   };
 
   useEffect(() => {
@@ -60,15 +110,65 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await supabase
-        .from("posts")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setData(response.data);
-    };
-    fetchData();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+
+      const fetchRankings = async () => {
+        const rankings = await supabase
+          .from("rankings")
+          .select("*")
+          .eq("user_id", session.user.id);
+
+        // console.log("this is the current session", session);
+        console.log(
+          "this is RANKINGS",
+          rankings.data.map((item) => item.genres)
+        );
+        // filter out the current user
+        // setFriendIDs(friends.data[0].friend_ids);
+      };
+      fetchRankings();
+
+      const fetchFriendID = async () => {
+        const friends = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
+
+        // console.log("this is the current session", session);
+        // console.log("this is the friend IDs", friends.data[0].friend_ids);
+        // filter out the current user
+        setFriendIDs(friends.data[0].friend_ids);
+      };
+      fetchFriendID();
+    });
   }, []);
+
+  useEffect(() => {
+    if (friendIDs) {
+      showPostIDs = [...friendIDs, session.user.id];
+      const fetchData = async () => {
+        const response = await supabase
+          .from("posts")
+          .select("*")
+          .in("user_id", showPostIDs)
+          .order("created_at", { ascending: false });
+        setData(response.data);
+      };
+      fetchData();
+    }
+  }, [friendIDs]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await supabase
+  //       .from("posts")
+  //       .select("*")
+  //       .order("created_at", { ascending: false });
+  //     setData(response.data);
+  //   };
+  //   fetchData();
+  // }, []);
 
   if (!data) {
     return (
@@ -100,31 +200,44 @@ export default function Page() {
           <FontAwesome name="send" size={20} color="#BBADD3" />
         </TouchableOpacity>
       </View> */}
+      <View style={styles.middle}>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          style={styles.scroll}
+          horizontal={true}
+        >
+          {/* Content inside the horizontal ScrollView */}
+          {recs.map((item) => (
+            <Poster title={item} goesTo={"ShowDetails"} />
+          ))}
+        </ScrollView>
 
-      <View style={styles.postList}>
-        <FlatList
-          data={data}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <Post
-              id={item.id}
-              user={item.user}
-              timestamp={item.created_at}
-              text={item.text}
-              liked={item.liked}
-              imageUrl={item.show_poster_url}
-              profilePic={item.profile_pic}
-              action={item.action}
-              comments={item.comments}
-              title={item.movie_title}
-              goesTo={"ShowDetails"}
-            />
-          )}
-          keyExtractor={(item) => item.id}
-          style={styles.posts}
-          contentContainerStyle={{ paddingTop: 10 }}
-        />
+        <View style={styles.postList}>
+          <FlatList
+            data={data}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <Post
+                id={item.id}
+                user={item.user}
+                timestamp={item.created_at}
+                text={item.text}
+                liked={item.liked}
+                imageUrl={item.show_poster_url}
+                profilePic={item.profile_pic}
+                action={item.action}
+                comments={item.comments}
+                title={item.movie_title}
+                goesTo={"ShowDetails"}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            style={styles.posts}
+            contentContainerStyle={{ paddingTop: 10 }}
+          />
+        </View>
       </View>
+
       <View style={styles.clapboard}>
         <Image
           source={require("../assets/Clapboard2.png")}
@@ -149,11 +262,20 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingLeft: 8,
   },
+  middle: {
+    flex: 1,
+  },
   posts: {
     // marginTop: 12,
+    flex: 1,
+  },
+  scroll: {
+    // borderWidth: 1,
+    flex: 3,
   },
   postList: {
-    flex: 8,
+    flex: 3.5,
+    // borderWidth: 1,
   },
   composer: {
     flexDirection: "row",
@@ -162,8 +284,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 8,
-    borderColor: "green",
-    borderWidth: 5,
+    // borderColor: "green",
+    // borderWidth: 5,
   },
 
   clapboard: {

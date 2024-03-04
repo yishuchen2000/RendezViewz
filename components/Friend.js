@@ -9,33 +9,65 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { EvilIcons } from "@expo/vector-icons";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 import getMovieDetails from "./getMovieDetails";
 
-const Friend = ({ id, user, profilePic, goesTo }) => {
+const Friend = ({ id, user, profilePic, onDeleteFriend, goesTo }) => {
   const navigation = useNavigation();
   const [inputText, setInputText] = useState("");
 
   return (
-    <Pressable
-      onPress={() =>
-        navigation.navigate("PeoplePage", { screen: "Friend Movies" })
-      }
-    >
-      <View style={styles.container}>
-        <View style={styles.header}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Pressable
+          onPress={() =>
+            navigation.navigate("PeoplePage", { screen: "Friend Movies" })
+          }
+        >
           <View style={styles.profile}>
             <View style={styles.profilePicContainer}>
               <Image style={styles.profilePic} source={{ uri: profilePic }} />
             </View>
             <Text style={styles.username}>{user}</Text>
           </View>
-          {/* <Text>{timestamp}</Text> */}
-        </View>
+        </Pressable>
+        {/* <Text>{timestamp}</Text> */}
       </View>
-    </Pressable>
+
+      <Pressable style={styles.deleteButtonContainer}>
+        <EvilIcons
+          style={styles.deleteButton}
+          onPress={() => {
+            Alert.alert(
+              "Delete Friend?",
+              `Are you sure you want to remove ${user} from friends?`,
+
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Delete",
+                  onPress: onDeleteFriend,
+                },
+              ],
+              { cancelable: false }
+            );
+          }}
+          name="trash"
+          size={25}
+          color="#602683"
+        />
+      </Pressable>
+    </View>
   );
 };
 
@@ -85,5 +117,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 17,
     color: "white",
+  },
+  deleteButtonContainer: {
+    position: "absolute",
+    right: 0,
+    bottom: 5,
+    width: windowWidth * 0.1,
+    height: "50%",
+    justifyContent: "center",
   },
 });

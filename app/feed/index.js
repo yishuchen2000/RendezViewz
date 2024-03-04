@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import supabase from "../../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
 import Post from "../../components/Post";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
