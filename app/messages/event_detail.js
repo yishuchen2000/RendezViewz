@@ -1,5 +1,4 @@
-//This file is the webview page for song details.
-//This page is opened when clicking anywhere on the row of a song on first_screen
+// Import necessary modules
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -9,18 +8,23 @@ import {
   Pressable,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import * as Calendar from "expo-calendar"; // Importing calendar module
+import * as Localization from "expo-localization";
 import getMovieDetails from "../../components/getMovieDetails";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const EventDetail = ({ route }) => {
   const { date, name, time, people } = route.params;
   const [showAllPeople, setShowAllPeople] = useState(false);
   const [showURL, setShowURL] = useState(null);
-  const [all, setall] = useState([]);
+  const [all, setAll] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,12 +34,10 @@ const EventDetail = ({ route }) => {
         }
         const peopleData = response.data.map((person) => ({
           label: person.user,
-          value: person.id.toString(), // Assuming you want to use the person's ID as the value
+          value: person.id.toString(),
           photo: person.profile_pic,
         }));
-        setall(peopleData);
-        console.log(peopleData);
-        //setPeople(peopleData); // Update the people array with the fetched data
+        setAll(peopleData);
       } catch (error) {
         console.error("Error fetching people:", error.message);
       }
@@ -59,7 +61,6 @@ const EventDetail = ({ route }) => {
     const remainingPeopleCount = people.length - maxPeopleToShow;
 
     const abbreviatedNames = abbreviatedPeople.map((personName, index) => {
-      // Check if the person exists in the 'all' array and has a photo
       const personData = all.find((person) => person.label === personName);
       if (personData && personData.photo) {
         return (
@@ -72,7 +73,6 @@ const EventDetail = ({ route }) => {
           </View>
         );
       } else {
-        // Render the current icon if no photo is available
         return (
           <View key={index} style={styles.personCircle}>
             <Ionicons
@@ -97,6 +97,54 @@ const EventDetail = ({ route }) => {
     }
 
     return abbreviatedNames;
+  };
+
+  const addToCalendar = async () => {
+    // Check for permission to access the calendar
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status === "granted") {
+      // Get the default calendar ID
+      const defaultCalendarId =
+        Platform.OS === "ios"
+          ? (await Calendar.getDefaultCalendarAsync()).id
+          : (await Calendar.getCalendarsAsync()).find(
+              (cal) => cal.accessLevel === "owner"
+            ).id;
+
+      // Set the time zone to the device's time zone
+      const timeZone = Localization.timezone;
+
+      // Create event object
+      const eventDetails = {
+        title: name,
+        startDate: new Date(date + "T" + time),
+        endDate: new Date(
+          date +
+            "T" +
+            (parseInt(time.split(":")[0]) + 2) +
+            ":" +
+            time.split(":")[1]
+        ), // Assuming event ends 2 hours later
+        timeZone,
+        availability: Calendar.Availability.BUSY,
+        calendarId: defaultCalendarId, // Specify the calendar ID here
+      };
+
+      // Add event to calendar
+      await Calendar.createEventAsync(defaultCalendarId, eventDetails)
+        .then((event) => {
+          // Event added successfully
+          console.log("Event added to calendar:", event);
+          Alert.alert("Success", "Event exported to calendar!");
+        })
+        .catch((error) => {
+          // Error adding event
+          console.error("Error adding event to calendar:", error);
+        });
+    } else {
+      // Permission not granted
+      console.log("Permission to access calendar was denied");
+    }
   };
 
   return (
@@ -133,6 +181,11 @@ const EventDetail = ({ route }) => {
           ) : (
             <View></View>
           )}
+          <Pressable style={styles.button} onPress={addToCalendar}>
+            <Text style={{ color: "purple", fontSize: 15 }}>
+              Export event to calendar
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
       <View style={styles.clapboard}>
@@ -153,7 +206,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    //padding: 24,
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
   },
@@ -165,7 +217,6 @@ const styles = StyleSheet.create({
   overall: {
     flexDirection: "column",
     alignItems: "center",
-    //padding: 24,
     backgroundColor: "transparent",
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
   },
@@ -177,10 +228,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "white",
   },
-  hour: {
-    fontSize: 20,
-    color: "white",
-  },
   show: {
     fontSize: 35,
     color: "white",
@@ -189,8 +236,6 @@ const styles = StyleSheet.create({
   image: {
     height: windowHeight * 0.3,
     width: windowHeight * 0.22,
-    // borderRadius: 15,
-    // backgroundColor: "rgba(255, 255, 255, 0.5)",
     marginBottom: 10,
     padding: 5,
   },
@@ -203,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 10,
-    flexWrap: "wrap", // This line makes the content wrap within the container
+    flexWrap: "wrap",
   },
   personCircle: {
     margin: 2,
@@ -219,16 +264,20 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
-  circletext: {
-    fontSize: 15,
-    color: "white",
-    textAlign: "center",
-  },
   circletext1: {
     fontSize: 15,
     marginTop: 20,
     color: "white",
     textAlign: "center",
+  },
+  button: {
+    marginTop: 20,
+    height: 40,
+    width: 200,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 50,
+    backgroundColor: "white",
   },
 });
 

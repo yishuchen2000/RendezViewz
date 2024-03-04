@@ -7,12 +7,16 @@ import {
   Pressable,
   ScrollView,
   Image,
+  Linking,
+  Alert,
 } from "react-native";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import * as Calendar from "expo-calendar"; // Importing calendar module
+import * as Localization from "expo-localization";
 
 const Success = ({ navigation, route }) => {
   const { date, name, time, people, all } = route.params;
@@ -73,6 +77,54 @@ const Success = ({ navigation, route }) => {
     }
 
     return abbreviatedNames;
+  };
+
+  const addToCalendar = async () => {
+    // Check for permission to access the calendar
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status === "granted") {
+      // Get the default calendar ID
+      const defaultCalendarId =
+        Platform.OS === "ios"
+          ? (await Calendar.getDefaultCalendarAsync()).id
+          : (await Calendar.getCalendarsAsync()).find(
+              (cal) => cal.accessLevel === "owner"
+            ).id;
+
+      // Set the time zone to the device's time zone
+      const timeZone = Localization.timezone;
+
+      // Create event object
+      const eventDetails = {
+        title: name,
+        startDate: new Date(date + "T" + time),
+        endDate: new Date(
+          date +
+            "T" +
+            (parseInt(time.split(":")[0]) + 2) +
+            ":" +
+            time.split(":")[1]
+        ), // Assuming event ends 2 hours later
+        timeZone,
+        availability: Calendar.Availability.BUSY,
+        calendarId: defaultCalendarId, // Specify the calendar ID here
+      };
+
+      // Add event to calendar
+      await Calendar.createEventAsync(defaultCalendarId, eventDetails)
+        .then((event) => {
+          // Event added successfully
+          console.log("Event added to calendar:", event);
+          Alert.alert("Success", "Event exported to calendar!");
+        })
+        .catch((error) => {
+          // Error adding event
+          console.error("Error adding event to calendar:", error);
+        });
+    } else {
+      // Permission not granted
+      console.log("Permission to access calendar was denied");
+    }
   };
 
   return (
@@ -138,14 +190,20 @@ const Success = ({ navigation, route }) => {
           )}
           <Pressable
             style={styles.button}
+            onPress={addToCalendar} // Call function on button press
+          >
+            <Text style={{ color: "purple", fontSize: 15 }}>
+              Export event to calendar
+            </Text>
+          </Pressable>
+          <Pressable
+            style={styles.button}
             onPress={() => {
               navigation.goBack();
               navigation.goBack();
             }}
           >
-            <Text style={{ color: "purple", fontSize: 15 }}>
-              Return to calendar
-            </Text>
+            <Text style={{ color: "purple", fontSize: 15 }}>Return home</Text>
           </Pressable>
         </View>
       </ScrollView>
