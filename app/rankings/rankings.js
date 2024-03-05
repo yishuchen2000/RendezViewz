@@ -59,19 +59,98 @@ export default function Rankings() {
   const [modalValid, setModalValid] = useState(false);
   const [renderSwitch, flipRenderSwitch] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await supabase.from("rankings").select("*");
-      const sortedData = response.data.sort((a, b) => b.rating - a.rating);
+  const [session, setSession] = useState(null);
+  const [rankings, setRankings] = useState(null);
 
-      sortedData.forEach((item, index = 0) => {
-        item.index = index + 1;
+  const handleRecordUpdated = (payload) => {
+    // console.log(payload);
+    // setFriendIDs(payload.new.friend_ids);
+
+    setRankings((oldData) => {
+      return oldData.map((item) => {
+        if (item.id === payload.new.id) {
+          return payload.new;
+        }
+        return item;
       });
+    });
+  };
 
-      setData(sortedData);
-    };
-    fetchData();
-  }, [renderSwitch, entry]);
+  const handleRecordInserted = (payload) => {
+    // console.log(payload.new);
+    setRankings((rankings) => [...rankings, payload.new]);
+  };
+
+  const handleRecordDeleted = (payload) => {
+    // console.log(payload);
+    setRankings((oldData) =>
+      oldData.filter((item) => item.id !== payload.old.id)
+    );
+  };
+
+  useEffect(() => {
+    supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "rankings" },
+        handleRecordUpdated
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "rankings" },
+        handleRecordInserted
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "rankings" },
+        handleRecordDeleted
+      )
+      .subscribe();
+  }, []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+
+      const fetchRankings = async () => {
+        const rankings = await supabase
+          .from("rankings")
+          .select("*")
+          .eq("user_id", session.user.id);
+
+        // console.log("this is RANKINGS", rankings.data);
+        setRankings(rankings.data);
+        // filter out the current user
+        // setFriendIDs(friends.data[0].friend_ids);
+
+        const sortedData = rankings.data.sort((a, b) => b.rating - a.rating);
+        sortedData.forEach((item, index = 0) => {
+          item.index = index + 1;
+        });
+        // console.log("this is sortedDATA", sortedData);
+        setData(sortedData);
+      };
+      fetchRankings();
+    });
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await supabase
+  //       .from("rankings")
+  //       .select("*")
+  //       .eq("user_id", session.user.id);
+  //     const sortedData = response.data.sort((a, b) => b.rating - a.rating);
+
+  //     sortedData.forEach((item, index = 0) => {
+  //       item.index = index + 1;
+  //     });
+
+  //     setData(sortedData);
+  //   };
+  //   fetchData();
+  // }, [renderSwitch, entry]);
 
   //button wil stay grey until these conitions are met
   useEffect(() => {
@@ -153,17 +232,24 @@ export default function Rankings() {
         url: movieDetails.Poster,
         rating: parseFloat(rankValue),
         genres: movieDetails.Genre,
+        user_id: session.user.id,
       },
     ]);
 
-    let response = await supabase.from("rankings").select("*");
-    let sortedData = response.data.sort((a, b) => b.rating - a.rating);
+    let response = await supabase
+      .from("rankings")
+      .select("*")
+      .eq("user_id", session.user.id);
+    let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    sortedData.forEach((item, index = 0) => {
+    newSortedData.forEach((item, index = 0) => {
       item.index = index + 1;
     });
 
-    await supabase.from("rankings").upsert(sortedData);
+    // setRankings((oldData) => [...oldData, payload.new]);
+    setData(newSortedData);
+
+    // await supabase.from("rankings").upsert(sortedData);
 
     flipRenderSwitch(!renderSwitch);
     setRankValue(5);
@@ -202,13 +288,16 @@ export default function Rankings() {
   const handleDelete = async (id, index) => {
     await supabase.from("rankings").delete().eq("id", id);
 
-    let response = await supabase.from("rankings").select("*");
+    let response = await supabase
+      .from("rankings")
+      .select("*")
+      .eq("user_id", session.user.id);
     sortedData = response.data.sort((a, b) => b.rating - a.rating);
 
     sortedData.forEach((item, index = 0) => {
       item.index = index + 1;
     });
-    await supabase.from("rankings").upsert(sortedData);
+    // await supabase.from("rankings").upsert(sortedData);
 
     setData(sortedData);
     LayoutAnimation.configureNext(layoutAnimConfig);
