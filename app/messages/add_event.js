@@ -1,20 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
   Text,
   Pressable,
   Dimensions,
-  ScrollView,
+  Keyboard,
   Alert,
   Image,
   Button,
   Modal,
   TouchableOpacity,
+  TextInput,
+  FlatList,
+  TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { debounce } from "lodash";
 import { initialItems } from "./eventdata";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 //import { MultiSelect } from "react-native-element-dropdown";
 import { Dropdown } from "react-native-element-dropdown";
 import { Entypo } from "@expo/vector-icons";
@@ -27,6 +32,7 @@ import MultiSelect from "react-native-multiple-select";
 //import DropDownPicker from "react-native-dropdown-listpicker";
 import { MultipleSelectList } from "react-native-dropdown-select-list";
 import CustomModal from "./custommodal";
+import searchByTitle from "../../components/searchByTitle";
 
 import dayjs from "dayjs";
 
@@ -63,6 +69,13 @@ const AddEvent = ({ route, navigation }) => {
   const [modalon, setModalon] = useState(false);
 
   const [Plist, setPlist] = useState([]);
+
+  //for movie or show selection
+  const [suggestions, setSuggestions] = useState([]);
+  const [visibleSuggestions, setVisibleSuggestions] = useState(false);
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectionChosen, setSelectionChosen] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -236,9 +249,36 @@ const AddEvent = ({ route, navigation }) => {
     });
   };
 
+  const fetchSuggestions = useCallback(
+    debounce(async (query) => {
+      if (query) {
+        const results = await searchByTitle(query.trim());
+        setSuggestions(results);
+        setVisibleSuggestions(true); //show suggestions when user stops typing
+      }
+    }, 1000),
+    []
+  );
+
+  useEffect(() => {
+    if (show && !selectionChosen) {
+      setVisibleSuggestions(false);
+      fetchSuggestions(show);
+    } else {
+      setSuggestions([]);
+    }
+
+    return () => fetchSuggestions.cancel();
+  }, [show, fetchSuggestions]);
+
+  dismissKeyboard = () => {
+    Keyboard.dismiss;
+    return false;
+  };
+
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <View style={styles.scrollView}>
         <View style={styles.top}>
           <View style={styles.wicon}>
             <FontAwesome name="calendar-o" size={27} color="white" />
@@ -342,30 +382,100 @@ const AddEvent = ({ route, navigation }) => {
         </View>
         <View style={styles.ccontainer}>
           <View style={styles.eachBox}>
-            <Ionicons name="ios-film-outline" size={30} color="white" />
+            <Ionicons
+              name="ios-film-outline"
+              size={30}
+              color="white"
+              style={{ paddingRight: 20 }}
+            />
             <View style={styles.input}>
-              <Dropdown
-                style={styles.dropdown1}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                itemTextStyle={styles.selecttext}
-                iconStyle={styles.iconStyle}
-                data={shows}
-                search
-                maxHeight={200}
-                labelField="label"
-                valueField="label"
-                placeholder="Select Content"
-                searchPlaceholder="Search..."
-                value={show}
-                onChange={(item) => {
-                  setShow(item.label);
-                  //console.log(item.label);
+              <TextInput
+                style={[
+                  styles.titleDropdown,
+                  { color: selectionChosen ? "purple" : "gray" },
+                ]}
+                placeholder="Enter a movie or show title..."
+                placeholderTextColor="gray"
+                value={
+                  (show ? show : "") +
+                  (selectedYear ? ` (${selectedYear})` : "")
+                }
+                onChangeText={(text) => {
+                  setShow(text);
+                  setSelectedYear("");
+                  setSelectionChosen(false);
                 }}
               />
+              {show && (
+                <Pressable
+                  style={styles.clearButton}
+                  onPress={() => {
+                    setShow("");
+                    setSelectedYear("");
+                    setSelectionChosen(false);
+                    setSuggestions([]);
+                    setVisibleSuggestions(false);
+                  }}
+                >
+                  <MaterialIcons
+                    name="cancel"
+                    size={20}
+                    color={"grey"}
+                    style={styles.clearButton}
+                  />
+                </Pressable>
+              )}
             </View>
           </View>
+          {visibleSuggestions && (
+            <View style={styles.sharedContainer}>
+              {suggestions.length > 0 ? (
+                <FlatList
+                  data={suggestions}
+                  keyExtractor={(item) => item.imdbID}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.suggestionItem}
+                      onPress={() => {
+                        setShow(item.Title);
+                        setSelectedYear(item.Year);
+                        setSuggestions([]);
+                        setVisibleSuggestions(false);
+                        setSelectionChosen(true);
+                      }}
+                    >
+                      <Image
+                        source={
+                          item.Poster !== "N/A"
+                            ? { uri: item.Poster }
+                            : require("../../assets/blankPoster.png")
+                        }
+                        style={styles.posterImage}
+                      />
+                      <View style={styles.suggestionText}>
+                        <Text numberOfLines={1} style={styles.titleText}>
+                          {item.Title}
+                        </Text>
+                        <Text style={{ color: "lightgrey" }}>
+                          ({item.Year})
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  style={{ maxHeight: 200 }}
+                />
+              ) : show !== null && show.trim() !== "" ? (
+                <View style={styles.noSuggestionsContainer}>
+                  <View style={styles.noSuggestionsTextContainer}>
+                    <Text style={styles.noSuggestionsText}>
+                      No movies or TV shows match that title.
+                    </Text>
+                  </View>
+                </View>
+              ) : null}
+            </View>
+          )}
+
           <View style={styles.eachBox}>
             <Ionicons name="ios-people" size={30} color="white" />
             <Pressable onPress={openModal} style={styles.input}>
@@ -385,7 +495,8 @@ const AddEvent = ({ route, navigation }) => {
 
           <View style={styles.space}></View>
         </View>
-      </ScrollView>
+      </View>
+
       <Pressable style={styles.button} onPress={handleAddEvent}>
         <Text style={{ color: "purple", fontSize: 15 }}>Send Invites</Text>
       </Pressable>
@@ -498,7 +609,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     //borderColor: "purple",
-    //borderWidth: 5,
   },
   eachBox1: {
     felx: 1,
@@ -685,6 +795,80 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "white",
     textAlign: "center",
+  },
+  titleTextBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 20,
+    paddingLeft: 15,
+    paddingRight: 5,
+    backgroundColor: "lavender",
+    height: 60,
+    borderRadius: 15,
+    borderWidth: 0.5,
+  },
+  titleDropdown: {
+    flex: 1,
+    color: "purple",
+  },
+  clearButton: {
+    marginLeft: 10,
+    marginRight: 0,
+    padding: 0,
+  },
+  clearButtonText: {
+    color: "darkgray",
+    fontSize: 20,
+  },
+  sharedContainer: {
+    height: 150,
+    marginLeft: 10,
+    width: "90%",
+    gap: 30,
+    justifyContent: "center",
+  },
+  suggestionsContainer: {
+    maxHeight: 200,
+    width: "80%",
+    position: "absolute",
+    top: "100%",
+    zIndex: 10,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  posterImage: {
+    height: 60,
+    width: 35,
+    marginHorizontal: 15,
+    borderWidth: 1,
+    borderColor: "lightgrey",
+  },
+  suggestionItem: {
+    padding: 10,
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    alignItems: "center",
+  },
+  titleText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "white",
+    paddingBottom: 2,
+  },
+  noSuggestionsContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  noSuggestionsTextContainer: {
+    justifyContent: "center",
+    width: windowWidth * 0.5,
+  },
+  noSuggestionsText: {
+    textAlign: "center",
+    fontSize: 20,
+    color: "lightgray",
   },
 });
 

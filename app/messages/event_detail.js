@@ -147,6 +147,58 @@ const EventDetail = ({ route }) => {
     }
   };
 
+  const formatDateAndTime = (date, time) => {
+    const dateTime = new Date(`${date}T${time}`);
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const day = dateTime.getDate();
+    const monthIndex = dateTime.getMonth();
+    const monthName = monthNames[monthIndex];
+
+    const getDaySuffix = (day) => {
+      if (day > 3 && day < 21) return "th";
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    const formattedDate = `${monthName} ${day}${getDaySuffix(day)}`;
+    const formattedTime = dateTime.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    // Return JSX with bold styles for date and time
+    return (
+      <>
+        <Text style={{ fontWeight: "normal" }}>
+          {formattedDate}
+          {" at "}
+          {formattedTime}
+        </Text>
+      </>
+    );
+  };
+
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
       <ScrollView
@@ -155,16 +207,13 @@ const EventDetail = ({ route }) => {
       >
         <View style={styles.overall}>
           <View style={styles.time}>
-            <Text style={styles.date}>
-              {date} @ {time}
-            </Text>
-          </View>
-
-          <View style={styles.time}>
             <Text style={styles.show}>{name}</Text>
           </View>
           <View style={styles.image}>
             <Image source={{ uri: showURL }} style={styles.poster} />
+          </View>
+          <View style={styles.time}>
+            <Text style={styles.date}>{formatDateAndTime(date, time)}</Text>
           </View>
           <View style={styles.peopleContainer}>{renderPeopleCircles()}</View>
           {showAllPeople ? (
@@ -178,12 +227,10 @@ const EventDetail = ({ route }) => {
                 Show less people
               </Text>
             </Pressable>
-          ) : (
-            <View></View>
-          )}
+          ) : null}
           <Pressable style={styles.button} onPress={addToCalendar}>
             <Text style={{ color: "purple", fontSize: 15 }}>
-              Export event to calendar
+              Export event to Calendar
             </Text>
           </Pressable>
         </View>
@@ -234,7 +281,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   image: {
-    height: windowHeight * 0.3,
+    height: windowHeight * 0.35,
     width: windowHeight * 0.22,
     marginBottom: 10,
     padding: 5,
@@ -273,7 +320,8 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     height: 40,
-    width: 200,
+    width: 250,
+    paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 50,

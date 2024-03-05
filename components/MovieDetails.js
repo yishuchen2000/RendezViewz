@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -72,8 +73,15 @@ const MovieDetails = ({ item }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <View style={styles.posterContainer}>
-        <Image source={{ uri: item.Poster }} style={styles.poster} />
+      <View style={styles.posterBackgroundContainer}>
+        <Image
+          source={{ uri: item.Poster }}
+          style={styles.posterBackground}
+          blurRadius={5}
+        />
+        <View style={styles.posterContainer}>
+          <Image source={{ uri: item.Poster }} style={styles.poster} />
+        </View>
       </View>
       <View style={styles.body}>
         <View style={styles.detailsContainer}>
@@ -126,13 +134,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     borderColor: "white",
     marginBottom: 5,
+    textAlign: "center",
   },
   genreContainer: {
     backgroundColor: "#311866",
     borderRadius: 10,
     padding: 5,
-    marginBottom: 13, // Adjust as needed
-    alignSelf: "flex-start",
+    marginBottom: 13,
   },
   subheading: {
     fontSize: 18,
@@ -150,18 +158,32 @@ const styles = StyleSheet.create({
     marginVertical: windowHeight * 0.02,
     gap: 10,
   },
-  poster: {
-    height: windowHeight * 0.48,
+  posterBackgroundContainer: {
+    position: "relative",
     width: windowWidth,
-    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  scrollViewContent: {},
+  posterBackground: {
+    position: "absolute",
+    width: windowWidth,
+    height: windowHeight * 0.5,
+    resizeMode: "cover",
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+  },
   posterContainer: {
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     overflow: "hidden",
+    marginTop: 0, // Adjust as necessary
+  },
+  poster: {
+    height: windowHeight * 0.5,
+    width: windowWidth * 0.9, // Adjust width as necessary to maintain aspect ratio
+    resizeMode: "contain",
   },
   peopleContainer: {
     borderRadius: 30,
@@ -194,6 +216,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 2,
     marginBottom: 10,
+  },
+  detailsContainer: {
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "center",
   },
   genreBox: {
     flexDirection: "row",

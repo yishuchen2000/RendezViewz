@@ -85,13 +85,11 @@ export default function Rankings() {
     }
   }, [entry, rankValue, data]);
 
-  // get top 5 matches to textInput
+  // get top 10 matches to textInput
   const fetchSuggestions = useCallback(
     debounce(async (query) => {
       if (query) {
         const results = await searchByTitle(query.trim());
-        console.log("Running again...");
-        console.log(results);
         setSuggestions(results);
         setVisibleSuggestions(true); //show suggestions when user stops typing
       }

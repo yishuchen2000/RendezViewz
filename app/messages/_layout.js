@@ -35,7 +35,7 @@ export default function MessagesLayout() {
         name="event_detail" //song detail page
         component={EventDetail}
         options={{
-          title: "Event details",
+          title: "Event Details",
           headerStyle: {
             backgroundColor: "#361866", // Set the background color of the header
           },
@@ -49,7 +49,7 @@ export default function MessagesLayout() {
         name="add_event" //song detail page
         component={AddEvent}
         options={{
-          title: "Schedule new watch party!",
+          title: "Schedule a new Watch Party!",
           headerStyle: {
             backgroundColor: "#361866", // Set the background color of the header
           },
