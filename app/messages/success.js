@@ -19,7 +19,7 @@ import * as Calendar from "expo-calendar"; // Importing calendar module
 import * as Localization from "expo-localization";
 
 const Success = ({ navigation, route }) => {
-  const { date, name, time, people, all } = route.params;
+  const { date, name, time, people, all, poster } = route.params;
   const photoMap = {};
   all.forEach((person) => {
     if (person.label && person.photo) {
@@ -127,6 +127,56 @@ const Success = ({ navigation, route }) => {
     }
   };
 
+  const formatDateAndTime = (date, time) => {
+    const dateTime = new Date(`${date}T${time}`);
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const day = dateTime.getDate();
+    const monthIndex = dateTime.getMonth();
+    const monthName = monthNames[monthIndex];
+
+    const getDaySuffix = (day) => {
+      if (day > 3 && day < 21) return "th";
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    const formattedDate = `${monthName} ${day}${getDaySuffix(day)}`;
+    const formattedTime = dateTime.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return (
+      <>
+        <Text style={{ fontWeight: "normal" }}>
+          {formattedDate}
+          {" at "}
+          {formattedTime}
+        </Text>
+      </>
+    );
+  };
+
   return (
     <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
       <ScrollView
@@ -144,34 +194,28 @@ const Success = ({ navigation, route }) => {
           >
             Congrats! Event scheduled:
           </Text>
-
-          <MaterialCommunityIcons
-            name="movie-filter"
-            size={150}
-            color="white"
-            marginTop={10}
-            marginBottom={10}
-          />
           <Text
             style={{
               color: "white",
-              fontSize: 20,
-              textAlign: "center",
-              marginBottom: 10,
-              fontWeight: "bold",
-            }}
-          >
-            {date} @ {time}
-          </Text>
-          <Text
-            style={{
-              color: "white",
-              fontSize: 20,
+              fontSize: 28,
+              marginTop: 20,
+              marginBottom: 20,
               textAlign: "center",
               fontWeight: "bold",
             }}
           >
             {name}
+          </Text>
+          <Image source={{ uri: poster }} style={styles.poster} />
+          <Text
+            style={{
+              color: "white",
+              fontSize: 24,
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            {formatDateAndTime(date, time)}
           </Text>
           <View style={styles.peopleContainer}>{renderPeopleCircles()}</View>
           {showAllPeople ? (
@@ -185,9 +229,7 @@ const Success = ({ navigation, route }) => {
                 Show less people
               </Text>
             </Pressable>
-          ) : (
-            <View></View>
-          )}
+          ) : null}
           <Pressable
             style={styles.button}
             onPress={addToCalendar} // Call function on button press
@@ -231,10 +273,16 @@ const styles = StyleSheet.create({
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     //flexWrap: "wrap",
   },
+  poster: {
+    height: windowHeight * 0.35,
+    width: windowHeight * 0.22,
+    marginBottom: 10,
+    padding: 5,
+  },
   button: {
-    marginTop: 50,
+    marginTop: 20,
     height: 40,
-    width: 200,
+    width: 225,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 50,
@@ -246,6 +294,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 10,
+    marginBottom: 10,
     flexWrap: "wrap", // This line makes the content wrap within the container
   },
   personCircle: {

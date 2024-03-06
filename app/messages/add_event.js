@@ -32,6 +32,7 @@ import MultiSelect from "react-native-multiple-select";
 //import DropDownPicker from "react-native-dropdown-listpicker";
 import { MultipleSelectList } from "react-native-dropdown-select-list";
 import CustomModal from "./custommodal";
+import getMovieDetails from "../../components/getMovieDetails";
 import searchByTitle from "../../components/searchByTitle";
 
 import dayjs from "dayjs";
@@ -51,6 +52,7 @@ const shows = [
 
 const AddEvent = ({ route, navigation }) => {
   const [show, setShow] = useState(null);
+  const [poster, setPoster] = useState(null);
   const [person, setPerson] = useState([]);
 
   //const [items, setItems] = useState(initialItems);
@@ -210,6 +212,7 @@ const AddEvent = ({ route, navigation }) => {
         people: person,
         time: time,
         all: Plist,
+        poster: poster,
       });
     } catch (error) {
       Alert.alert("Error", `Failed to add event: ${error.message}`);
@@ -248,6 +251,15 @@ const AddEvent = ({ route, navigation }) => {
       return null; // Return null if the person is not found
     });
   };
+
+  useEffect(() => {
+    const showPoster = async () => {
+      const movieDetails = await getMovieDetails(show);
+      posterPic = movieDetails.Poster;
+      setPoster(posterPic);
+    };
+    showPoster();
+  }, [selectionChosen]);
 
   const fetchSuggestions = useCallback(
     debounce(async (query) => {
