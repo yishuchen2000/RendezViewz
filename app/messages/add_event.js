@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   StyleSheet,
   View,
@@ -15,52 +15,52 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   ScrollView,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { debounce } from "lodash";
-import { initialItems } from "./eventdata";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+} from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
+import {debounce} from 'lodash';
+import {initialItems} from './eventdata';
+import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 //import { MultiSelect } from "react-native-element-dropdown";
-import { Dropdown } from "react-native-element-dropdown";
-import { Entypo } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import {Dropdown} from 'react-native-element-dropdown';
+import {Entypo} from '@expo/vector-icons';
+import {FontAwesome} from '@expo/vector-icons';
+import {FontAwesome5} from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 //import DateTimePicker from "@react-native-community/datetimepicker";
-import DatePicker from "react-native-modern-datepicker";
-import MultiSelect from "react-native-multiple-select";
+import DatePicker from 'react-native-modern-datepicker';
+import MultiSelect from 'react-native-multiple-select';
 //import DropDownPicker from "react-native-dropdown-listpicker";
-import { MultipleSelectList } from "react-native-dropdown-select-list";
-import CustomModal from "./custommodal";
-import getMovieDetails from "../../components/getMovieDetails";
-import searchByTitle from "../../components/searchByTitle";
+import {MultipleSelectList} from 'react-native-dropdown-select-list';
+import CustomModal from './custommodal';
+import getMovieDetails from '../../components/getMovieDetails';
+import searchByTitle from '../../components/searchByTitle';
 
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const shows = [
-  { label: "Alice in Wonderland", value: "1" },
-  { label: "Barbie", value: "2" },
-  { label: "Bees", value: "3" },
-  { label: "The Godfather", value: "4" },
-  { label: "The Notebook", value: "5" },
-  { label: "The Shining", value: "6" },
-  { label: "Titanic", value: "7" },
+  {label: 'Alice in Wonderland', value: '1'},
+  {label: 'Barbie', value: '2'},
+  {label: 'Bees', value: '3'},
+  {label: 'The Godfather', value: '4'},
+  {label: 'The Notebook', value: '5'},
+  {label: 'The Shining', value: '6'},
+  {label: 'Titanic', value: '7'},
 ];
 
-const AddEvent = ({ route, navigation }) => {
+const AddEvent = ({route, navigation}) => {
   const [show, setShow] = useState(null);
   const [poster, setPoster] = useState(null);
   const [person, setPerson] = useState([]);
 
   //const [items, setItems] = useState(initialItems);
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
   //const [mode, setMode] = useState("date");
   const [showPicker, setShowPicker] = useState(false);
-  const [time, setTime] = useState(dayjs().format("HH:mm"));
+  const [time, setTime] = useState(dayjs().format('HH:mm'));
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const [pickeddate, setpickeddate] = useState(true);
@@ -75,17 +75,17 @@ const AddEvent = ({ route, navigation }) => {
   //for movie or show selection
   const [suggestions, setSuggestions] = useState([]);
   const [visibleSuggestions, setVisibleSuggestions] = useState(false);
-  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedYear, setSelectedYear] = useState('');
   const [selectionChosen, setSelectionChosen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await supabase.from("friends").select("*");
+        const response = await supabase.from('friends').select('*');
         if (response.error) {
           throw new Error(response.error.message);
         }
-        const peopleData = response.data.map((person) => ({
+        const peopleData = response.data.map(person => ({
           label: person.user,
           value: person.id.toString(), // Assuming you want to use the person's ID as the value
           photo: person.profile_pic,
@@ -94,7 +94,7 @@ const AddEvent = ({ route, navigation }) => {
         //console.log(peopleData);
         //setPeople(peopleData); // Update the people array with the fetched data
       } catch (error) {
-        console.error("Error fetching people:", error.message);
+        console.error('Error fetching people:', error.message);
       }
     };
     fetchData();
@@ -102,8 +102,8 @@ const AddEvent = ({ route, navigation }) => {
 
   useEffect(() => {
     // Set the initial date state to today's date when the component mounts
-    setDate(dayjs().format("YYYY-MM-DD"));
-    setTime(dayjs().format("HH:mm"));
+    setDate(dayjs().format('YYYY-MM-DD'));
+    setTime(dayjs().format('HH:mm'));
   }, []);
   //Date
 
@@ -114,7 +114,7 @@ const AddEvent = ({ route, navigation }) => {
   }
   function handleChange(selectedDate) {
     // Set date to pressed date
-    setDate(dayjs(selectedDate).format("YYYY-MM-DD"));
+    setDate(dayjs(selectedDate).format('YYYY-MM-DD'));
     //console.log(selectedDate);
   }
   function handleChange1(date) {
@@ -143,11 +143,11 @@ const AddEvent = ({ route, navigation }) => {
     setModalon(!modalon);
   }
 
-  const handleSelectedPeople = (selectedPeople) => {
+  const handleSelectedPeople = selectedPeople => {
     // Extracting only the labels from the Plist array based on the selected values
-    const personLabels = Plist.filter((person) =>
-      selectedPeople.includes(person.value)
-    ).map((person) => person.label);
+    const personLabels = Plist.filter(person =>
+      selectedPeople.includes(person.value),
+    ).map(person => person.label);
     // Setting the person state with the extracted labels
     setPerson(personLabels);
     //console.log("main doc set people:", personLabels);
@@ -156,32 +156,32 @@ const AddEvent = ({ route, navigation }) => {
   const handleAddEvent = async () => {
     if (pickeddate) {
       // Show an alert for missing date
-      Alert.alert("Error", "Please select a date before sending the invite.");
+      Alert.alert('Error', 'Please select a date before sending the invite.');
       return;
     }
     if (pickedtime) {
       // Show an alert for missing time
-      Alert.alert("Error", "Please select a time before sending the invite.");
+      Alert.alert('Error', 'Please select a time before sending the invite.');
       return;
     }
     if (!show) {
       // Show an alert for missing show
-      Alert.alert("Error", "Please select a show before sending the invite.");
+      Alert.alert('Error', 'Please select a show before sending the invite.');
       return;
     }
     if (person.length === 0) {
       // Show an alert for missing people
-      Alert.alert("Error", "Please select people before sending the invite.");
+      Alert.alert('Error', 'Please select people before sending the invite.');
       return;
     }
 
     try {
       // Check if an event with the same date and show already exists
-      const { data, error } = await supabase
-        .from("party")
+      const {data, error} = await supabase
+        .from('party')
         .select()
-        .eq("date", date)
-        .eq("show", show);
+        .eq('date', date)
+        .eq('show', show);
 
       if (error) {
         throw new Error(error.message);
@@ -190,23 +190,23 @@ const AddEvent = ({ route, navigation }) => {
       // If a row with the same date and show exists, raise an error
       if (data && data.length > 0) {
         Alert.alert(
-          "Error",
-          "An event with the same date and show already exists."
+          'Error',
+          'An event with the same date and show already exists.',
         );
         return; // Prevent navigation if event already exists
       }
 
       // If the entry doesn't exist, proceed with the insertion
-      const { insertError } = await supabase
-        .from("party")
-        .insert([{ date: date, people: person, show: show, time: time }]);
+      const {insertError} = await supabase
+        .from('party')
+        .insert([{date: date, people: person, show: show, time: time}]);
 
       if (insertError) {
         throw new Error(insertError.message);
       }
 
       // Show success message to the user
-      navigation.navigate("success", {
+      navigation.navigate('success', {
         date: date,
         name: show,
         people: person,
@@ -215,7 +215,7 @@ const AddEvent = ({ route, navigation }) => {
         poster: poster,
       });
     } catch (error) {
-      Alert.alert("Error", `Failed to add event: ${error.message}`);
+      Alert.alert('Error', `Failed to add event: ${error.message}`);
     }
   };
 
@@ -232,15 +232,15 @@ const AddEvent = ({ route, navigation }) => {
   const renderPeopleCircles = () => {
     return person.map((personName, index) => {
       // Find the corresponding person object in the Plist array
-      const selectedPerson = Plist.find((item) => item.label === personName);
+      const selectedPerson = Plist.find(item => item.label === personName);
       // Check if the person is found
       if (selectedPerson) {
         const photoUri = selectedPerson.photo;
         return (
           <View key={index} style={styles.personCircle}>
             <Image
-              source={{ uri: photoUri }}
-              style={{ width: 45, height: 45, borderRadius: 22.5 }}
+              source={{uri: photoUri}}
+              style={{width: 45, height: 45, borderRadius: 22.5}}
             />
             <Text numberOfLines={1} style={styles.circletext}>
               {personName}
@@ -262,14 +262,14 @@ const AddEvent = ({ route, navigation }) => {
   }, [selectionChosen]);
 
   const fetchSuggestions = useCallback(
-    debounce(async (query) => {
+    debounce(async query => {
       if (query) {
         const results = await searchByTitle(query.trim());
         setSuggestions(results);
         setVisibleSuggestions(true); //show suggestions when user stops typing
       }
     }, 1000),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -289,14 +289,14 @@ const AddEvent = ({ route, navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={['#0e0111', '#311866']} style={styles.container}>
       <View style={styles.scrollView}>
         <View style={styles.top}>
           <View style={styles.wicon}>
             <FontAwesome name="calendar-o" size={27} color="white" />
             <Pressable onPress={handleOnPressOpen} style={styles.datepick}>
               <Text style={pickeddate ? styles.placeholder : styles.hooray}>
-                {pickeddate ? "Select Date" : text}
+                {pickeddate ? 'Select Date' : text}
               </Text>
             </Pressable>
             <CustomModal
@@ -310,10 +310,9 @@ const AddEvent = ({ route, navigation }) => {
             <FontAwesome5 name="clock" size={27} color="white" />
             <Pressable
               onPress={handleTimePickerPressOpen}
-              style={styles.datepick}
-            >
+              style={styles.datepick}>
               <Text style={pickedtime ? styles.placeholder : styles.hooray}>
-                {pickedtime ? "Select Time" : textT}
+                {pickedtime ? 'Select Time' : textT}
               </Text>
             </Pressable>
           </View>
@@ -324,17 +323,16 @@ const AddEvent = ({ route, navigation }) => {
                 <View
                   //activeOpacity={1}
                   //onPress={closeModal}
-                  style={styles.blur}
-                >
+                  style={styles.blur}>
                   <View style={styles.modalView}>
                     <DatePicker
                       options={{
-                        backgroundColor: "white",
-                        textHeaderColor: "purple",
-                        textDefaultColor: "rgba(230, 70, 150, 1)",
-                        selectedTextColor: "white",
-                        mainColor: "purple",
-                        textSecondaryColor: "purple",
+                        backgroundColor: 'white',
+                        textHeaderColor: 'purple',
+                        textDefaultColor: 'rgba(230, 70, 150, 1)',
+                        selectedTextColor: 'white',
+                        mainColor: 'purple',
+                        textSecondaryColor: 'purple',
                       }}
                       testID="dateTimePicker"
                       value={date}
@@ -344,11 +342,10 @@ const AddEvent = ({ route, navigation }) => {
                     />
                     <View
                       style={{
-                        backgroundColor: "purple",
+                        backgroundColor: 'purple',
                         borderRadius: 10,
                         marginBottom: 10,
-                      }}
-                    >
+                      }}>
                       {/* Call handleDateSelect when the "Select" button is pressed */}
                       <Button
                         title="Select"
@@ -364,24 +361,22 @@ const AddEvent = ({ route, navigation }) => {
           <Modal
             animationType="none"
             transparent={true}
-            visible={showTimePicker}
-          >
+            visible={showTimePicker}>
             <View style={styles.centeredView}>
               {modalon && (
                 <View
                   //activeOpacity={1}
                   //onPress={closeModal}
-                  style={styles.blur}
-                >
+                  style={styles.blur}>
                   <View style={styles.modalView}>
                     <DatePicker
                       options={{
-                        backgroundColor: "white",
-                        textHeaderColor: "purple",
-                        textDefaultColor: "rgba(230, 70, 150, 1)",
-                        selectedTextColor: "white",
-                        mainColor: "purple",
-                        textSecondaryColor: "purple",
+                        backgroundColor: 'white',
+                        textHeaderColor: 'purple',
+                        textDefaultColor: 'rgba(230, 70, 150, 1)',
+                        selectedTextColor: 'white',
+                        mainColor: 'purple',
+                        textSecondaryColor: 'purple',
                       }}
                       mode="time"
                       onTimeChange={handleTimeChange}
@@ -398,23 +393,23 @@ const AddEvent = ({ route, navigation }) => {
               name="ios-film-outline"
               size={30}
               color="white"
-              style={{ paddingRight: 20 }}
+              style={{paddingRight: 20}}
             />
             <View style={styles.input}>
               <TextInput
                 style={[
                   styles.titleDropdown,
-                  { color: selectionChosen ? "purple" : "gray" },
+                  {color: selectionChosen ? 'purple' : 'gray'},
                 ]}
                 placeholder="Enter a movie or show title..."
                 placeholderTextColor="gray"
                 value={
-                  (show ? show : "") +
-                  (selectedYear ? ` (${selectedYear})` : "")
+                  (show ? show : '') +
+                  (selectedYear ? ` (${selectedYear})` : '')
                 }
-                onChangeText={(text) => {
+                onChangeText={text => {
                   setShow(text);
-                  setSelectedYear("");
+                  setSelectedYear('');
                   setSelectionChosen(false);
                 }}
               />
@@ -422,17 +417,16 @@ const AddEvent = ({ route, navigation }) => {
                 <Pressable
                   style={styles.clearButton}
                   onPress={() => {
-                    setShow("");
-                    setSelectedYear("");
+                    setShow('');
+                    setSelectedYear('');
                     setSelectionChosen(false);
                     setSuggestions([]);
                     setVisibleSuggestions(false);
-                  }}
-                >
+                  }}>
                   <MaterialIcons
                     name="cancel"
                     size={20}
-                    color={"grey"}
+                    color={'grey'}
                     style={styles.clearButton}
                   />
                 </Pressable>
@@ -444,8 +438,8 @@ const AddEvent = ({ route, navigation }) => {
               {suggestions.length > 0 ? (
                 <FlatList
                   data={suggestions}
-                  keyExtractor={(item) => item.imdbID}
-                  renderItem={({ item }) => (
+                  keyExtractor={item => item.imdbID}
+                  renderItem={({item}) => (
                     <TouchableOpacity
                       style={styles.suggestionItem}
                       onPress={() => {
@@ -454,13 +448,12 @@ const AddEvent = ({ route, navigation }) => {
                         setSuggestions([]);
                         setVisibleSuggestions(false);
                         setSelectionChosen(true);
-                      }}
-                    >
+                      }}>
                       <Image
                         source={
-                          item.Poster !== "N/A"
-                            ? { uri: item.Poster }
-                            : require("../../assets/blankPoster.png")
+                          item.Poster !== 'N/A'
+                            ? {uri: item.Poster}
+                            : require('../../assets/blankPoster.png')
                         }
                         style={styles.posterImage}
                       />
@@ -468,15 +461,13 @@ const AddEvent = ({ route, navigation }) => {
                         <Text numberOfLines={1} style={styles.titleText}>
                           {item.Title}
                         </Text>
-                        <Text style={{ color: "lightgrey" }}>
-                          ({item.Year})
-                        </Text>
+                        <Text style={{color: 'lightgrey'}}>({item.Year})</Text>
                       </View>
                     </TouchableOpacity>
                   )}
-                  style={{ maxHeight: 200 }}
+                  style={{maxHeight: 200}}
                 />
-              ) : show !== null && show.trim() !== "" ? (
+              ) : show !== null && show.trim() !== '' ? (
                 <View style={styles.noSuggestionsContainer}>
                   <View style={styles.noSuggestionsTextContainer}>
                     <Text style={styles.noSuggestionsText}>
@@ -493,11 +484,10 @@ const AddEvent = ({ route, navigation }) => {
             <Pressable onPress={openModal} style={styles.input}>
               <View style={styles.input1}>
                 <Text
-                  style={[styles.replaceText, { fontSize: 17, color: "grey" }]}
-                >
+                  style={[styles.replaceText, {fontSize: 17, color: 'grey'}]}>
                   {person.length > 0
-                    ? "Click here to edit people list"
-                    : "Select people"}
+                    ? 'Click here to edit people list'
+                    : 'Select people'}
                 </Text>
               </View>
             </Pressable>
@@ -510,15 +500,15 @@ const AddEvent = ({ route, navigation }) => {
       </View>
 
       <Pressable style={styles.button} onPress={handleAddEvent}>
-        <Text style={{ color: "purple", fontSize: 15 }}>Send Invites</Text>
+        <Text style={{color: 'purple', fontSize: 15}}>Send Invites</Text>
       </Pressable>
       <View style={styles.clapboard}>
         <Image
-          source={require("../../assets/Clapboard2.png")}
+          source={require('../../assets/Clapboard2.png')}
           style={{
             flex: 1,
             width: windowWidth,
-            resizeMode: "stretch",
+            resizeMode: 'stretch',
           }}
         />
       </View>
@@ -529,7 +519,7 @@ const AddEvent = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    height: "90%",
+    height: '90%',
     //alignItems: "center",
     //borderWidth: 5,
     //borderColor: "red",
@@ -539,86 +529,86 @@ const styles = StyleSheet.create({
   },
   bottom: {
     height: 300,
-    justifyContent: "end",
+    justifyContent: 'end',
     //borderWidth: 5,
     //borderColor: "green",
   },
 
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "start",
+    alignItems: 'center',
+    justifyContent: 'start',
     //padding: 24,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   ccontainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "start",
+    alignItems: 'center',
+    justifyContent: 'start',
     //padding: 24,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   clapboard: {
     height: windowHeight * 0.03,
     width: windowWidth,
-    position: "absolute",
+    position: 'absolute',
     bottom: windowHeight * 0,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   item: {
     padding: 17,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   input: {
-    width: "80%",
+    width: '80%',
     height: 35,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 10,
     margin: 10,
     paddingHorizontal: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     //borderColor: "blue",
     //borderWidth: 5,
   },
   input1: {
     width: windowWidth * 0.7,
     height: 30,
-    flexDirection: "column",
-    justifyContent: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
     //paddingBottom: 30,
     //alignItems: "center",
     //borderRadius: 15,
     //margin: 10,
     paddingHorizontal: 10,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     //borderColor: "green",
     //borderWidth: 5,
   },
   button: {
-    alignSelf: "center",
-    position: "absolute",
-    backgroundColor: "white",
+    alignSelf: 'center',
+    position: 'absolute',
+    backgroundColor: 'white',
     width: 200,
     padding: 10,
     borderRadius: 50,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 10,
     bottom: windowHeight * 0.05,
     //right: 20,
   },
   selecttext: {
-    color: "purple",
+    color: 'purple',
   },
   eachBox: {
     height: windowHeight * 0.05,
     width: windowWidth * 0.85,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     margin: 5,
     //borderColor: "purple",
   },
@@ -627,32 +617,32 @@ const styles = StyleSheet.create({
     padding: 5,
     width: windowWidth * 0.88,
     height: windowHeight * 0.41,
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderRadius: 20,
     marginBottom: 5,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     //borderColor: "red",
     //borderWidth: 5,
   },
   dropdown: {
-    color: "purple",
+    color: 'purple',
     height: 50,
     width: windowWidth * 0.7,
     borderRadius: 50,
   },
   blur: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust the alpha value for the darkness
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the alpha value for the darkness
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   dropdown1: {
-    color: "purple",
+    color: 'purple',
     //height: windowHeight * 0.3,
     width: windowWidth * 0.65,
     borderRadius: 50,
@@ -660,7 +650,7 @@ const styles = StyleSheet.create({
     //borderWidth: 5,
   },
   dropdown2: {
-    color: "purple",
+    color: 'purple',
     height: 30,
     width: windowWidth * 0.65,
     //borderRadius: 50,
@@ -673,24 +663,24 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 16,
     marginLeft: 10,
-    color: "gray",
+    color: 'gray',
   },
   selectedTextStyle: {
     fontSize: 16,
-    color: "purple",
+    color: 'purple',
   },
   iconStyle: {
     width: 10,
     aspectRatio: 1,
   },
   selectedStyle: {
-    flexDirection: "column",
+    flexDirection: 'column',
     height: 100,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 14,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
-    shadowColor: "#000",
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    shadowColor: '#000',
     //activeColor: "red",
     marginTop: 8,
     marginRight: 7,
@@ -705,78 +695,78 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   textSelectedStyle: {
-    color: "purple",
+    color: 'purple',
     marginRight: 5,
     fontSize: 13,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
-    color: "black",
+    color: 'black',
   },
   placeholderStyle: {
     fontSize: 16,
-    color: "gray",
+    color: 'gray',
   },
   placeholderStyle2: {
     fontSize: 16,
     //alignSelf: "flex-start",
-    color: "gray",
+    color: 'gray',
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   top: {
     height: windowHeight * 0.075,
     width: windowWidth * 0.85,
     paddingRight: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     margin: 5,
     //borderWidth: 5,
     //borderColor: "blue",
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   modalView: {
     margin: 10,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
-    width: "90%",
+    width: '90%',
     padding: 35,
-    alignItems: "center",
+    alignItems: 'center',
   },
   datepick: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    height: "100%",
-    width: "75%",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    height: '100%',
+    width: '75%',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 10,
     marginLeft: 10,
     height: windowHeight * 0.043,
   },
   wicon: {
     //margin: 5,
-    width: "45%",
-    height: "100%",
+    width: '45%',
+    height: '100%',
 
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
     //borderWidth: 5,
     //borderColor: "purple",
   },
   placeholder: {
-    color: "grey",
+    color: 'grey',
   },
   hooray: {
-    color: "purple",
+    color: 'purple',
   },
   photo: {
     //borderWidth: 5,
@@ -785,43 +775,43 @@ const styles = StyleSheet.create({
     height: 50,
   },
   peopleContainer: {
-    width: "90%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "start",
+    width: '90%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'start',
     paddingLeft: 25,
     margin: 10,
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
     //borderWidth: 5,
     //borderColor: "purple",
   },
   personCircle: {
     margin: 5,
     height: 60,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     aspectRatio: 1,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   circletext: {
     fontSize: 15,
-    color: "white",
-    textAlign: "center",
+    color: 'white',
+    textAlign: 'center',
   },
   titleTextBar: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 20,
     paddingLeft: 15,
     paddingRight: 5,
-    backgroundColor: "lavender",
+    backgroundColor: 'lavender',
     height: 60,
     borderRadius: 15,
     borderWidth: 0.5,
   },
   titleDropdown: {
     flex: 1,
-    color: "purple",
+    color: 'purple',
   },
   clearButton: {
     marginLeft: 10,
@@ -829,58 +819,58 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   clearButtonText: {
-    color: "darkgray",
+    color: 'darkgray',
     fontSize: 20,
   },
   sharedContainer: {
     height: 150,
     marginLeft: 10,
-    width: "90%",
+    width: '90%',
     gap: 30,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   suggestionsContainer: {
     maxHeight: 200,
-    width: "80%",
-    position: "absolute",
-    top: "100%",
+    width: '80%',
+    position: 'absolute',
+    top: '100%',
     zIndex: 10,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
   },
   posterImage: {
     height: 60,
     width: 35,
     marginHorizontal: 15,
     borderWidth: 1,
-    borderColor: "lightgrey",
+    borderColor: 'lightgrey',
   },
   suggestionItem: {
     padding: 10,
-    flexDirection: "row",
+    flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    alignItems: "center",
+    borderBottomColor: '#eee',
+    alignItems: 'center',
   },
   titleText: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
     paddingBottom: 2,
   },
   noSuggestionsContainer: {
-    width: "100%",
-    alignItems: "center",
+    width: '100%',
+    alignItems: 'center',
   },
   noSuggestionsTextContainer: {
-    justifyContent: "center",
+    justifyContent: 'center',
     width: windowWidth * 0.5,
   },
   noSuggestionsText: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 20,
-    color: "lightgray",
+    color: 'lightgray',
   },
 });
 

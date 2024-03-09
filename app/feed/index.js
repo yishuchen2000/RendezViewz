@@ -1,20 +1,20 @@
-import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
-import { useState, useEffect } from "react";
-import supabase from "../../Supabase";
-import { LinearGradient } from "expo-linear-gradient";
-import Post from "../../components/Post";
-import { FontAwesome, Entypo } from "@expo/vector-icons";
+import {View, StyleSheet, Image, FlatList, Dimensions} from 'react-native';
+import {useState, useEffect} from 'react';
+import supabase from '../../Supabase';
+import {LinearGradient} from 'expo-linear-gradient';
+import Post from '../../components/Post';
+import {FontAwesome, Entypo} from '@expo/vector-icons';
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function Page() {
   const [data, setData] = useState(null);
   // const [input, setInput] = useState("");
 
-  const handleRecordUpdated = (payload) => {
-    setData((oldData) => {
-      return oldData.map((item) => {
+  const handleRecordUpdated = payload => {
+    setData(oldData => {
+      return oldData.map(item => {
         if (item.id === payload.new.id) {
           return payload.new;
         }
@@ -23,31 +23,31 @@ export default function Page() {
     });
   };
 
-  const handleRecordInserted = (payload) => {
-    setData((oldData) => [...oldData, payload.new]);
+  const handleRecordInserted = payload => {
+    setData(oldData => [...oldData, payload.new]);
   };
 
-  const handleRecordDeleted = (payload) => {
-    setData((oldData) => oldData.filter((item) => item.id !== payload.old.id));
+  const handleRecordDeleted = payload => {
+    setData(oldData => oldData.filter(item => item.id !== payload.old.id));
   };
 
   useEffect(() => {
     supabase
-      .channel("schema-db-changes")
+      .channel('schema-db-changes')
       .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "posts" },
-        handleRecordUpdated
+        'postgres_changes',
+        {event: 'UPDATE', schema: 'public', table: 'posts'},
+        handleRecordUpdated,
       )
       .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "posts" },
-        handleRecordInserted
+        'postgres_changes',
+        {event: 'INSERT', schema: 'public', table: 'posts'},
+        handleRecordInserted,
       )
       .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "posts" },
-        handleRecordDeleted
+        'postgres_changes',
+        {event: 'DELETE', schema: 'public', table: 'posts'},
+        handleRecordDeleted,
       )
       .subscribe();
   }, []);
@@ -55,9 +55,9 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await supabase
-        .from("posts")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('posts')
+        .select('*')
+        .order('created_at', {ascending: false});
       setData(response.data);
     };
     fetchData();
@@ -74,21 +74,18 @@ export default function Page() {
   if (!data) {
     return (
       <LinearGradient
-        colors={["#361866", "#E29292"]}
-        style={[styles.container, { paddingHorizontal: 8 }]}
-      >
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
+        colors={['#0e0111', '#311866']}
+        style={[styles.container, {paddingHorizontal: 8}]}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator size="large" color="purple" />
-          <Text style={{ color: "white" }}>Loading...</Text>
+          <Text style={{color: 'white'}}>Loading...</Text>
         </View>
       </LinearGradient>
     );
   }
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={['#0e0111', '#311866']} style={styles.container}>
       {/* <View style={styles.composer}>
         <TextInput
           style={styles.input}
@@ -106,7 +103,7 @@ export default function Page() {
         <FlatList
           data={data}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <Post
               id={item.id}
               user={item.user}
@@ -118,21 +115,21 @@ export default function Page() {
               action={item.action}
               comments={item.comments}
               title={item.movie_title}
-              goesTo={"ShowDetails"}
+              goesTo={'ShowDetails'}
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           style={styles.posts}
-          contentContainerStyle={{ paddingTop: 10 }}
+          contentContainerStyle={{paddingTop: 10}}
         />
       </View>
       <View style={styles.clapboard}>
         <Image
-          source={require("../../assets/Clapboard2.png")}
+          source={require('../../assets/Clapboard2.png')}
           style={{
             flex: 1,
             width: windowWidth,
-            resizeMode: "stretch",
+            resizeMode: 'stretch',
           }}
         />
       </View>
@@ -143,9 +140,9 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    backgroundColor: "transparent",
-    backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    backgroundImage: 'linear-gradient(to bottom,  #0e0111, #311866)',
     paddingRight: 8,
     paddingLeft: 8,
   },
@@ -154,31 +151,42 @@ const styles = StyleSheet.create({
     flex: 8,
   },
   composer: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    width: "100%",
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    width: '100%',
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 8,
-    borderColor: "green",
+    borderColor: 'green',
     borderWidth: 5,
   },
 
   clapboard: {
     height: windowHeight * 0.03,
     width: windowWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
-
+  subText: {
+    fontSize: 12,
+    color: 'white',
+    textTransform: 'uppercase',
+    fontWeight: '500',
+  },
+  recent: {
+    marginLeft: 12,
+    marginTop: 5,
+    marginBottom: 6,
+    fontSize: 18,
+  },
   input: {
     flex: 1,
     height: 30,
     paddingHorizontal: 8,
-    backgroundColor: "rgba(173, 216, 230, 0.5)",
+    backgroundColor: 'rgba(173, 216, 230, 0.5)',
     borderRadius: 999,
   },
   send: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
