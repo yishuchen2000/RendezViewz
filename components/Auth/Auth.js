@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 import {
   Alert,
   View,
@@ -6,24 +6,25 @@ import {
   AppState,
   SafeAreaView,
   Dimensions,
+  Text,
   TouchableHighlight,
-} from 'react-native';
-import supabase from '../../Supabase';
-import {Button, Input} from 'react-native-elements';
-import {useNavigation} from '@react-navigation/native';
-import AuthSignUp from './AuthSignUp';
-import Account from '../Account';
-import {LinearGradient} from 'expo-linear-gradient';
+} from "react-native";
+import supabase from "../../Supabase";
+import { Button, Input } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
+import AuthSignUp from "./AuthSignUp";
+import Account from "../Account";
+import { LinearGradient } from "expo-linear-gradient";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
 // `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
 // if the user's session is terminated. This should only be registered once.
-AppState.addEventListener('change', state => {
-  if (state === 'active') {
+AppState.addEventListener("change", (state) => {
+  if (state === "active") {
     supabase.auth.startAutoRefresh();
   } else {
     supabase.auth.stopAutoRefresh();
@@ -32,14 +33,14 @@ AppState.addEventListener('change', state => {
 
 export default function Auth() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [firstTime, setFirstTime] = useState(false);
 
   async function signInWithEmail() {
     setLoading(true);
-    const {error} = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
@@ -52,7 +53,7 @@ export default function Auth() {
     setLoading(true);
     // setFirstTime(true);
     const {
-      data: {session},
+      data: { session },
       error,
     } = await supabase.auth.signUp({
       email: email,
@@ -73,43 +74,45 @@ export default function Auth() {
 
   return (
     <LinearGradient
-      colors={['#0e0111', '#311866']}
-      style={[styles.background, {paddingHorizontal: windowWidth * 0.1}]}>
+      colors={["#0e0111", "#311866"]}
+      style={[styles.background, { paddingHorizontal: windowWidth * 0.1 }]}
+    >
       <Text style={styles.helloText}>Hello!</Text>
       <View
-        style={[styles.bottomSlideContainer, styles.bottomSlideVisible]}></View>
+        style={[styles.bottomSlideContainer, styles.bottomSlideVisible]}
+      ></View>
       <SafeAreaView style={styles.container}>
         <View style={[styles.verticallySpaced, styles.mt20]}>
           <Input
             label="Email"
             leftIcon={{
-              type: 'font-awesome',
-              name: 'envelope',
-              color: 'white',
+              type: "font-awesome",
+              name: "envelope",
+              color: "white",
             }}
-            labelStyle={{color: 'white'}}
-            inputStyle={{color: 'white'}}
-            onChangeText={text => setEmail(text)}
+            labelStyle={{ color: "white" }}
+            inputStyle={{ color: "white" }}
+            onChangeText={(text) => setEmail(text)}
             value={email}
             placeholder="email@address.com"
-            autoCapitalize={'none'}
+            autoCapitalize={"none"}
           />
         </View>
         <View style={styles.verticallySpaced}>
           <Input
             label="Password"
             leftIcon={{
-              type: 'font-awesome',
-              name: 'lock',
-              color: 'white',
+              type: "font-awesome",
+              name: "lock",
+              color: "white",
             }}
-            labelStyle={{color: 'white'}}
-            inputStyle={{color: 'white'}}
-            onChangeText={text => setPassword(text)}
+            labelStyle={{ color: "white" }}
+            inputStyle={{ color: "white" }}
+            onChangeText={(text) => setPassword(text)}
             value={password}
             secureTextEntry={true}
             placeholder="Password"
-            autoCapitalize={'none'}
+            autoCapitalize={"none"}
           />
         </View>
         <View style={[styles.buttonSpaced, styles.mt20]}>
@@ -117,12 +120,13 @@ export default function Auth() {
             activeOpacity={0.6} // Adjust the opacity as needed
             underlayColor="transparent" // Set the underlay color to transparent
             onPress={() => {
-              setButtonColor('transparent');
-              navigation.navigate('AuthSignUp');
-            }}>
+              setButtonColor("transparent");
+              navigation.navigate("AuthSignUp");
+            }}
+          >
             <Button
               title="Login"
-              titleStyle={{color: '#0E0111'}}
+              titleStyle={{ color: "#0E0111" }}
               disabled={loading}
               onPress={() => signInWithEmail()}
               buttonStyle={{
@@ -136,8 +140,8 @@ export default function Auth() {
         </View>
         <View style={[styles.buttonSpaced, styles.centered]}>
           <Text style={styles.signupText}>
-            Need an account?{' '}
-            <TouchableOpacity onPress={() => navigation.navigate('AuthSignUp')}>
+            Need an account?{" "}
+            <TouchableOpacity onPress={() => navigation.navigate("AuthSignUp")}>
               <Text style={styles.signupLink}>Sign Up</Text>
             </TouchableOpacity>
           </Text>
@@ -149,18 +153,18 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
   helloText: {
-    color: 'white',
+    color: "white",
     fontSize: windowHeight * 0.08,
-    position: 'absolute',
+    position: "absolute",
     top: windowHeight * 0.12,
     left: windowWidth * 0.05,
   },
   bottomSlideContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -windowHeight * 0.1,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(151, 223, 252, 0.19)',
+    backgroundColor: "rgba(151, 223, 252, 0.19)",
     borderTopLeftRadius: windowWidth * 0.1,
     borderTopRightRadius: windowWidth * 0.1,
     paddingHorizontal: windowWidth * 0.05,
@@ -172,39 +176,39 @@ const styles = StyleSheet.create({
   container: {
     width: windowWidth,
     height: windowHeight,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   background: {
     width: windowWidth,
     height: windowHeight,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   verticallySpaced: {
     paddingHorizontal: windowWidth * 0.1,
     paddingTop: windowHeight * 0.02,
     paddingBottom: windowHeight * 0.01,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   buttonSpaced: {
     paddingHorizontal: windowWidth * 0.1,
     paddingTop: windowHeight * 0.02,
     paddingBottom: windowHeight * 0.03,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   centered: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   signupText: {
-    color: 'white',
+    color: "white",
     fontSize: windowWidth * 0.05,
-    textAlign: 'center',
+    textAlign: "center",
   },
   signupLink: {
-    color: '#97DFFC',
+    color: "#97DFFC",
     fontSize: windowWidth * 0.05,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   mt20: {
     marginTop: windowHeight * 0.02,

@@ -205,19 +205,20 @@ const Post = ({
         <View style={styles.header}>
           <View style={styles.profile}>
             <View style={styles.profilePicContainer}>
+              <View style={styles.profilePicBackground} />
               <Image style={styles.profilePic} source={{ uri: profilePic }} />
             </View>
-
-            <Text style={styles.username}>{user}</Text>
+            <View>
+              <Text style={styles.username}>{user}</Text>
+              <Text style={styles.formattedTime}>{formattedTime}</Text>
+            </View>
           </View>
-          <Text style={{ color: "white" }}>{formattedTime}</Text>
+          <Text style={styles.action}>{action}</Text>
         </View>
-
         {/* <View style={styles.divider} /> */}
 
         <View style={styles.body}>
           <View style={styles.postContent}>
-            <Text style={styles.action}>{action}</Text>
             <View style={styles.contentContainer}>
               <Text style={styles.content}>{text}</Text>
             </View>
@@ -239,7 +240,7 @@ const Post = ({
                 returnKeyType="send"
               />
               <TouchableOpacity style={styles.send} onPress={onCommentSend}>
-                <FontAwesome name="send" size={18} color="#361866" />
+                <FontAwesome name="send" size={18} color="#97DFFC" />
               </TouchableOpacity>
             </View>
 
@@ -247,6 +248,7 @@ const Post = ({
               <Image
                 style={styles.heart}
                 source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
+                tintColor="#97DFFC"
               />
             </TouchableOpacity>
           </View>
@@ -261,7 +263,7 @@ export default Post;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     // borderColor: "black",
     // borderWidth: 1,
     borderRadius: 15,
@@ -297,6 +299,13 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     // borderColor: "#361866",
+  },
+  profile: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  formattedTime: {
+    color: "white",
   },
   body: {
     flexDirection: "row",
@@ -365,16 +374,25 @@ const styles = StyleSheet.create({
   profilePic: {
     width: "100%",
     height: "100%",
+    borderRadius: 50, // Assuming it's a circle
+    zIndex: 2, // Make sure it's above the background
   },
   profilePicContainer: {
-    width: 35,
-    height: 35,
+    width: 45,
+    height: 45,
     margin: 5,
     marginRight: 8,
+    position: "relative",
   },
-  profile: {
-    flexDirection: "row",
-    alignItems: "center",
+  profilePicBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    borderRadius: 50, // Assuming it's a circle
+    backgroundColor: "#858AE3",
+    zIndex: 1,
   },
   username: {
     fontWeight: "bold",
