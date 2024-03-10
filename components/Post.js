@@ -116,7 +116,7 @@ const Post = ({
     const response = await supabase
       .from("posts")
       .update({ liked: !liked })
-      .eq("id", id);
+      .eq("user_id", id);
     console.log(response);
   };
 
@@ -129,7 +129,7 @@ const Post = ({
       const response = await supabase
         .from("posts")
         .update({ comments: [...comments, ["Yishu C.", inputText, url, true]] })
-        .eq("id", id);
+        .eq("user_id", id);
       console.log(response);
       setInputText("");
     } else {
@@ -145,7 +145,7 @@ const Post = ({
       .update({
         comments: [...comments.slice(0, index), ...comments.slice(index + 1)],
       })
-      .eq("id", id);
+      .eq("user_id", id);
     console.log(response);
   };
 

@@ -304,8 +304,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   recent: {
-    marginLeft: 3,
-    marginTop: 15,
+    marginLeft: 4,
+    marginTop: 11,
     marginBottom: 10,
     fontSize: 18,
   },
@@ -357,14 +357,6 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.03,
     width: windowWidth,
     alignSelf: "center",
-  },
-
-  header: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
-    marginBottom: 7,
-    marginTop: 10,
   },
 
   input: {
