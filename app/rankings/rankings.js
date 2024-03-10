@@ -120,16 +120,17 @@ export default function Rankings() {
           .eq("user_id", session.user.id);
 
         // console.log("this is RANKINGS", rankings.data);
-        setRankings(rankings.data);
+        // setRankings(rankings.data);
         // filter out the current user
         // setFriendIDs(friends.data[0].friend_ids);
-
-        const sortedData = rankings.data.sort((a, b) => b.rating - a.rating);
-        sortedData.forEach((item, index = 0) => {
-          item.index = index + 1;
-        });
-        // console.log("this is sortedDATA", sortedData);
-        setData(sortedData);
+        if (rankings.data) {
+          const sortedData = rankings.data.sort((a, b) => b.rating - a.rating);
+          sortedData.forEach((item, index = 0) => {
+            item.index = index + 1;
+          });
+          // console.log("this is sortedDATA", sortedData);
+          setData(sortedData);
+        }
       };
       fetchRankings();
     });
@@ -238,14 +239,17 @@ export default function Rankings() {
       .from("rankings")
       .select("*")
       .eq("user_id", session.user.id);
-    let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    newSortedData.forEach((item, index = 0) => {
-      item.index = index + 1;
-    });
+    if (response.data) {
+      let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    // setRankings((oldData) => [...oldData, payload.new]);
-    setData(newSortedData);
+      newSortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
+
+      // setRankings((oldData) => [...oldData, payload.new]);
+      setData(newSortedData);
+    }
 
     // await supabase.from("rankings").upsert(sortedData);
 
@@ -290,14 +294,18 @@ export default function Rankings() {
       .from("rankings")
       .select("*")
       .eq("user_id", session.user.id);
-    sortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    sortedData.forEach((item, index = 0) => {
-      item.index = index + 1;
-    });
-    // await supabase.from("rankings").upsert(sortedData);
+    if (response.data) {
+      sortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    setData(sortedData);
+      sortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
+      // await supabase.from("rankings").upsert(sortedData);
+
+      setData(sortedData);
+    }
+
     LayoutAnimation.configureNext(layoutAnimConfig);
   };
 
@@ -316,7 +324,9 @@ export default function Rankings() {
       item.genres.forEach((genre) => genreSet.add(genre));
     });
 
-    setGenreList(Array.from(genreSet).sort());
+    if (Array.from(genreSet)) {
+      setGenreList(Array.from(genreSet).sort());
+    }
   };
 
   const filterByGenres = (data) => {
@@ -327,7 +337,9 @@ export default function Rankings() {
       );
     }
 
-    filteredData.sort((a, b) => b.rating - a.rating);
+    if (filteredData) {
+      filteredData.sort((a, b) => b.rating - a.rating);
+    }
 
     filteredData.forEach((item, index) => {
       item.index = index + 1;
@@ -345,7 +357,7 @@ export default function Rankings() {
   if (!data) {
     return (
       <LinearGradient
-        colors={["#361866", "#E29292"]}
+        colors={["#0e0111", "#311866"]}
         style={[styles.container, { paddingHorizontal: 8 }]}
       >
         <View
@@ -360,7 +372,7 @@ export default function Rankings() {
 
   return (
     <LinearGradient
-      colors={["#361866", "#E29292"]}
+      colors={["#0e0111", "#311866"]}
       style={styles.container}
       onTouchStart={() => {
         Keyboard.dismiss();
@@ -812,7 +824,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   filterContainer: {
-    backgroundColor: "#361866",
+    // backgroundColor: "#361866",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",

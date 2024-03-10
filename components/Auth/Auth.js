@@ -6,7 +6,9 @@ import {
   AppState,
   SafeAreaView,
   Dimensions,
+  Text,
   TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 import supabase from "../../Supabase";
 import { Button, Input } from "react-native-elements";
@@ -35,6 +37,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [buttonColor, setButtonColor] = useState("#97DFFC");
   const [firstTime, setFirstTime] = useState(false);
 
   async function signInWithEmail() {
@@ -73,9 +76,13 @@ export default function Auth() {
 
   return (
     <LinearGradient
-      colors={["#311866", "#b67287"]}
-      style={[styles.container, { paddingHorizontal: 40 }]}
+      colors={["#0e0111", "#311866"]}
+      style={[styles.background, { paddingHorizontal: windowWidth * 0.1 }]}
     >
+      <Text style={styles.helloText}>Hello!</Text>
+      <View
+        style={[styles.bottomSlideContainer, styles.bottomSlideVisible]}
+      ></View>
       <SafeAreaView style={styles.container}>
         <View style={[styles.verticallySpaced, styles.mt20]}>
           <Input
@@ -96,7 +103,11 @@ export default function Auth() {
         <View style={styles.verticallySpaced}>
           <Input
             label="Password"
-            leftIcon={{ type: "font-awesome", name: "lock", color: "white" }}
+            leftIcon={{
+              type: "font-awesome",
+              name: "lock",
+              color: "white",
+            }}
             labelStyle={{ color: "white" }}
             inputStyle={{ color: "white" }}
             onChangeText={(text) => setPassword(text)}
@@ -110,43 +121,32 @@ export default function Auth() {
           <TouchableHighlight
             activeOpacity={0.6} // Adjust the opacity as needed
             underlayColor="transparent" // Set the underlay color to transparent
-            onPress={() => navigation.navigate("AuthSignUp")}
+            onPress={() => {
+              setButtonColor("transparent");
+              navigation.navigate("AuthSignUp");
+            }}
           >
             <Button
-              title="Sign in"
-              titleStyle={{ color: "white" }}
+              title="Login"
+              titleStyle={{ color: "#0E0111" }}
               disabled={loading}
               onPress={() => signInWithEmail()}
               buttonStyle={{
-                backgroundColor: "#311866",
-                borderRadius: 20,
-                height: 50,
-                paddingHorizontal: 20,
+                backgroundColor: buttonColor,
+                borderRadius: windowWidth * 0.05,
+                height: windowHeight * 0.07,
+                paddingHorizontal: windowWidth * 0.05,
               }}
             />
           </TouchableHighlight>
         </View>
-        <View style={styles.buttonSpaced}>
-          <TouchableHighlight
-            activeOpacity={0.6} // Adjust the opacity as needed
-            underlayColor="transparent" // Set the underlay color to transparent
-            onPress={() => navigation.navigate("AuthSignUp")}
-          >
-            <Button
-              title="New Account"
-              titleStyle={{ color: "white" }}
-              disabled={loading}
-              onPress={() => navigation.navigate("AuthSignUp")}
-              buttonStyle={{
-                backgroundColor: "transparent",
-                borderColor: "white",
-                borderWidth: 2,
-                borderRadius: 20,
-                height: 50,
-                paddingHorizontal: 20,
-              }}
-            />
-          </TouchableHighlight>
+        <View style={[styles.buttonSpaced, styles.centered]}>
+          <Text style={styles.signupText}>
+            Need an account?{" "}
+            <TouchableOpacity onPress={() => navigation.navigate("AuthSignUp")}>
+              <Text style={styles.signupLink}>Sign Up</Text>
+            </TouchableOpacity>
+          </Text>
         </View>
       </SafeAreaView>
     </LinearGradient>
@@ -154,25 +154,65 @@ export default function Auth() {
 }
 
 const styles = StyleSheet.create({
+  helloText: {
+    color: "white",
+    fontSize: windowHeight * 0.08,
+    position: "absolute",
+    top: windowHeight * 0.12,
+    left: windowWidth * 0.05,
+  },
+  bottomSlideContainer: {
+    position: "absolute",
+    bottom: -windowHeight * 0.1,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(151, 223, 252, 0.19)",
+    borderTopLeftRadius: windowWidth * 0.1,
+    borderTopRightRadius: windowWidth * 0.1,
+    paddingHorizontal: windowWidth * 0.05,
+    paddingVertical: windowHeight * 0.05,
+  },
+  bottomSlideVisible: {
+    height: windowHeight * 0.7,
+  },
   container: {
+    width: windowWidth,
+    height: windowHeight,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  background: {
     width: windowWidth,
     height: windowHeight,
     justifyContent: "center",
     alignItems: "center",
   },
   verticallySpaced: {
-    paddingHorizontal: 40,
-    paddingTop: 4,
-    paddingBottom: 2,
+    paddingHorizontal: windowWidth * 0.1,
+    paddingTop: windowHeight * 0.02,
+    paddingBottom: windowHeight * 0.01,
     alignSelf: "stretch",
   },
   buttonSpaced: {
-    paddingHorizontal: 40,
-    paddingTop: 4,
-    paddingBottom: 12,
+    paddingHorizontal: windowWidth * 0.1,
+    paddingTop: windowHeight * 0.02,
+    paddingBottom: windowHeight * 0.03,
     alignSelf: "stretch",
   },
+  centered: {
+    alignItems: "center",
+  },
+  signupText: {
+    color: "white",
+    fontSize: windowWidth * 0.05,
+    textAlign: "center",
+  },
+  signupLink: {
+    color: "#97DFFC",
+    fontSize: windowWidth * 0.05,
+    textDecorationLine: "underline",
+  },
   mt20: {
-    marginTop: 10,
+    marginTop: windowHeight * 0.02,
   },
 });

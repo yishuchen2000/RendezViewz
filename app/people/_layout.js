@@ -4,6 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import MyTabs from "./myTabs";
 import People from "./people";
 import AddFriendPage from "./AddFriendPage";
+import FriendProfile from "./FriendProfile";
+import NewFriendProfile from "./NewFriendProfile";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +20,26 @@ const PeopleStack = () => {
       <Stack.Screen
         name="Friend Movies"
         component={MyTabs}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="FriendProfile"
+        component={FriendProfile}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="NewFriendProfile"
+        component={NewFriendProfile}
         options={{
           headerTransparent: true,
           headerTintColor: "white",

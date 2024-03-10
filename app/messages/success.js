@@ -178,7 +178,7 @@ const Success = ({ navigation, route }) => {
   };
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}

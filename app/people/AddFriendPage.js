@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import NewFriend from "../../components/NewFriend";
+import NewFriend from "./NewFriend";
 import supabase from "../../Supabase";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -119,7 +119,7 @@ const AddFriendPage = ({ route, navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <View style={styles.container1}>
         <View style={styles.input}></View>
 
