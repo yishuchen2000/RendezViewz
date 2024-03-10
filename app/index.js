@@ -173,7 +173,7 @@ export default function Page() {
   if (!data) {
     return (
       <LinearGradient
-        colors={["#361866", "#E29292"]}
+        colors={["#0E0111", "#613DC1"]}
         style={[styles.container, { paddingHorizontal: 8 }]}
       >
         <View
@@ -187,7 +187,7 @@ export default function Page() {
   }
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0E0111", "#613DC1"]} style={styles.container}>
       {/* <View style={styles.composer}>
         <TextInput
           style={styles.input}
@@ -201,6 +201,7 @@ export default function Page() {
         </TouchableOpacity>
       </View> */}
       <View style={styles.middle}>
+      <Text style={styles.header}>Recommendations</Text>
         <ScrollView
           showsHorizontalScrollIndicator={false}
           style={styles.scroll}
@@ -211,6 +212,9 @@ export default function Page() {
             <Poster title={item} goesTo={"ShowDetails"} />
           ))}
         </ScrollView>
+
+
+        <Text style={styles.header}>Posts</Text>
 
         <View style={styles.postList}>
           <FlatList
@@ -295,6 +299,14 @@ const styles = StyleSheet.create({
     width: windowWidth,
     alignSelf: "center",
   },
+
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 7,
+    marginTop: 10,
+  },  
 
   input: {
     flex: 1,
