@@ -224,7 +224,7 @@ export default function Page() {
       >
         {/*        
         <View style={styles.header}> */}
-        <Text style={[styles.subText, styles.recent]}>Recommended</Text>
+        <Text style={[styles.subText, styles.recent]}>Recommendations</Text>
         <ScrollView
           showsHorizontalScrollIndicator={false}
           style={styles.scroll}
@@ -262,7 +262,9 @@ export default function Page() {
             style={styles.posts}
             contentContainerStyle={{ paddingTop: 10 }}
             ListHeaderComponent={
-              <View style={{ paddingTop: windowHeight * 0.2 }} />
+              <View style={{ paddingTop: windowHeight * 0.21 }}>
+                <Text style={[styles.subText, styles.recent]}>Posts</Text>
+              </View>
             }
             onScroll={(e) => {
               scrollY.setValue(e.nativeEvent.contentOffset.y);
@@ -302,9 +304,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   recent: {
-    marginLeft: 4,
-    marginTop: 5,
-    marginBottom: 4,
+    marginLeft: 3,
+    marginTop: 15,
+    marginBottom: 10,
     fontSize: 18,
   },
   middle: {
