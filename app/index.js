@@ -30,6 +30,7 @@ const HEADER_MAX_HEIGHT = 200;
 export default function Page() {
   const [session, setSession] = useState(null);
   const [friendIDs, setFriendIDs] = useState(null);
+  const [showPostIDs, setshowPostIDs] = useState(null);
 
   const [data, setData] = useState(null);
   const [input, setInput] = useState("");
@@ -157,12 +158,13 @@ export default function Page() {
 
   useEffect(() => {
     if (friendIDs) {
-      showPostIDs = [...friendIDs, session.user.id];
+      finalIDs = [...friendIDs, session.user.id];
+      setshowPostIDs(finalIDs);
       const fetchData = async () => {
         const response = await supabase
           .from("posts")
           .select("*")
-          .in("user_id", showPostIDs)
+          .in("user_id", finalIDs)
           .order("created_at", { ascending: false });
         setData(response.data);
       };
@@ -245,6 +247,8 @@ export default function Page() {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <Post
+                showPostIDs={showPostIDs}
+                sessionID={session.user.id}
                 id={item.user_id}
                 user={item.user}
                 timestamp={item.created_at}
@@ -253,9 +257,9 @@ export default function Page() {
                 imageUrl={item.show_poster_url}
                 profilePic={item.profile_pic}
                 action={item.action}
-                comments={item.comments}
+                rawComments={item.comments}
                 title={item.movie_title}
-                goesTo={"ShowDetails"}
+                goesTo={"FriendProfile"}
               />
             )}
             keyExtractor={(item) => item.id}

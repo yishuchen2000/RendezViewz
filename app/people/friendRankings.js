@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View, Dimensions, FlatList, Image } from "react-native";
 import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRoute } from "@react-navigation/native";
 
 import supabase from "../../Supabase";
 import Ranking from "../../components/friendRanking";
@@ -12,20 +13,30 @@ const windowHeight = Dimensions.get("window").height;
 const UNDERLINE = require("../../assets/underline.png");
 
 export default function Rankings() {
+  const route = useRoute();
+  const { id } = route.params;
+  console.log("USER_IDin FriendRanking", id);
+
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await supabase.from("friendRankings").select("*");
-      const sortedData = response.data.sort((a, b) => a.index - b.index);
+      const response = await supabase
+        .from("rankings")
+        .select("*")
+        .eq("user_id", id);
 
+      let sortedData = response.data.sort((a, b) => a.index - b.index);
+      sortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
       setData(sortedData);
     };
     fetchData();
   }, []);
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <FlatList
         data={data}
         showsVerticalScrollIndicator={false}

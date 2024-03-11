@@ -136,7 +136,7 @@ const NewFriend = ({ id, user, profilePic, onAddFriend, goesTo }) => {
             );
           }}
           size={25}
-          color="#602683"
+          color="#97DFFC"
         />
       </Pressable>
     </View>
@@ -209,7 +209,7 @@ export default NewFriend;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(225, 225, 225, 0.3)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     borderColor: "#361866",
     //borderWidth: 0.5,
     // height: 70,
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   deleteButtonContainer: {
     position: "absolute",
     right: 0,
-    bottom: 5,
+    bottom: 20,
     width: windowWidth * 0.1,
     height: "50%",
     justifyContent: "center",

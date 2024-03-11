@@ -5,14 +5,17 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import supabase from "../../Supabase";
 import Ranking from "../../components/friendRanking";
+import { useRoute } from "@react-navigation/native";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const UNDERLINE = require("../../assets/underline.png");
 
-export default function Rankings() {
+export default function Rankings({ id }) {
   const [data, setData] = useState([]);
+  // const route = useRoute();
+  // const { id } = route.params;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +28,7 @@ export default function Rankings() {
   }, []);
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <FlatList
         data={data}
         showsVerticalScrollIndicator={false}

@@ -214,9 +214,7 @@ export default function Me() {
           <Text style={[styles.subText, styles.recent]}>About</Text>
           <View style={styles.rectangleContainer}>
             <View style={styles.leftContainer}>
-              <Text style={styles.rectangleText}>
-                some info about me: i love horror films!
-              </Text>
+              <Text style={styles.rectangleText}>{profileData[0].info}</Text>
             </View>
             <View style={styles.centerContainer}>
               <View style={styles.rectangleLine} />

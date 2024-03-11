@@ -15,7 +15,6 @@ import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
 import ProfilePost from "../../components/ProfilePost";
-import { useNavigation } from "@react-navigation/native";
 import { EvilIcons } from "@expo/vector-icons";
 
 import supabase from "../../Supabase";
@@ -27,7 +26,6 @@ const windowHeight = Dimensions.get("window").height;
 const UNDERLINE = require("../../assets/underline.png");
 
 export default function FriendProfile() {
-  const navigation = useNavigation();
   // const [data, setData] = useState([]);
 
   // const [userID, setUserID] = useState(null);
@@ -40,7 +38,6 @@ export default function FriendProfile() {
     rankedNumber,
     wishlistNumber,
   } = route.params;
-  console.log("USER_IDin FriendProfile", id);
   // console.log("friendNUMBER", friendNumber);
   // console.log("myPostData", myPostData);
   // console.log("profileData", profileData);
@@ -91,14 +88,7 @@ export default function FriendProfile() {
             <View style={styles.statsContainer}>
               <Pressable
                 style={styles.statsBox}
-                onPress={() =>
-                  navigation.navigate("Friend Movies", {
-                    screen: "Friend Rankings",
-                    params: { id: id },
-                  })
-                }
-
-                // onPress={() => navigation.navigate("Friend Movies", { id: id })}
+                // onPress={() => navigation.navigate("rankings")}
               >
                 <View style={styles.statsBox}>
                   <Text style={[styles.text, { fontSize: 18 }]}>
@@ -169,10 +159,7 @@ export default function FriendProfile() {
                 <Pressable
                   style={styles.statsBox}
                   onPress={() =>
-                    navigation.navigate("Friend Movies", {
-                      screen: "Friend Wishlist",
-                      params: { id: id },
-                    })
+                    navigation.navigate("rankings", { screen: "My Wishlist" })
                   }
                 >
                   <Text style={[styles.text, { fontSize: 18 }]}>
