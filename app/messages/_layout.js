@@ -37,7 +37,7 @@ export default function MessagesLayout() {
         options={{
           title: "Event Details",
           headerStyle: {
-            backgroundColor: "#361866", // Set the background color of the header
+            backgroundColor: "#000814", // Set the background color of the header
           },
           headerTitleStyle: {
             color: "white", // Set the font color of the title

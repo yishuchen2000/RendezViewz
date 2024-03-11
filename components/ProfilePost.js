@@ -153,12 +153,13 @@ const Post = ({
 
             <Text style={styles.username}>{user}</Text>
           </View>
-          <Text style={{ color: "white" }}>{formattedTime}</Text>
+
+          <Text style={styles.action}>{action}</Text>
         </View>
 
         <View style={styles.body}>
           <View style={styles.postContent}>
-            <Text style={styles.action}>{action}</Text>
+            {/* <Text style={styles.action}>{action}</Text> */}
             <View style={styles.contentContainer}>
               <Text style={styles.content}>{text}</Text>
             </View>
@@ -174,7 +175,7 @@ export default Post;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     // borderColor: "black",
     // borderWidth: 1,
     borderRadius: 15,
