@@ -1,5 +1,5 @@
-import React from 'react';
-import {useState, useEffect} from 'react';
+import React from "react";
+import { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -11,20 +11,20 @@ import {
   Pressable,
   Dimensions,
   ActivityIndicator,
-} from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
-import {FontAwesome} from '@expo/vector-icons';
-import ProfilePost from '../../components/ProfilePost';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { FontAwesome } from "@expo/vector-icons";
+import ProfilePost from "../../components/ProfilePost";
 //import Rankings from "./rankings/rankings";
-import {useNavigation} from '@react-navigation/native';
-import MyTabs from '../rankings/_layout';
-import Account from '../../components/Account';
-import {Session} from '@supabase/supabase-js';
+import { useNavigation } from "@react-navigation/native";
+import MyTabs from "../rankings/_layout";
+import Account from "../../components/Account";
+import { Session } from "@supabase/supabase-js";
 //import MyTabs from "./rankings";
-import {EvilIcons} from '@expo/vector-icons';
+import { EvilIcons } from "@expo/vector-icons";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 export default function Me() {
   const navigation = useNavigation();
@@ -41,24 +41,24 @@ export default function Me() {
   const [isFollowed, setIsFollowed] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({data: {session}}) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       // console.log("id info in profile!", session.user.id);
       const fetchData = async () => {
         const profileInfo = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id);
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
         setProfileData(profileInfo.data);
-        const friendNumber = profileInfo.data[0]['friend_ids']
-          ? profileInfo.data[0]['friend_ids'].length
+        const friendNumber = profileInfo.data[0]["friend_ids"]
+          ? profileInfo.data[0]["friend_ids"].length
           : 0;
         setFriendNumber(friendNumber);
 
         const myPosts = await supabase
-          .from('posts')
-          .select('*')
-          .eq('user_id', session.user.id);
+          .from("posts")
+          .select("*")
+          .eq("user_id", session.user.id);
         setMyPostData(myPosts.data);
         // console.log(myPosts.data);
 
@@ -75,16 +75,16 @@ export default function Me() {
   useEffect(() => {
     const fetchNumbers = async () => {
       const rankings = await supabase
-        .from('rankings')
-        .select('*', {count: 'exact', head: true});
+        .from("rankings")
+        .select("*", { count: "exact", head: true });
 
       const friends = await supabase
-        .from('friends')
-        .select('*', {count: 'exact', head: true});
+        .from("friends")
+        .select("*", { count: "exact", head: true });
 
       const wishlist = await supabase
-        .from('wishlist')
-        .select('*', {count: 'exact', head: true});
+        .from("wishlist")
+        .select("*", { count: "exact", head: true });
 
       setRankedNumber(rankings.count);
       // setFriendNumber(friends.count);
@@ -109,11 +109,14 @@ export default function Me() {
   if (!numbersFetched || !infoFetched) {
     return (
       <LinearGradient
-        colors={['#0e0111', '#311866']}
-        style={[styles.container, {paddingHorizontal: 8}]}>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        colors={["#0e0111", "#311866"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <ActivityIndicator size="large" color="purple" />
-          <Text style={{color: 'white'}}>Loading...</Text>
+          <Text style={{ color: "white" }}>Loading...</Text>
         </View>
       </LinearGradient>
     );
@@ -122,8 +125,9 @@ export default function Me() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['#0e0111', '#311866']}
-        style={[styles.container, {paddingHorizontal: 8}]}>
+        colors={["#0e0111", "#311866"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.header}>
             <Pressable onPress={accountPage} style={styles.titleBar}>
@@ -140,41 +144,43 @@ export default function Me() {
                 />
                 <Pressable
                   style={styles.cameraIcon}
-                  onPress={() => console.log('Camera icon pressed')}>
+                  onPress={() => console.log("Camera icon pressed")}
+                >
                   <EvilIcons name="camera" size={24} color="black" />
                 </Pressable>
               </View>
+              <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
+                {profileData[0].username}
+              </Text>
             </View>
 
             <View style={styles.statsContainer}>
               <Pressable
                 style={styles.statsBox}
-                onPress={() => navigation.navigate('rankings')}>
+                onPress={() => navigation.navigate("rankings")}
+              >
                 <View style={styles.statsBox}>
-                  <Text style={[styles.text, {fontSize: 18}]}>
+                  <Text style={[styles.text, { fontSize: 18 }]}>
                     {rankedNumber}
                   </Text>
                   <Text style={[styles.text, styles.subText]}>Ranked</Text>
                 </View>
               </Pressable>
 
-              <Text style={[styles.text, {fontWeight: '400', fontSize: 28}]}>
-                {profileData[0].username}
-              </Text>
-
               <View
                 style={[
                   styles.statsBox,
                   {
-                    // borderColor: "white",
-                    // borderLeftWidth: 1,
-                    // borderRightWidth: 1,
+                    borderColor: "white",
+                    borderLeftWidth: 1,
                   },
-                ]}>
+                ]}
+              >
                 <Pressable
                   style={[styles.statsBox]}
-                  onPress={() => navigation.navigate('people')}>
-                  <Text style={[styles.text, {fontSize: 18}]}>
+                  onPress={() => navigation.navigate("people")}
+                >
+                  <Text style={[styles.text, { fontSize: 18 }]}>
                     {friendNumber}
                   </Text>
                   <Text style={[styles.text, styles.subText]}>Friends</Text>
@@ -183,7 +189,7 @@ export default function Me() {
             </View>
           </View>
 
-          <View style={styles.buttonsContainer}>
+          {/* <View style={styles.buttonsContainer}>
             <Pressable
               style={[styles.button, styles.followButton]}
               onPress={toggleFollow}>
@@ -199,7 +205,7 @@ export default function Me() {
                 Rankings
               </Text>
             </Pressable>
-          </View>
+          </View> */}
           <Text style={[styles.subText, styles.recent]}>About</Text>
           <View style={styles.rectangleContainer}>
             <View style={styles.leftContainer}>
@@ -215,9 +221,10 @@ export default function Me() {
                 <Pressable
                   style={styles.statsBox}
                   onPress={() =>
-                    navigation.navigate('rankings', {screen: 'My Wishlist'})
-                  }>
-                  <Text style={[styles.text, {fontSize: 18}]}>
+                    navigation.navigate("rankings", { screen: "My Wishlist" })
+                  }
+                >
+                  <Text style={[styles.text, { fontSize: 18 }]}>
                     {wishlistNumber}
                   </Text>
                   <Text style={[styles.text, styles.subText]}>Wishlist</Text>
@@ -229,7 +236,7 @@ export default function Me() {
           <View style={styles.info}>
             <View style={styles.postBar}>
               <Text style={[styles.subText, styles.recent]}>Posts</Text>
-              {myPostData.map(item => (
+              {myPostData.map((item) => (
                 <ProfilePost
                   key={item.id}
                   id={item.id}
@@ -242,7 +249,7 @@ export default function Me() {
                   action={item.action}
                   comments={item.comments}
                   title={item.movie_title}
-                  goesTo={'ShowDetails'}
+                  goesTo={"ShowDetails"}
                 />
               ))}
             </View>
@@ -251,11 +258,11 @@ export default function Me() {
       </LinearGradient>
       <View style={styles.clapboard}>
         <Image
-          source={require('../../assets/Clapboard2.png')}
+          source={require("../../assets/Clapboard2.png")}
           style={{
             flex: 1,
             width: windowWidth,
-            resizeMode: 'stretch',
+            resizeMode: "stretch",
           }}
         />
       </View>
@@ -265,27 +272,27 @@ export default function Me() {
 
 const styles = StyleSheet.create({
   header: {
-    borderColor: 'red',
+    borderColor: "red",
     flex: 0.5,
   },
   info: {
-    borderColor: 'green',
+    borderColor: "green",
     flex: 1,
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     paddingTop: 10,
     paddingBotton: 20,
   },
   followButtonText: {
-    color: '#0E0111',
-    fontWeight: 'bold',
+    color: "#0E0111",
+    fontWeight: "bold",
     fontSize: 18,
   },
   button: {
@@ -294,42 +301,42 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   followButton: {
-    backgroundColor: '#858AE3',
+    backgroundColor: "#858AE3",
     width: 120,
     marginRight: 20,
   },
   messageButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 3,
-    borderColor: '#97DFFC',
+    borderColor: "#97DFFC",
     width: 120,
     marginLeft: 20,
   },
   messageButtonText: {
-    color: '#97DFFC',
-    fontWeight: 'bold',
+    color: "#97DFFC",
+    fontWeight: "bold",
     fontSize: 18,
   },
   rectangleContainer: {
     marginTop: 10,
-    backgroundColor: '#97DFFC33',
+    backgroundColor: "#97DFFC33",
     borderRadius: 40,
     paddingHorizontal: 10,
     marginVertical: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   leftContainer: {
     flex: 2,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingLeft: 10,
   },
   centerContainer: {
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 10,
   },
   rightContainer: {
@@ -338,19 +345,19 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   rectangleText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   rectangleLine: {
     width: 3,
-    backgroundColor: '#858AE3',
-    height: '30%',
-    alignSelf: 'center',
+    backgroundColor: "#858AE3",
+    height: "30%",
+    alignSelf: "center",
   },
   wishlistInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   postBar: {
     flex: 1,
@@ -359,60 +366,60 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   text: {
-    color: 'white',
+    color: "white",
   },
   titleBar: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     flex: 0.32,
   },
   linearGradient: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   centeredView: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     flex: 1,
   },
   profileImageContainer: {
-    position: 'relative',
+    position: "relative",
     width: 100,
     height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 75,
   },
   cameraIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: "rgba(255,255,255,0.6)",
     padding: 6,
     borderRadius: 12,
   },
   statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     flex: 0.4,
-    marginTop: 20,
+    margin: 20,
   },
   statsBox: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
   },
   subText: {
     fontSize: 12,
-    color: 'white',
-    textTransform: 'uppercase',
-    fontWeight: '500',
+    color: "white",
+    textTransform: "uppercase",
+    fontWeight: "500",
   },
   recent: {
     marginLeft: 12,
@@ -423,6 +430,6 @@ const styles = StyleSheet.create({
   clapboard: {
     height: windowHeight * 0.03,
     width: windowWidth,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 });
