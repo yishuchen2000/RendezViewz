@@ -290,7 +290,7 @@ const AddEvent = ({ route, navigation }) => {
 
   return (
     <LinearGradient
-      colors={["#361866", "#E29292"]}
+      colors={["#0e0111", "#311866"]}
       style={styles.container}
       onTouchStart={() => {
         Keyboard.dismiss();
