@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 3,
     borderColor: "#97DFFC",
-    width: windowWidth * 0.3,
+    width: windowWidth * 0.31,
     marginLeft: 0,
   },
   messageButtonText: {

@@ -25,6 +25,8 @@
 
 // main();
 
+// import { API_KEY } from "react-native-dotenv";
+
 const getRecommendations = async (genres) => {
   console.log("RUNNING REC FUNCTION");
   // const express = require("express");
@@ -33,7 +35,7 @@ const getRecommendations = async (genres) => {
   // app.use(express.json());
 
   const openai = new OpenAI({
-    apiKey: "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",
+    apiKey: API_KEY,
     // organization: "org-WLr8SbLneb2GU2RocRwhX1qg",
   });
 

@@ -24,7 +24,15 @@ import { AntDesign } from "@expo/vector-icons";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const NewFriend = ({ id, user, profilePic, onAddFriend, goesTo }) => {
+const NewFriend = ({
+  friendIDs,
+  sessionID,
+  id,
+  user,
+  profilePic,
+  onAddFriend,
+  goesTo,
+}) => {
   const navigation = useNavigation();
 
   const [profileData, setProfileData] = useState(null);
@@ -94,6 +102,8 @@ const NewFriend = ({ id, user, profilePic, onAddFriend, goesTo }) => {
           onPress={() =>
             navigation.navigate("NewFriendProfile", {
               // screen: "FriendProfile",
+              friendIDs: friendIDs,
+              sessionID: sessionID,
               id: id,
               friendNumber: friendNumber,
               myPostData: myPostData,

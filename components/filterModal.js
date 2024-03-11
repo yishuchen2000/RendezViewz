@@ -50,14 +50,14 @@ function FilterModal({
         styles.genreButton,
         {
           backgroundColor: selectedGenres.includes(genre)
-            ? "#602683"
+            ? "#858AE3"
             : "lightgrey",
         },
       ]}
       onPress={() => toggleGenreSelection(genre)}
     >
       <Text
-        style={{ color: selectedGenres.includes(genre) ? "white" : "black" }}
+        style={{ color: selectedGenres.includes(genre) ? "black" : "black" }}
       >
         {genre}
       </Text>
@@ -77,7 +77,7 @@ function FilterModal({
             <Text style={styles.modalTitle}>Filter by Genre</Text>
             {renderGenresInColumns()}
             <Pressable style={styles.applyButton} onPress={applyFilters}>
-              <Text style={{ color: "white", fontWeight: "bold" }}>Apply</Text>
+              <Text style={{ color: "black", fontWeight: "bold" }}>Apply</Text>
             </Pressable>
           </View>
         </View>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: "#0E0111",
     padding: 20,
     borderRadius: 20,
     width: "90%",
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 24,
     fontWeight: "bold",
-    color: "#602683",
+    color: "white",
     textAlign: "center",
   },
   columnsContainer: {
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#602683",
+    backgroundColor: "#858AE3",
     borderWidth: 1,
     color: "white",
   },

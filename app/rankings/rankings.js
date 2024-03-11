@@ -821,6 +821,7 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    // backgroundColor: "#0E0111",
     alignItems: "center",
     height: windowHeight * 0.05,
     paddingHorizontal: windowWidth * 0.02,

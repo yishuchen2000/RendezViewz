@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Pressable,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -33,6 +34,8 @@ export default function Rankings() {
   // const [userID, setUserID] = useState(null);
   const route = useRoute();
   const {
+    friendIDs,
+    sessionID,
     id,
     friendNumber,
     myPostData,
@@ -42,8 +45,36 @@ export default function Rankings() {
   } = route.params;
   // console.log("friendNUMBER", friendNumber);
   // console.log("myPostData", myPostData);
-  console.log("id", id);
+  console.log("id in NEW FRIEND PROFILE", id);
+  console.log("SessionID in NEW FRIEND PROFILE", sessionID);
   const [isFollowed, setIsFollowed] = useState(false);
+
+  const onAddFriend = async (id) => {
+    console.log("id to add", id);
+    const updatedFriendIDs = [...friendIDs, id];
+    console.log("Updated FriendIDs!", updatedFriendIDs);
+
+    const addFriend = await supabase
+      .from("profiles")
+      .update({ friend_ids: updatedFriendIDs })
+      .eq("id", sessionID);
+
+    console.log(addFriend);
+
+    setIsFollowed(!isFollowed);
+    // setFriendIDs(updatedFriendIDs);
+  };
+
+  const onDeleteFriend = async (idToDelete) => {
+    const updatedFriendIDs = friendIDs.filter((id) => id !== idToDelete);
+
+    const deleteFriend = await supabase
+      .from("profiles")
+      .update({ friend_ids: updatedFriendIDs })
+      .eq("id", sessionID);
+
+    setIsFollowed(!isFollowed);
+  };
 
   // if (!numbersFetched || !infoFetched) {
   // return (
@@ -133,14 +164,67 @@ export default function Rankings() {
           </View>
 
           <View style={styles.buttonsContainer}>
-            <Pressable
-              style={[styles.button, styles.followButton]}
-              // onPress={toggleFollow}
-            >
-              <Text style={[styles.text, styles.followButtonText]}>
-                {isFollowed ? "Added" : "Add"}
-              </Text>
-            </Pressable>
+            {!isFollowed && (
+              <Pressable
+                style={[styles.button, styles.followButton]}
+                onPress={() => {
+                  Alert.alert(
+                    "Add Friend?",
+                    `Do you want to add ${profileData[0].username} as a friend?`,
+
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => onAddFriend(id),
+                      },
+                    ],
+                    { cancelable: false }
+                  );
+                }}
+                size={25}
+                color="#97DFFC"
+              >
+                <Text style={[styles.text, styles.followButtonText]}>
+                  {/* {isFollowed ? "Added" : "Add"} */}
+                  Add
+                </Text>
+              </Pressable>
+            )}
+
+            {isFollowed && (
+              <Pressable
+                style={[styles.button, styles.followButton]}
+                onPress={() => {
+                  Alert.alert(
+                    "Delete Friend?",
+                    `Do you want to delete ${profileData[0].username} from friends?`,
+
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => onDeleteFriend(id),
+                      },
+                    ],
+                    { cancelable: false }
+                  );
+                }}
+                size={25}
+                color="#97DFFC"
+              >
+                <Text style={[styles.text, styles.followButtonText]}>
+                  {/* {isFollowed ? "Added" : "Add"} */}
+                  Added
+                </Text>
+              </Pressable>
+            )}
 
             <Pressable
               style={[styles.button, styles.messageButton]}
@@ -260,6 +344,7 @@ const styles = StyleSheet.create({
   },
   followButton: {
     backgroundColor: "#858AE3",
+    width: windowWidth * 0.31,
     marginRight: 20,
     width: windowWidth * 0.31,
   },
@@ -267,6 +352,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 3,
     borderColor: "#97DFFC",
+    width: windowWidth * 0.31,
     marginLeft: 20,
     width: windowWidth * 0.31,
   },
