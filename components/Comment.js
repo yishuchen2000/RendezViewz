@@ -33,6 +33,8 @@ const Comment = ({ onDeleteComment, sessionID, id, text, avatarGoesTo }) => {
   const [friendNumber, setFriendNumber] = useState(null);
   const [myPostData, setMyPostData] = useState(null);
 
+  const [dataFetched, setDataFetched] = useState(false);
+
   const navigation = useNavigation();
   //   console.log(id);
   //   console.log(text);
@@ -72,6 +74,8 @@ const Comment = ({ onDeleteComment, sessionID, id, text, avatarGoesTo }) => {
 
       setRankedNumber(rankings.count);
       setWishlistNumber(wishlist.count);
+
+      setDataFetched(true);
     };
     fetchData();
   }, []);
@@ -99,6 +103,10 @@ const Comment = ({ onDeleteComment, sessionID, id, text, avatarGoesTo }) => {
 
   //   const formattedTime = getTimeDifference(timestamp);
 
+  if (!dataFetched) {
+    return <View style={styles.oneComment}></View>;
+  }
+
   return (
     <View style={styles.oneComment}>
       <View style={styles.leftContent}>
@@ -120,7 +128,7 @@ const Comment = ({ onDeleteComment, sessionID, id, text, avatarGoesTo }) => {
         </Pressable>
 
         <View style={styles.commentText}>
-          <Text style={styles.userName}>{username}</Text>
+          <Text style={styles.userName}>{profileData[0].username}</Text>
           <Text style={styles.comment}>{text}</Text>
         </View>
       </View>
