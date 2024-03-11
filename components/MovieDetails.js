@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -71,47 +72,49 @@ const MovieDetails = ({ item }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <View style={styles.posterBackgroundContainer}>
-        <Image
-          source={{ uri: item.Poster }}
-          style={styles.posterBackground}
-          blurRadius={5}
-        />
-        <View style={styles.posterContainer}>
-          <Image source={{ uri: item.Poster }} style={styles.poster} />
-        </View>
-      </View>
-      <View style={styles.body}>
-        <View style={styles.detailsContainer}>
-          <Text style={styles.title}>{item.Title}</Text>
-          <View style={styles.genreContainer}>{renderGenreList()}</View>
-        </View>
-        <View style={styles.lowerBody}>
-          <View style={styles.plotBox}>
-            <Text style={styles.subheading}>
-              {item.Year} • {item.Rated}
-              {item.Runtime !== "N/A" &&
-                item.Runtime !== "1 min" &&
-                ` • ${item.Runtime}`}
-            </Text>
-            <Text style={styles.plotText}>{item.Plot}</Text>
+    <LinearGradient colors={["#0e0111", "#311866"]}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.posterBackgroundContainer}>
+          <Image
+            source={{ uri: item.Poster }}
+            style={styles.posterBackground}
+            blurRadius={5}
+          />
+          <View style={styles.posterContainer}>
+            <Image source={{ uri: item.Poster }} style={styles.poster} />
           </View>
         </View>
-        <View style={styles.peopleContainer}>
-          {item.Director !== "N/A" && (
-            <View style={styles.directorContainer}>
-              <Text style={styles.castPosition}> Director: </Text>
-              <Text style={styles.name} numberOfLines={1}>
-                {item.Director}
+        <View style={styles.body}>
+          <View style={styles.detailsContainer}>
+            <Text style={styles.title}>{item.Title}</Text>
+            <View style={styles.genreContainer}>{renderGenreList()}</View>
+          </View>
+          <View style={styles.lowerBody}>
+            <View style={styles.plotBox}>
+              <Text style={styles.subheading}>
+                {item.Year} • {item.Rated}
+                {item.Runtime !== "N/A" &&
+                  item.Runtime !== "1 min" &&
+                  ` • ${item.Runtime}`}
               </Text>
+              <Text style={styles.plotText}>{item.Plot}</Text>
             </View>
-          )}
-          {renderWriters()}
-          {renderCast()}
+          </View>
+          <View style={styles.peopleContainer}>
+            {item.Director !== "N/A" && (
+              <View style={styles.directorContainer}>
+                <Text style={styles.castPosition}> Director: </Text>
+                <Text style={styles.name} numberOfLines={1}>
+                  {item.Director}
+                </Text>
+              </View>
+            )}
+            {renderWriters()}
+            {renderCast()}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 

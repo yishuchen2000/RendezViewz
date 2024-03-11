@@ -29,7 +29,6 @@ const Post = ({
   text,
   liked,
   imageUrl,
-  profilePic,
   action,
   comments,
   title,
@@ -39,23 +38,85 @@ const Post = ({
   const [showComment, setshowComment] = useState(false);
   const [movieDetails, setMovieDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profilePic, setProfilePic] = useState(null);
 
   const navigation = useNavigation();
+  // console.log(id);
+
+  // useEffect(() => {
+  //   const fetchMovieDetails = async () => {
+  //     const details = await getMovieDetails(title);
+  //     setMovieDetails(details);
+  //     setIsLoading(false);
+  //   };
+  //   fetchMovieDetails();
+  // }, [title]);
 
   useEffect(() => {
-    const fetchMovieDetails = async () => {
+    const fetchData = async () => {
       const details = await getMovieDetails(title);
       setMovieDetails(details);
       setIsLoading(false);
+
+      const profileInfo = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", id);
+      setProfilePic(profileInfo.data[0].avatar_url);
     };
-    fetchMovieDetails();
+    fetchData();
   }, [title]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const details = await getMovieDetails(title);
+  //     setMovieDetails(details);
+  //     setIsLoading(false);
+
+  //     const profileInfo = await supabase
+  //       .from("profiles")
+  //       .select("*")
+  //       .eq("id", id);
+
+  //     console.log("PROFILE IN FRIEND", profileInfo.data);
+  //     setProfileData(profileInfo.data);
+
+  //     let friendNumber = profileInfo.data[0]["friend_ids"]
+  //       ? profileInfo.data[0]["friend_ids"].length
+  //       : 0;
+  //     // console.log("FRIEND NUMBER", friendNumber);
+  //     setFriendNumber(friendNumber);
+
+  //     const myPosts = await supabase
+  //       .from("posts")
+  //       .select("*")
+  //       .eq("user_id", id);
+  //     setMyPostData(myPosts.data);
+  //     // console.log("POST", myPosts.data);
+
+  //     const rankings = await supabase
+  //       .from("rankings")
+  //       .select("*", { count: "exact", head: true })
+  //       .eq("user_id", id);
+
+  //     const wishlist = await supabase
+  //       .from("wishlist")
+  //       .select("*", { count: "exact", head: true })
+  //       .eq("user_id", id);
+
+  //     setRankedNumber(rankings.count);
+  //     setWishlistNumber(wishlist.count);
+
+  //     setInfoFetched(true);
+  //   };
+  //   fetchData();
+  // }, [title]);
 
   const onLikePressed = async () => {
     const response = await supabase
       .from("posts")
       .update({ liked: !liked })
-      .eq("id", id);
+      .eq("user_id", id);
     console.log(response);
   };
 
@@ -68,7 +129,7 @@ const Post = ({
       const response = await supabase
         .from("posts")
         .update({ comments: [...comments, ["Yishu C.", inputText, url, true]] })
-        .eq("id", id);
+        .eq("user_id", id);
       console.log(response);
       setInputText("");
     } else {
@@ -84,7 +145,7 @@ const Post = ({
       .update({
         comments: [...comments.slice(0, index), ...comments.slice(index + 1)],
       })
-      .eq("id", id);
+      .eq("user_id", id);
     console.log(response);
   };
 
@@ -205,19 +266,20 @@ const Post = ({
         <View style={styles.header}>
           <View style={styles.profile}>
             <View style={styles.profilePicContainer}>
+              <View style={styles.profilePicBackground} />
               <Image style={styles.profilePic} source={{ uri: profilePic }} />
             </View>
-
-            <Text style={styles.username}>{user}</Text>
+            <View>
+              <Text style={styles.username}>{user}</Text>
+              <Text style={styles.formattedTime}>{formattedTime}</Text>
+            </View>
           </View>
-          <Text style={{ color: "white" }}>{formattedTime}</Text>
+          <Text style={styles.action}>{action}</Text>
         </View>
-
         {/* <View style={styles.divider} /> */}
 
         <View style={styles.body}>
           <View style={styles.postContent}>
-            <Text style={styles.action}>{action}</Text>
             <View style={styles.contentContainer}>
               <Text style={styles.content}>{text}</Text>
             </View>
@@ -239,7 +301,7 @@ const Post = ({
                 returnKeyType="send"
               />
               <TouchableOpacity style={styles.send} onPress={onCommentSend}>
-                <FontAwesome name="send" size={18} color="#361866" />
+                <FontAwesome name="send" size={18} color="#97DFFC" />
               </TouchableOpacity>
             </View>
 
@@ -247,6 +309,7 @@ const Post = ({
               <Image
                 style={styles.heart}
                 source={liked ? LIKE_ICON_FILLED : LIKE_ICON_OUTLINE}
+                tintColor="#97DFFC"
               />
             </TouchableOpacity>
           </View>
@@ -261,7 +324,7 @@ export default Post;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     // borderColor: "black",
     // borderWidth: 1,
     borderRadius: 15,
@@ -297,6 +360,13 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     // borderColor: "#361866",
+  },
+  profile: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  formattedTime: {
+    color: "white",
   },
   body: {
     flexDirection: "row",
@@ -365,16 +435,25 @@ const styles = StyleSheet.create({
   profilePic: {
     width: "100%",
     height: "100%",
+    borderRadius: 50, // Assuming it's a circle
+    zIndex: 2, // Make sure it's above the background
   },
   profilePicContainer: {
-    width: 35,
-    height: 35,
+    width: 45,
+    height: 45,
     margin: 5,
     marginRight: 8,
+    position: "relative",
   },
-  profile: {
-    flexDirection: "row",
-    alignItems: "center",
+  profilePicBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    borderRadius: 50, // Assuming it's a circle
+    backgroundColor: "#858AE3",
+    zIndex: 1,
   },
   username: {
     fontWeight: "bold",

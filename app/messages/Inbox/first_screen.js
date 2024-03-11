@@ -194,7 +194,7 @@ const Events = ({ route, navigation }) => {
   );
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <View style={styles.searchArea}>
         <View style={styles.searchContainer}>
           <TextInput
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     //padding: 24,
     backgroundColor: "transparent",
-    backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+    backgroundImage: "linear-gradient(to bottom, #0e0111, #311866)",
   },
   time: {
     alignItems: "center",

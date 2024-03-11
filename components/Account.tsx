@@ -12,7 +12,6 @@ import {
 import { Button, Input } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import { Session } from "@supabase/supabase-js";
-import { FlashList } from "@shopify/flash-list";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -22,18 +21,10 @@ export default function Account({ session }: { session: Session }) {
   const [username, setUsername] = useState("");
   const [website, setWebsite] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [users, setUsers] = useState<{ id: string }[]>([]);
 
   useEffect(() => {
     if (session) getProfile();
-    if (session) getAllUsers();
   }, [session]);
-
-  async function getAllUsers() {
-    const { data, error } = await supabase.from("profiles").select("id");
-    if (error) console.log(error?.message);
-    setUsers(data ?? []);
-  }
 
   async function getProfile() {
     try {
@@ -100,8 +91,8 @@ export default function Account({ session }: { session: Session }) {
 
   return (
     <LinearGradient
-      colors={["#311866", "#b67287"]}
-      style={[styles.container, { paddingHorizontal: 40 }]}
+      colors={["#0E0111", "#311866"]}
+      style={[styles.container, { paddingHorizontal: windowWidth * 0.1 }]}
     >
       <Text style={styles.title}>Edit Account</Text>
       <SafeAreaView style={styles.container}>
@@ -135,12 +126,12 @@ export default function Account({ session }: { session: Session }) {
                 updateProfile({ username, website, avatar_url: avatarUrl })
               }
               disabled={loading}
-              titleStyle={{ color: "white" }}
+              titleStyle={{ color: "#0E0111" }} // Change text color
               buttonStyle={{
-                backgroundColor: "#311866",
-                borderRadius: 20,
-                height: 50,
-                paddingHorizontal: 20,
+                backgroundColor: "#858AE3", // Change background color
+                borderRadius: windowWidth * 0.05,
+                height: windowHeight * 0.07,
+                paddingHorizontal: windowWidth * 0.05,
               }}
             />
           </TouchableHighlight>
@@ -154,15 +145,15 @@ export default function Account({ session }: { session: Session }) {
             <Button
               title="Sign Out"
               onPress={() => supabase.auth.signOut()}
-              titleStyle={{ color: "white" }}
+              titleStyle={{ color: "#97DFFC" }} // Change text color
               disabled={loading}
               buttonStyle={{
                 backgroundColor: "transparent",
-                borderColor: "white",
+                borderColor: "#97DFFC", // Change outline color
                 borderWidth: 2,
-                borderRadius: 20,
-                height: 50,
-                paddingHorizontal: 20,
+                borderRadius: windowWidth * 0.05,
+                height: windowHeight * 0.07,
+                paddingHorizontal: windowWidth * 0.05,
               }}
             />
           </TouchableHighlight>
@@ -172,51 +163,37 @@ export default function Account({ session }: { session: Session }) {
   );
 }
 
-{
-  /* <View style={[styles.verticallySpaced, { height: 200 }]}>
-        <FlashList
-          data={users}
-          renderItem={({ item }) => <Text>{item.id}</Text>}
-          estimatedItemSize={200}
-        />
-      </View> */
-}
-//     </View>
-//   );
-// }
-
 const styles = StyleSheet.create({
   container: {
     width: windowWidth,
     height: windowHeight,
     alignItems: "center",
-    // backgroundColor: "#001D3D",
   },
   title: {
     color: "white",
-    fontSize: 30,
+    fontSize: windowWidth * 0.08,
     fontWeight: "bold",
-    marginBottom: 20,
-    marginTop: 30,
-    textAlign: "left", // Align text to the left
+    marginBottom: windowHeight * 0.04,
+    marginTop: windowHeight * 0.06,
+    textAlign: "left",
     alignSelf: "flex-start",
   },
   textWhite: {
-    color: "white", // Set text color to white
+    color: "white",
   },
   verticallySpaced: {
-    paddingHorizontal: 40,
-    paddingTop: 4,
-    paddingBottom: 2,
+    paddingHorizontal: windowWidth * 0.1,
+    paddingTop: windowHeight * 0.005,
+    paddingBottom: windowHeight * 0.01,
     alignSelf: "stretch",
   },
   buttonSpaced: {
-    paddingHorizontal: 40,
-    paddingTop: 4,
-    paddingBottom: 12,
+    paddingHorizontal: windowWidth * 0.1,
+    paddingTop: windowHeight * 0.005,
+    paddingBottom: windowHeight * 0.015,
     alignSelf: "stretch",
   },
   mt20: {
-    marginTop: 25,
+    marginTop: windowHeight * 0.02,
   },
 });
