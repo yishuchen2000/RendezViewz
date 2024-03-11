@@ -261,12 +261,14 @@ const styles = StyleSheet.create({
   followButton: {
     backgroundColor: "#858AE3",
     marginRight: 20,
+    width: windowWidth * 0.31,
   },
   messageButton: {
     backgroundColor: "transparent",
     borderWidth: 3,
     borderColor: "#97DFFC",
     marginLeft: 20,
+    width: windowWidth * 0.31,
   },
   messageButtonText: {
     color: "#97DFFC",
