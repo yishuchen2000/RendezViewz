@@ -42,7 +42,7 @@ export default function Rankings() {
   } = route.params;
   // console.log("friendNUMBER", friendNumber);
   // console.log("myPostData", myPostData);
-  // console.log("profileData", profileData);
+  console.log("id", id);
   const [isFollowed, setIsFollowed] = useState(false);
 
   // if (!numbersFetched || !infoFetched) {
@@ -93,7 +93,7 @@ export default function Rankings() {
                 onPress={() =>
                   navigation.navigate("Friend Movies", {
                     screen: "Friend Rankings",
-                    params: { id: id },
+                    id: id,
                   })
                 }
               >
@@ -147,7 +147,7 @@ export default function Rankings() {
               onPress={() =>
                 navigation.navigate("Friend Movies", {
                   screen: "Friend Rankings",
-                  params: { id: id },
+                  id: id,
                 })
               }
             >
@@ -173,7 +173,7 @@ export default function Rankings() {
                   onPress={() =>
                     navigation.navigate("Friend Movies", {
                       screen: "Friend Wishlist",
-                      params: { id: id },
+                      id: id,
                     })
                   }
                 >
@@ -260,14 +260,14 @@ const styles = StyleSheet.create({
   },
   followButton: {
     backgroundColor: "#858AE3",
-    width: 120,
+    width: windowWidth * 0.3,
     marginRight: 20,
   },
   messageButton: {
     backgroundColor: "transparent",
     borderWidth: 3,
     borderColor: "#97DFFC",
-    width: 120,
+    width: windowWidth * 0.3,
     marginLeft: 20,
   },
   messageButtonText: {

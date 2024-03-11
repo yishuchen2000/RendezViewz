@@ -526,8 +526,8 @@ export default function Wishlist() {
             createFilterList();
           }}
         >
-          <FontAwesome name="filter" size={18} color="white" />
-          <Text style={{ color: "white" }}> Filters</Text>
+          <FontAwesome name="filter" size={18} color="black" />
+          <Text> Filters</Text>
         </Pressable>
         <FilterModal
           modalVisible={filterModal}
@@ -796,8 +796,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 3,
     marginLeft: "auto",
-    backgroundColor: "#361866",
-    borderColor: "white",
+    backgroundColor: "#858AE3",
+    // borderColor: "white",
     borderWidth: 1,
     padding: 10,
     marginVertical: 3,

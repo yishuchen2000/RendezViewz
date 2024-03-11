@@ -46,7 +46,6 @@ export default function Rankings() {
   const [filterModal, setFilterModal] = useState(false);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [genreList, setGenreList] = useState([]);
-  const [data, setData] = useState([]);
   const [entry, setEntry] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [visibleSuggestions, setVisibleSuggestions] = useState(false);
@@ -820,7 +819,6 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   filterContainer: {
-
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",

@@ -1,30 +1,29 @@
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { useRoute } from "@react-navigation/native";
 import Rankings from "./friendRankings";
 import Wishlist from "./friendWishlist";
 
 const Tab = createMaterialTopTabNavigator();
-const Stack = createStackNavigator();
 
-export default function MyTabs({ id }) {
+export default function MyTabs({ id, route }) {
+  console.log(route.params?.id);
+  console.log(id);
   return (
     <Tab.Navigator
       screenOptions={{
         unmountOnBlur: true,
-        tabBarStyle: { backgroundColor: "#361866" },
+        tabBarStyle: { backgroundColor: "black" },
         tabBarLabelStyle: { fontSize: 14, fontWeight: "bold", color: "white" },
         tabBarIndicatorStyle: { backgroundColor: "white" },
       }}
     >
-      <Tab.Screen name="Friend Rankings" component={Rankings} />
-      <Tab.Screen name="Friend Wishlist" component={Wishlist} />
-      {/* <Tab.Screen name="Friend Rankings">
-        {() => <Rankings userId={id} />}
+      <Tab.Screen name="Friend Rankings">
+        {(props) => <Rankings userId={id} />}
       </Tab.Screen>
       <Tab.Screen name="Friend Wishlist">
-        {() => <Wishlist userId={id} />}
-      </Tab.Screen> */}
+        {(props) => <Wishlist userId={id} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
