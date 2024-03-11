@@ -39,8 +39,8 @@ const AddFriendPage = ({ route, navigation }) => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      // setcurrentUserID(session.user.id);
-      console.log("currentUserID", currentUserID);
+      setcurrentUserID(session.user.id);
+      // console.log("currentUserID", currentUserID);
 
       const fetchFriendID = async () => {
         const friends = await supabase
@@ -160,6 +160,7 @@ const AddFriendPage = ({ route, navigation }) => {
             renderItem={({ item }) => (
               <View style={styles.friendbox}>
                 <NewFriend
+                  sessionID={session.user.id}
                   onAddFriend={() => onAddFriend(item.id)}
                   friendIDs={friendIDs}
                   currentUserId={currentUserID}
