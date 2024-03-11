@@ -132,7 +132,7 @@ export default function People() {
   if (!data) {
     return (
       <LinearGradient
-        colors={["#361866", "#E29292"]}
+        colors={["#0e0111", "#311866"]}
         style={[styles.container, { paddingHorizontal: 8 }]}
       >
         <View
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "transparent",
-    backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+    // backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     paddingTop: 10,
   },
   container1: {

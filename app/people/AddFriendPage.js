@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -10,43 +10,43 @@ import {
   ActivityIndicator,
   Modal,
   Text,
-} from 'react-native';
-import {FontAwesome} from '@expo/vector-icons';
-import {LinearGradient} from 'expo-linear-gradient';
-import NewFriend from '../../components/NewFriend';
-import supabase from '../../Supabase';
-import {Entypo} from '@expo/vector-icons';
-import {AntDesign} from '@expo/vector-icons';
-import filter from 'lodash.filter';
-import {useNavigation} from '@react-navigation/native';
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import NewFriend from "../../components/NewFriend";
+import supabase from "../../Supabase";
+import { Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import filter from "lodash.filter";
+import { useNavigation } from "@react-navigation/native";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
-const AddFriendPage = ({route, navigation}) => {
+const AddFriendPage = ({ route, navigation }) => {
   const [session, setSession] = useState(null);
   const [currentUserID, setcurrentUserID] = useState(null);
   const [friendIDs, setFriendIDs] = useState(null);
 
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
   const [entry, setEntry] = useState(null);
   const [modalValid, setModalValid] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({data: {session}}) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       // setcurrentUserID(session.user.id);
-      console.log('currentUserID', currentUserID);
+      console.log("currentUserID", currentUserID);
 
       const fetchFriendID = async () => {
         const friends = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id);
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
         setFriendIDs(friends.data[0].friend_ids);
       };
       fetchFriendID();
@@ -56,14 +56,14 @@ const AddFriendPage = ({route, navigation}) => {
   useEffect(() => {
     if (friendIDs) {
       // console.log("TYPE", typeof friendIDs);
-      console.log('friendID', friendIDs);
+      console.log("friendID", friendIDs);
 
       const fetchNewFreinds = async () => {
         const filterIDs = [...friendIDs, session.user.id];
         const response = await supabase
-          .from('profiles')
-          .select('*')
-          .not('id', 'in', `(${filterIDs.join(',')})`);
+          .from("profiles")
+          .select("*")
+          .not("id", "in", `(${filterIDs.join(",")})`);
 
         // console.log("out", response.data);
         // console.log("out", response);
@@ -76,15 +76,15 @@ const AddFriendPage = ({route, navigation}) => {
     }
   }, [friendIDs]);
 
-  const onAddFriend = async id => {
-    console.log('id to add', id);
+  const onAddFriend = async (id) => {
+    console.log("id to add", id);
     const updatedFriendIDs = [...friendIDs, id];
-    console.log('Updated FriendIDs!', updatedFriendIDs);
+    console.log("Updated FriendIDs!", updatedFriendIDs);
 
     const addFriend = await supabase
-      .from('profiles')
-      .update({friend_ids: updatedFriendIDs})
-      .eq('id', session.user.id);
+      .from("profiles")
+      .update({ friend_ids: updatedFriendIDs })
+      .eq("id", session.user.id);
 
     setFriendIDs(updatedFriendIDs);
   };
@@ -101,36 +101,36 @@ const AddFriendPage = ({route, navigation}) => {
   //     .eq("id", id);
   // };
 
-  const contains = ({username}, query) => {
+  const contains = ({ username }, query) => {
     return username.toLowerCase().includes(query);
   };
 
   const clearSearch = () => {
     setFilteredData(data);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   const handleSearch = () => {
     const formattedQuery = searchQuery.toLowerCase();
-    const filteredData = filter(data, ({username}) => {
-      return contains({username}, formattedQuery);
+    const filteredData = filter(data, ({ username }) => {
+      return contains({ username }, formattedQuery);
     });
     setFilteredData(filteredData);
   };
 
   return (
-    <LinearGradient colors={['#0e0111', '#311866']} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <View style={styles.container1}>
         <View style={styles.input}></View>
 
         <View style={styles.searchBar}>
           <TextInput
             numberOfLines={1}
-            style={{flex: 1, color: 'black', textAlign: 'left'}}
+            style={{ flex: 1, color: "black", textAlign: "left" }}
             placeholder="Search by Username"
             placeholderTextColor="gray"
             value={searchQuery}
-            onChangeText={query => setSearchQuery(query)}
+            onChangeText={(query) => setSearchQuery(query)}
             onSubmitEditing={handleSearch}
             returnKeyType="search"
           />
@@ -157,7 +157,7 @@ const AddFriendPage = ({route, navigation}) => {
           {/* <Text style={styles.title}>Add</Text> */}
           <FlatList
             data={filteredData}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View style={styles.friendbox}>
                 <NewFriend
                   onAddFriend={() => onAddFriend(item.id)}
@@ -169,7 +169,7 @@ const AddFriendPage = ({route, navigation}) => {
                 />
               </View>
             )}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             style={styles.posts}
           />
         </View>
@@ -185,11 +185,11 @@ const AddFriendPage = ({route, navigation}) => {
       </View>
       <View style={styles.clapboard}>
         <Image
-          source={require('../../assets/Clapboard2.png')}
+          source={require("../../assets/Clapboard2.png")}
           style={{
             flex: 1,
             width: windowWidth,
-            resizeMode: 'stretch',
+            resizeMode: "stretch",
           }}
         />
       </View>
@@ -200,99 +200,101 @@ const AddFriendPage = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
-    backgroundImage: 'linear-gradient(to bottom, #361866, #E29292)',
+    backgroundColor: "transparent",
+    backgroundImage: "linear-gradient(to bottom, #0e0111, #311866)",
     paddingTop: 10,
   },
   container1: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     flex: 1,
   },
   friendbox: {
-    backgroundColor: 'rgba(50, 50, 50, 0.1)',
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
+    // backgroundColor: "rgba(50, 50, 50, 0.1)",
+    borderRadius: 20,
   },
   friendList: {
-    backgroundColor: 'transpar',
+    backgroundColor: "transparent",
     flex: 8,
   },
   buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     width: windowWidth * 0.13,
   },
   searchbutton: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   searchBar: {
     marginLeft: 5,
     marginRight: 5,
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
     paddingHorizontal: 15,
     paddingVertical: 6,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 6,
   },
   main: {
     height: windowHeight * 0.5,
     width: windowWidth,
-    backgroundColor: 'transparent',
-    flexDirection: 'column',
+    backgroundColor: "transparent",
+    flexDirection: "column",
     width: windowWidth,
     height: windowHeight,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   itemContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "transparent",
     margin: 5,
     borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     flex: 1,
   },
   cal: {
-    width: '100%',
-    backgroundColor: 'transparent',
-    height: '5%',
+    width: "100%",
+    backgroundColor: "transparent",
+    height: "5%",
     borderWidth: 5,
-    borderColor: 'green',
-    alignItems: 'center',
+    borderColor: "green",
+    alignItems: "center",
   },
   title: {
     fontSize: 64,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   subtitle: {
     fontSize: 36,
-    color: '#38434D',
+    color: "#38434D",
   },
   clapboard: {
     height: windowHeight * 0.03,
     width: windowWidth,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   buttonContainer: {
-    position: 'absolute',
+    position: "absolute",
     height: 60,
     aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     bottom: windowHeight * 0.05,
     right: windowWidth * 0.05,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   plusButton: {
     borderRadius: 100,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
   },
   posts: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
 });
 
