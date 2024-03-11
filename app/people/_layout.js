@@ -6,10 +6,13 @@ import People from "./people";
 import AddFriendPage from "./AddFriendPage";
 import FriendProfile from "./FriendProfile";
 import NewFriendProfile from "./NewFriendProfile";
+import { useRoute } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 
 const PeopleStack = () => {
+  // const route = useRoute();
+  // console.log("ID in layout", route.params.id);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -26,7 +29,22 @@ const PeopleStack = () => {
           headerTitle: "",
           headerBackTitleVisible: false,
         }}
+        // initialParams={{ userId }}
       />
+      {/* <Stack.Screen
+        name="Friend Movies"
+        options={({ route }) => ({
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+          // Pass userId as a screen prop to MyTabs
+          screenProps: { id: route.params.id },
+        })}
+      >
+        {(props) => <MyTabs {...props} />}
+      </Stack.Screen> */}
+
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}

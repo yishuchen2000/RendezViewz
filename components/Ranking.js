@@ -82,7 +82,7 @@ const Ranking = ({ index, title, coverPic, onDelete, goesTo, rating }) => {
           }}
           name="trash"
           size={25}
-          color="#602683"
+          color="#97DFFC"
         />
       </Pressable>
     </View>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   container: {
     height: windowHeight * 0.1,
     flexDirection: "row",
-    backgroundColor: "rgba(217, 217, 217, 0.4)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     borderColor: "#361866",
     borderRadius: 10,
     marginVertical: windowHeight * 0.002,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     width: 17,
     height: 17,
     resizeMode: "contain",
-    tintColor: "purple",
+    tintColor: "#97DFFC",
   },
   deleteButtonContainer: {
     position: "absolute",

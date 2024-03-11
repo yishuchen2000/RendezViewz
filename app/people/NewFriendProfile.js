@@ -16,6 +16,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
 import ProfilePost from "../../components/ProfilePost";
 import { EvilIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../Supabase";
 import Ranking from "../../components/friendRanking";
@@ -26,6 +27,7 @@ const windowHeight = Dimensions.get("window").height;
 const UNDERLINE = require("../../assets/underline.png");
 
 export default function Rankings() {
+  const navigation = useNavigation();
   // const [data, setData] = useState([]);
 
   // const [userID, setUserID] = useState(null);
@@ -88,7 +90,7 @@ export default function Rankings() {
             <View style={styles.statsContainer}>
               <Pressable
                 style={styles.statsBox}
-                // onPress={() => navigation.navigate("rankings")}
+                onPress={() => navigation.navigate("Friend Movies")}
               >
                 <View style={styles.statsBox}>
                   <Text style={[styles.text, { fontSize: 18 }]}>
@@ -137,7 +139,7 @@ export default function Rankings() {
 
             <Pressable
               style={[styles.button, styles.messageButton]}
-              // onPress={() => console.log("Message button pressed")}
+              onPress={() => navigation.navigate("Friend Movies")}
             >
               <Text style={[styles.text, styles.messageButtonText]}>
                 Rankings
@@ -148,7 +150,7 @@ export default function Rankings() {
           <View style={styles.rectangleContainer}>
             <View style={styles.leftContainer}>
               <Text style={styles.rectangleText}>
-                some info about me: i love horror films!
+                <Text style={styles.rectangleText}>{profileData[0].info}</Text>
               </Text>
             </View>
             <View style={styles.centerContainer}>

@@ -7,7 +7,7 @@ import Wishlist from "./friendWishlist";
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 
-export default function MyTabs() {
+export default function MyTabs({ id }) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -19,6 +19,12 @@ export default function MyTabs() {
     >
       <Tab.Screen name="Friend Rankings" component={Rankings} />
       <Tab.Screen name="Friend Wishlist" component={Wishlist} />
+      {/* <Tab.Screen name="Friend Rankings">
+        {() => <Rankings userId={id} />}
+      </Tab.Screen>
+      <Tab.Screen name="Friend Wishlist">
+        {() => <Wishlist userId={id} />}
+      </Tab.Screen> */}
     </Tab.Navigator>
   );
 }
