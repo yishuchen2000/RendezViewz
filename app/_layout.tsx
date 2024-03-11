@@ -1,5 +1,11 @@
 import { Tabs } from "expo-router";
-import { View, Text, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import {
@@ -134,9 +140,11 @@ export default function HomeLayout() {
   }
 
   return (
-    <View>
-      <Auth />
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={{ flex: 1 }}>
+        <Auth />
+      </View>
+    </TouchableWithoutFeedback>
   );
 
   return (
