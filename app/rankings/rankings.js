@@ -380,7 +380,7 @@ export default function Rankings() {
                 onPress={closeModal}
               >
                 <View style={styles.buttonClose}>
-                  <MaterialIcons name="cancel" size={30} color={"black"} />
+                  <MaterialIcons name="cancel" size={30} color={"white"} />
                 </View>
               </Pressable>
             </View>
@@ -392,10 +392,10 @@ export default function Rankings() {
                   <TextInput
                     style={[
                       styles.titleDropdown,
-                      { color: selectionChosen ? "purple" : "gray" },
+                      { color: selectionChosen ? "white" : "white" },
                     ]}
                     placeholder="Enter a movie or show title..."
-                    placeholderTextColor="gray"
+                    placeholderTextColor="rgba(255, 255, 255, 0.8)"
                     value={
                       (entry ? entry : "") +
                       (selectedYear ? ` (${selectedYear})` : "")
@@ -421,7 +421,7 @@ export default function Rankings() {
                       <MaterialIcons
                         name="cancel"
                         size={25}
-                        color={"grey"}
+                        color={"white"}
                         style={styles.clearButton}
                       />
                     </Pressable>
@@ -490,7 +490,7 @@ export default function Rankings() {
                         minimumValue={0}
                         maximumValue={100}
                         step={1}
-                        minimumTrackTintColor="purple"
+                        minimumTrackTintColor="#858AE3"
                         maximumTrackTintColor="grey"
                         value={rankValue * 10}
                         onValueChange={(value) => {
@@ -509,13 +509,13 @@ export default function Rankings() {
               <Pressable
                 style={[
                   styles.addButton,
-                  { backgroundColor: modalValid ? "#602683" : "gray" },
+                  { backgroundColor: modalValid ? "#858AE3" : "gray" },
                 ]}
                 onPress={handleRank}
                 disabled={!modalValid}
               >
                 <Text
-                  style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
+                  style={{ color: "#0E0111", fontSize: 15, fontWeight: "bold" }}
                 >
                   Update Ranking
                 </Text>
@@ -543,8 +543,8 @@ export default function Rankings() {
             createFilterList();
           }}
         >
-          <FontAwesome name="filter" size={18} color="white" />
-          <Text style={{ color: "white" }}> Filters</Text>
+          <FontAwesome name="filter" size={18} color="#0E0111" />
+          <Text style={{ color: "#0E0111" }}> Filters</Text>
         </Pressable>
         <FilterModal
           modalVisible={filterModal}
@@ -618,8 +618,11 @@ const styles = StyleSheet.create({
     right: windowWidth * 0.05,
     backgroundColor: "transparent",
   },
+  yearText: {
+    color: "white",
+  },
   plusButton: {
-    borderRadius: 100,
+    borderRadius: 200,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
@@ -629,7 +632,7 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.6,
     flexDirection: "column",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: "#0E0111",
     borderRadius: 20,
     shadowColor: "#000",
     shadowOffset: {
@@ -639,14 +642,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.6,
     shadowRadius: 8,
     elevation: 10,
-    borderWidth: 1,
-    borderColor: "#361866",
   },
   modalHeader: {
     flexDirection: "row",
     width: windowWidth * 0.8,
     justifyContent: "space-between",
-    paddingBottom: 42,
+    paddingBottom: 30,
+    paddingTop: 20,
   },
   clapboard: {
     height: windowHeight * 0.03,
@@ -658,39 +660,40 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     marginTop: 30,
-    color: "#361866",
+    color: "white",
     textAlign: "center",
   },
   underline: {
     transform: [{ scaleX: -1 }, { rotate: "4deg" }],
     alignSelf: "center",
     position: "absolute",
-    top: 45,
+    top: 60,
     left: 48,
     width: "70%",
     height: 90,
-    tintColor: "#361866",
+    tintColor: "#858AE3",
   },
   buttonCloseContainer: {
     position: "absolute",
     color: "white",
-    padding: 5,
+    padding: 15,
     width: 80,
-    height: 50,
+    height: 70,
+    marginTop: 15,
   },
   questionsContainer: {
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 15,
+    paddingBottom: 5,
   },
   titleSelectContainer: {
     width: "100%",
     gap: 8,
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   titleQuestion: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#361866",
+    color: "white",
     marginLeft: 17,
   },
   titleTextBar: {
@@ -699,14 +702,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingLeft: 15,
     paddingRight: 5,
-    backgroundColor: "lavender",
-    height: 60,
+    margin: 10,
+    backgroundColor: "rgba(133, 138, 227, 0.50)",
+    borderColor: "#858AE3",
+    borderWeight: 10,
+    height: 55,
     borderRadius: 15,
     borderWidth: 0.5,
   },
   titleDropdown: {
     flex: 1,
-    color: "purple",
+    color: "white",
   },
   clearButton: {
     marginLeft: 10,
@@ -747,11 +753,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     alignItems: "center",
+    marginLeft: 15,
   },
   titleText: {
     fontSize: 14,
     fontWeight: "bold",
     paddingBottom: 2,
+    color: "white",
   },
   noSuggestionsContainer: {
     width: "100%",
@@ -768,18 +776,20 @@ const styles = StyleSheet.create({
   },
   slider: {
     alignItems: "center",
+    marginLeft: 10,
     gap: 10,
   },
   sliderDisplay: {
     padding: 10,
     fontSize: 28,
-    color: "purple",
-    borderWidth: 1,
+    color: "white",
+    borderWidth: 3,
+    borderColor: "#858AE3",
     borderRadius: 15,
     width: windowWidth * 0.2,
     justifyContent: "center",
     textAlign: "center",
-    backgroundColor: "lavender",
+    backgroundColor: "rgba(133, 138, 227, 0.50)",
   },
   selectedTextStyle: {
     color: "#602683",
@@ -799,7 +809,6 @@ const styles = StyleSheet.create({
   bottom: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
   },
   addButton: {
     alignSelf: "center",
@@ -808,9 +817,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 50,
   },
   filterContainer: {
-    // backgroundColor: "#361866",
+
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -822,8 +832,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 3,
     marginLeft: "auto",
-    backgroundColor: "#361866",
-    borderColor: "white",
+    backgroundColor: "#858AE3",
+    // borderColor: "white",
     borderWidth: 1,
     padding: 10,
     marginVertical: 3,

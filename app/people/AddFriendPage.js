@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "transparent",
-    backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+    backgroundImage: "linear-gradient(to bottom, #0e0111, #311866)",
     paddingTop: 10,
   },
   container1: {
@@ -209,10 +209,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   friendbox: {
-    backgroundColor: "rgba(50, 50, 50, 0.1)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
+    // backgroundColor: "rgba(50, 50, 50, 0.1)",
+    borderRadius: 20,
   },
   friendList: {
-    backgroundColor: "transpar",
+    backgroundColor: "transparent",
     flex: 8,
   },
   buttons: {
@@ -247,7 +249,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemContainer: {
-    backgroundColor: "white",
+    backgroundColor: "transparent",
     margin: 5,
     borderRadius: 15,
     justifyContent: "center",

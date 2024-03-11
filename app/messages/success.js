@@ -186,31 +186,41 @@ const Success = ({ navigation, route }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 20,
+              fontSize: 25,
               textAlign: "center",
-              marginTop: 20,
+              margin: 18,
             }}
           >
             Congrats! Event scheduled:
           </Text>
+
+          <View style={styles.posterBackgroundContainer}>
+            <Image
+              source={{ uri: poster }}
+              style={styles.posterBackground}
+              blurRadius={5}
+            />
+            <View style={styles.posterContainer}>
+              <Image source={{ uri: poster }} style={styles.poster} />
+            </View>
+          </View>
           <Text
             style={{
               color: "white",
-              fontSize: 28,
+              fontSize: 24,
               marginTop: 20,
-              marginBottom: 20,
-              paddingHorizontal: 20,
+              marginBottom: 10,
+
               textAlign: "center",
               fontWeight: "bold",
             }}
           >
             {name}
           </Text>
-          <Image source={{ uri: poster }} style={styles.poster} />
           <Text
             style={{
               color: "white",
-              fontSize: 24,
+              fontSize: 22,
               textAlign: "center",
               fontWeight: "bold",
             }}
@@ -234,18 +244,22 @@ const Success = ({ navigation, route }) => {
             style={styles.button}
             onPress={addToCalendar} // Call function on button press
           >
-            <Text style={{ color: "purple", fontSize: 15 }}>
+            <Text
+              style={{ color: "#000814", fontSize: 15, fontWeight: "bold" }}
+            >
               Export event to calendar
             </Text>
           </Pressable>
           <Pressable
-            style={styles.button}
+            style={styles.button1}
             onPress={() => {
               navigation.goBack();
               navigation.goBack();
             }}
           >
-            <Text style={{ color: "purple", fontSize: 15 }}>Return home</Text>
+            <Text style={{ color: "#", fontSize: 15, fontWeight: "bold" }}>
+              Return home
+            </Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -289,20 +303,51 @@ const styles = StyleSheet.create({
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     //flexWrap: "wrap",
   },
+  posterBackgroundContainer: {
+    position: "relative",
+    width: windowWidth,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  posterBackground: {
+    position: "absolute",
+    width: windowWidth,
+    height: windowHeight * 0.3,
+    resizeMode: "cover",
+    borderRadius: 15,
+  },
+  posterContainer: {
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    overflow: "hidden",
+    marginTop: 0, // Adjust as necessary
+  },
   poster: {
-    height: windowHeight * 0.35,
-    width: windowHeight * 0.22,
-    marginBottom: 10,
-    padding: 5,
+    height: windowHeight * 0.3,
+    width: windowWidth * 0.9, // Adjust width as necessary to maintain aspect ratio
+    resizeMode: "contain",
   },
   button: {
-    marginTop: 20,
+    marginTop: 10,
     height: 40,
     width: 225,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 50,
-    backgroundColor: "white",
+    backgroundColor: "#858AE3",
+  },
+  button1: {
+    margin: 20,
+    height: 40,
+    width: 225,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 50,
+    backgroundColor: "transparent",
+    borderWidth: 3,
+    borderColor: "#97DFFC",
   },
   peopleContainer: {
     width: windowWidth * 0.8,

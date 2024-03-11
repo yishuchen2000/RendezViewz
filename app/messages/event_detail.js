@@ -206,11 +206,18 @@ const EventDetail = ({ route }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.overall}>
+          <View style={styles.posterBackgroundContainer}>
+            <Image
+              source={{ uri: showURL }}
+              style={styles.posterBackground}
+              blurRadius={5}
+            />
+            <View style={styles.posterContainer}>
+              <Image source={{ uri: showURL }} style={styles.poster} />
+            </View>
+          </View>
           <View style={styles.time}>
             <Text style={styles.show}>{name}</Text>
-          </View>
-          <View style={styles.image}>
-            <Image source={{ uri: showURL }} style={styles.poster} />
           </View>
           <View style={styles.time}>
             <Text style={styles.date}>{formatDateAndTime(date, time)}</Text>
@@ -229,8 +236,10 @@ const EventDetail = ({ route }) => {
             </Pressable>
           ) : null}
           <Pressable style={styles.button} onPress={addToCalendar}>
-            <Text style={{ color: "purple", fontSize: 15 }}>
-              Export event to Calendar
+            <Text
+              style={{ color: "#000814", fontSize: 15, fontWeight: "bold" }}
+            >
+              Export Event to Calendar
             </Text>
           </Pressable>
         </View>
@@ -269,25 +278,49 @@ const styles = StyleSheet.create({
   },
   time: {
     alignItems: "center",
-    margin: 10,
+    marginTop: 10,
+    marginBottom: 0,
   },
   date: {
-    fontSize: 25,
+    fontSize: windowWidth * 0.05,
     color: "white",
   },
   show: {
-    fontSize: 35,
+    fontSize: windowWidth * 0.09,
     color: "white",
     textAlign: "center",
   },
   image: {
     height: windowHeight * 0.35,
     width: windowHeight * 0.22,
-    marginBottom: 10,
-    padding: 5,
+    marginBottom: windowHeight * 0.02,
+    padding: windowWidth * 0.01,
+  },
+  posterBackgroundContainer: {
+    position: "relative",
+    width: windowWidth,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  posterBackground: {
+    position: "absolute",
+    width: windowWidth,
+    height: windowHeight * 0.5,
+    resizeMode: "cover",
+    borderRadius: 15,
+  },
+  posterContainer: {
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    overflow: "hidden",
+    marginTop: 0, // Adjust as necessary
   },
   poster: {
-    flex: 1,
+    height: windowHeight * 0.5,
+    width: windowWidth * 0.9, // Adjust width as necessary to maintain aspect ratio
+    resizeMode: "contain",
   },
   peopleContainer: {
     flexDirection: "row",
@@ -318,14 +351,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
-    marginTop: 20,
-    height: 40,
-    width: 250,
-    paddingHorizontal: 10,
-    alignItems: "center",
+    marginTop: windowHeight * 0.01,
+    marginBottom: windowHeight * 0.04,
+    paddingVertical: windowHeight * 0.02,
+    paddingHorizontal: windowWidth * 0.04,
     justifyContent: "center",
-    borderRadius: 50,
-    backgroundColor: "white",
+    alignItems: "center",
+    borderRadius: windowWidth * 0.1,
+    backgroundColor: "#858AE3",
   },
 });
 

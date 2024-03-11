@@ -289,6 +289,7 @@ const AddEvent = ({ route, navigation }) => {
   };
 
   return (
+
     <LinearGradient
       colors={["#0e0111", "#311866"]}
       style={styles.container}
@@ -400,12 +401,7 @@ const AddEvent = ({ route, navigation }) => {
         </View>
         <View style={styles.ccontainer}>
           <View style={styles.eachBox}>
-            <Ionicons
-              name="ios-film-outline"
-              size={30}
-              color="white"
-              style={{ paddingRight: 20 }}
-            />
+            <Ionicons name="ios-film-outline" size={30} color="white" />
             <View style={styles.input}>
               <TextInput
                 style={[
@@ -474,9 +470,7 @@ const AddEvent = ({ route, navigation }) => {
                         <Text numberOfLines={1} style={styles.titleText}>
                           {item.Title}
                         </Text>
-                        <Text style={{ color: "lightgrey" }}>
-                          ({item.Year})
-                        </Text>
+                        <Text style={{ color: "white" }}>({item.Year})</Text>
                       </View>
                     </TouchableOpacity>
                   )}
@@ -499,7 +493,7 @@ const AddEvent = ({ route, navigation }) => {
             <Pressable onPress={openModal} style={styles.input}>
               <View style={styles.input1}>
                 <Text
-                  style={[styles.replaceText, { fontSize: 17, color: "grey" }]}
+                  style={[styles.replaceText, { fontSize: 14, color: "grey" }]}
                 >
                   {person.length > 0
                     ? "Click here to edit people list"
@@ -516,7 +510,9 @@ const AddEvent = ({ route, navigation }) => {
       </View>
 
       <Pressable style={styles.button} onPress={handleAddEvent}>
-        <Text style={{ color: "purple", fontSize: 15 }}>Send Invites</Text>
+        <Text style={{ color: "#000814", fontSize: 17, fontWeight: "bold" }}>
+          Send Invites
+        </Text>
       </Pressable>
       <View style={styles.clapboard}>
         <Image
@@ -536,6 +532,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     height: "90%",
+    top: windowHeight * 0.1,
     //alignItems: "center",
     //borderWidth: 5,
     //borderColor: "red",
@@ -607,13 +604,13 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: "center",
     position: "absolute",
-    backgroundColor: "white",
+    backgroundColor: "#858AE3",
     width: 200,
     padding: 10,
     borderRadius: 50,
     alignItems: "center",
     marginTop: 10,
-    bottom: windowHeight * 0.05,
+    bottom: windowHeight * 0.15,
     //right: 20,
   },
   selecttext: {
@@ -745,8 +742,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     margin: 5,
-    //borderWidth: 5,
-    //borderColor: "blue",
+
     alignSelf: "center",
   },
   modalView: {
@@ -815,15 +811,27 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   titleTextBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 20,
-    paddingLeft: 15,
-    paddingRight: 5,
-    backgroundColor: "lavender",
-    height: 60,
-    borderRadius: 15,
-    borderWidth: 0.5,
+    // flexDirection: "row",
+    // alignItems: "center",
+    // marginHorizontal: 20,
+    // paddingLeft: 15,
+    // paddingRight: 5,
+    // backgroundColor: "lavender",
+    // height: 60,
+    // borderRadius: 15,
+    // borderWidth: 0.5,
+    width: windowWidth * 0.7,
+    height: 30,
+    flexDirection: "column",
+    justifyContent: "center",
+    //paddingBottom: 30,
+    //alignItems: "center",
+    //borderRadius: 15,
+    //margin: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "transparent",
+    //borderColor: "green",
+    //borderWidth: 5,
   },
   titleDropdown: {
     flex: 1,

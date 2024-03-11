@@ -184,21 +184,23 @@ export default function Page() {
   //   fetchData();
   // }, []);
 
-  // if (!data) {
-  //   return (
-  //     <LinearGradient
-  //       colors={["#0e0111", "#311866"]}
-  //       style={[styles.container, { paddingHorizontal: 8 }]}
-  //     >
-  //       <View
-  //         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-  //       >
-  //         <ActivityIndicator size="large" color="purple" />
-  //         <Text style={{ color: "white" }}>Loading...</Text>
-  //       </View>
-  //     </LinearGradient>
-  //   );
-  // }
+
+  if (!data) {
+    return (
+      <LinearGradient
+        colors={["#0e0111", "#311866"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="purple" />
+          <Text style={{ color: "white" }}>Loading...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
 
   return (
     <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
