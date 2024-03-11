@@ -93,7 +93,6 @@ export default function Rankings() {
                 onPress={() =>
                   navigation.navigate("Friend Movies", {
                     screen: "Friend Rankings",
-                    id: id,
                   })
                 }
               >
@@ -147,7 +146,6 @@ export default function Rankings() {
               onPress={() =>
                 navigation.navigate("Friend Movies", {
                   screen: "Friend Rankings",
-                  id: id,
                 })
               }
             >
@@ -173,7 +171,6 @@ export default function Rankings() {
                   onPress={() =>
                     navigation.navigate("Friend Movies", {
                       screen: "Friend Wishlist",
-                      id: id,
                     })
                   }
                 >
@@ -260,14 +257,12 @@ const styles = StyleSheet.create({
   },
   followButton: {
     backgroundColor: "#858AE3",
-    width: windowWidth * 0.3,
     marginRight: 20,
   },
   messageButton: {
     backgroundColor: "transparent",
     borderWidth: 3,
     borderColor: "#97DFFC",
-    width: windowWidth * 0.3,
     marginLeft: 20,
   },
   messageButtonText: {
