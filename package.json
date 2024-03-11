@@ -42,6 +42,7 @@
     "react-native": "0.72.6",
     "react-native-add-calendar-event": "^5.0.0",
     "react-native-calendars": "^1.1302.0",
+    "react-native-confetti-cannon": "^1.5.2",
     "react-native-date-picker": "^4.3.5",
     "react-native-dropdown-listpicker": "^1.1.4",
     "react-native-dropdown-select-list": "^2.0.5",

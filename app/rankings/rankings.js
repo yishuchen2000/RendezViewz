@@ -154,7 +154,7 @@ export default function Rankings() {
 
   //button wil stay grey until these conitions are met
   useEffect(() => {
-    if (selectionChosen && rankValue <= 10 && rankValue >= 0) {
+    if (selectionChosen) {
       const isDuplicate = data.some((item) => item.title === entry);
       setIsDuplicateEntry(isDuplicate);
       setModalValid(true);
@@ -162,7 +162,7 @@ export default function Rankings() {
       setIsDuplicateEntry(false);
       setModalValid(false);
     }
-  }, [entry, rankValue, data]);
+  }, [selectionChosen, data]);
 
   // get top 10 matches to textInput
   const fetchSuggestions = useCallback(
@@ -490,15 +490,15 @@ export default function Rankings() {
                       <Slider
                         style={{ width: windowWidth * 0.65, height: 40 }}
                         minimumValue={0}
-                        maximumValue={100} // This allows for 0-10 range with decimal points.
+                        maximumValue={100}
                         step={1}
                         minimumTrackTintColor="purple"
                         maximumTrackTintColor="grey"
-                        value={rankValue * 10} // Convert the rankValue back to 0-100 scale for the slider.
+                        value={rankValue * 10}
                         onValueChange={(value) => {
-                          const newValue = value / 10; // Convert back to 0-10 scale for rankValue.
+                          const newValue = value / 10;
                           debouncedSetRankValue(newValue);
-                          setSliderDisplayValue(newValue.toFixed(1)); // Update display value, keep one decimal point.
+                          setSliderDisplayValue(newValue.toFixed(1));
                         }}
                       />
                     </View>
