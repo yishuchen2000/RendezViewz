@@ -93,6 +93,7 @@ export default function Rankings() {
                 onPress={() =>
                   navigation.navigate("Friend Movies", {
                     screen: "Friend Rankings",
+                    id: id,
                   })
                 }
               >
@@ -146,6 +147,7 @@ export default function Rankings() {
               onPress={() =>
                 navigation.navigate("Friend Movies", {
                   screen: "Friend Rankings",
+                  id: id,
                 })
               }
             >
@@ -171,6 +173,7 @@ export default function Rankings() {
                   onPress={() =>
                     navigation.navigate("Friend Movies", {
                       screen: "Friend Wishlist",
+                      id: id,
                     })
                   }
                 >
