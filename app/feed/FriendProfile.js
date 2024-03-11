@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
 import ProfilePost from "../../components/ProfilePost";
+import { useNavigation } from "@react-navigation/native";
 import { EvilIcons } from "@expo/vector-icons";
 
 import supabase from "../../Supabase";
@@ -26,6 +27,7 @@ const windowHeight = Dimensions.get("window").height;
 const UNDERLINE = require("../../assets/underline.png");
 
 export default function FriendProfile() {
+  const navigation = useNavigation();
   // const [data, setData] = useState([]);
 
   // const [userID, setUserID] = useState(null);
@@ -38,6 +40,7 @@ export default function FriendProfile() {
     rankedNumber,
     wishlistNumber,
   } = route.params;
+  console.log("USER_IDin FriendProfile", id);
   // console.log("friendNUMBER", friendNumber);
   // console.log("myPostData", myPostData);
   // console.log("profileData", profileData);
@@ -88,7 +91,16 @@ export default function FriendProfile() {
             <View style={styles.statsContainer}>
               <Pressable
                 style={styles.statsBox}
-                // onPress={() => navigation.navigate("rankings")}
+                onPress={() => {
+                  navigation.popToTop();
+                  navigation.navigate("people", {
+                    screen: "Friend Movies",
+                    params: {
+                      screen: "Friend Rankings",
+                      params: { id: id },
+                    },
+                  });
+                }}
               >
                 <View style={styles.statsBox}>
                   <Text style={[styles.text, { fontSize: 18 }]}>
@@ -97,11 +109,9 @@ export default function FriendProfile() {
                   <Text style={[styles.text, styles.subText]}>Ranked</Text>
                 </View>
               </Pressable>
-
               <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
                 {profileData[0].username}
               </Text>
-
               <View
                 style={[
                   styles.statsBox,
@@ -158,9 +168,12 @@ export default function FriendProfile() {
               <View style={styles.wishlistInfo}>
                 <Pressable
                   style={styles.statsBox}
-                  onPress={() =>
-                    navigation.navigate("rankings", { screen: "My Wishlist" })
-                  }
+                  // onPress={() =>
+                  //   navigation.navigate("Friend Movies", {
+                  //     screen: "Friend Wishlist",
+                  //     params: { id: id },
+                  //   })
+                  // }
                 >
                   <Text style={[styles.text, { fontSize: 18 }]}>
                     {wishlistNumber}
@@ -176,6 +189,7 @@ export default function FriendProfile() {
               <Text style={[styles.subText, styles.recent]}>Posts</Text>
               {myPostData.map((item) => (
                 <ProfilePost
+                  profileData={profileData}
                   key={item.id}
                   id={item.id}
                   user={item.user}

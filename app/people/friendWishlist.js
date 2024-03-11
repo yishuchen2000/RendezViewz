@@ -12,16 +12,22 @@ const windowHeight = Dimensions.get("window").height;
 
 const UNDERLINE = require("../../assets/underline.png");
 
-export default function Rankings({ id }) {
+export default function Rankings() {
   const [data, setData] = useState([]);
-  // const route = useRoute();
-  // const { id } = route.params;
+  const route = useRoute();
+  const { id } = route.params;
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await supabase.from("friendWishlist").select("*");
-      const sortedData = response.data.sort((a, b) => a.index - b.index);
+      const response = await supabase
+        .from("wishlist")
+        .select("*")
+        .eq("user_id", id);
 
+      let sortedData = response.data.sort((a, b) => a.index - b.index);
+      sortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
       setData(sortedData);
     };
     fetchData();

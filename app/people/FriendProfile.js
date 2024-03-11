@@ -168,12 +168,12 @@ export default function FriendProfile() {
               <View style={styles.wishlistInfo}>
                 <Pressable
                   style={styles.statsBox}
-                  // onPress={() =>
-                  //   navigation.navigate("Friend Movies", {
-                  //     screen: "Friend Wishlist",
-                  //     params: { id: id },
-                  //   })
-                  // }
+                  onPress={() =>
+                    navigation.navigate("Friend Movies", {
+                      screen: "Friend Wishlist",
+                      params: { id: id },
+                    })
+                  }
                 >
                   <Text style={[styles.text, { fontSize: 18 }]}>
                     {wishlistNumber}

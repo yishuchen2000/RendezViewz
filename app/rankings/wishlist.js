@@ -13,18 +13,24 @@ import {
   LayoutAnimation,
   ScrollView,
   Alert,
+  ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import { BlurView } from "expo-blur";
-import { useState, useEffect } from "react";
+import Slider from "@react-native-community/slider";
+import { debounce } from "lodash";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Dropdown } from "react-native-element-dropdown";
+import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import supabase from "../../Supabase";
 import Ranking from "../../components/Ranking";
+import FilterModal from "../../components/filterModal";
+import FilterCell from "../../components/FilterCell";
 import getMovieDetails from "../../components/getMovieDetails";
+import searchByTitle from "../../components/searchByTitle";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -33,55 +39,155 @@ const UNDERLINE = require("../../assets/underline.png");
 
 export default function Wishlist() {
   const navigation = useNavigation();
+  const flatListRef = useRef();
 
   const [isDuplicateEntry, setIsDuplicateEntry] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [filterModal, setFilterModal] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [genreList, setGenreList] = useState([]);
   const [data, setData] = useState([]);
-  const [possibleEntries, setPossibleEntries] = useState(null);
   const [entry, setEntry] = useState(null);
-  const [entryPic, setEntryPic] = useState(null);
-  const [rankValue, setRankValue] = useState(null);
-  const [rankCount, setRankCount] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [visibleSuggestions, setVisibleSuggestions] = useState(false);
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectionChosen, setSelectionChosen] = useState(false);
+  const [rankValue, setRankValue] = useState(5);
+  const [sliderDisplayValue, setSliderDisplayValue] = useState(
+    rankValue.toString()
+  );
   const [modalValid, setModalValid] = useState(false);
   const [renderSwitch, flipRenderSwitch] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await supabase.from("wishlist").select("*");
-      const sortedData = response.data.sort((a, b) => a.index - b.index);
+  const [session, setSession] = useState([]);
+  const [rankings, setRankings] = useState([]);
 
-      setData(sortedData);
-      setRankCount(response.data.length);
-    };
-    fetchData();
-  }, [renderSwitch, entry]);
+  const handleRecordUpdated = (payload) => {
+    // console.log(payload);
+    // setFriendIDs(payload.new.friend_ids);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await supabase.from("rankable").select("*");
-      const sortedMovies = response.data.sort((a, b) => {
-        return a.title.localeCompare(b.title);
+    setRankings((oldData) => {
+      if (!Array.isArray(oldData)) {
+        console.warn("oldData is not an array", oldData);
+        return []; // Return an empty array or appropriate default value
+      }
+
+      return oldData.map((item) => {
+        if (item.id === payload.new.id) {
+          return payload.new;
+        }
+        return item;
       });
+    });
+  };
 
-      setPossibleEntries(sortedMovies);
-    };
-    fetchData();
+  useEffect(() => {
+    supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "wishlist" },
+        handleRecordUpdated
+      ) /*
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "rankings" },
+        handleRecordInserted
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "rankings" },
+        handleRecordDeleted
+      )*/
+      .subscribe();
   }, []);
 
   useEffect(() => {
-    if (entry && rankValue) {
-      const isDuplicate = data.some((item) => item.title === entry);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setSession(session);
+
+        const fetchRankings = async () => {
+          try {
+            const rankingsList = await supabase
+              .from("wishlist")
+              .select("*")
+              .eq("user_id", session.user.id);
+
+            // console.log("this is RANKINGS", rankings.data);
+            // setRankings(rankings.data);
+            // filter out the current user
+            // setFriendIDs(friends.data[0].friend_ids);
+            if (Array.isArray(rankingsList.data)) {
+              // console.log("this is sortedDATA", sortedData);
+              setRankings(rankingsList.data);
+            }
+          } catch {
+            console.error("Failed to fetch rankings:", error);
+          }
+        };
+        fetchRankings();
+      }
+    });
+  }, []);
+
+  //button wil stay grey until these conditions are met
+  useEffect(() => {
+    if (selectionChosen) {
+      const isDuplicate = rankings.some((item) => item.title === entry);
       setIsDuplicateEntry(isDuplicate);
       setModalValid(true);
     } else {
       setIsDuplicateEntry(false);
       setModalValid(false);
     }
-  }, [entry, rankValue, data]);
+  }, [selectionChosen, rankings]);
+
+  // get top 10 matches to textInput
+  const fetchSuggestions = useCallback(
+    debounce(async (query) => {
+      if (query) {
+        const results = await searchByTitle(query.trim());
+        setSuggestions(results);
+        setVisibleSuggestions(true); //show suggestions when user stops typing
+      }
+    }, 1000),
+    []
+  );
+
+  // dropdown visibility
+  useEffect(() => {
+    if (entry && !selectionChosen) {
+      setVisibleSuggestions(false);
+      fetchSuggestions(entry);
+    } else {
+      setSuggestions([]);
+    }
+
+    return () => fetchSuggestions.cancel();
+  }, [entry, fetchSuggestions]);
+
+  const sliderDisplaySubmit = (e) => {
+    const submittedValue = parseFloat(e.nativeEvent.text);
+    if (!isNaN(submittedValue) && submittedValue >= 0 && submittedValue <= 10) {
+      setRankValue(submittedValue);
+      setSliderDisplayValue(submittedValue.toString());
+    } else if (submittedValue > 10) {
+      setRankValue(10);
+      setSliderDisplayValue("10");
+    } else if (submittedValue < 0) {
+      setRankValue(0);
+      setSliderDisplayValue("0");
+    } else {
+      // Optionally, reset to the last valid value
+      setSliderDisplayValue(rankValue.toString());
+    }
+  };
 
   const handleRank = async () => {
-    setModalVisible(!modalVisible); //close modal
     const movieDetails = await getMovieDetails(entry);
+
+    closeModal();
 
     if (!movieDetails || movieDetails.Response === "False") {
       Alert.alert("Invalid Title", "Please enter a valid movie or show title.");
@@ -92,34 +198,48 @@ export default function Wishlist() {
       Alert.alert(`${entry} is already ranked on this list.`);
       return;
     }
-    let newId = Date.now();
-    let adjustedRank = parseInt(rankValue);
 
-    let response = await supabase.from("wishlist").select("*");
-    let sortedData = response.data.sort((a, b) => a.index - b.index);
+    newId = Date.now();
 
-    if (adjustedRank > rankCount + 1) {
-      adjustedRank = rankCount + 1;
-    } else {
-      const updatedRankings = sortedData.map((item) => {
-        if (item.index >= adjustedRank) {
-          item.index += 1;
-        }
-        return item;
-      });
-      await supabase.from("wishlist").upsert(updatedRankings);
-    }
-
-    const { data } = await supabase.from("wishlist").upsert([
+    const { data: upsertedData } = await supabase.from("wishlist").upsert([
       {
         id: newId,
         title: movieDetails.Title,
-        index: adjustedRank,
+        index: 0,
         url: movieDetails.Poster,
+        genres: movieDetails.Genre,
+        user_id: session.user.id,
       },
     ]);
+
+    let response = await supabase
+      .from("wishlist")
+      .select("*")
+      .eq("user_id", session.user.id);
+
+    if (response.data !== null) {
+      let newSortedData = response.data;
+
+      newSortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
+
+      // setRankings((oldData) => [...oldData, payload.new]);
+      setRankings(newSortedData);
+    } else {
+      setRankings([]);
+    }
+
+    // await supabase.from("rankings").upsert(sortedData);
+
     flipRenderSwitch(!renderSwitch);
+    setRankValue(5);
   };
+  //Animation for switching between slider and dropdown
+  useEffect(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  }, [visibleSuggestions]);
+
   //Animation for delete
   const layoutAnimConfig = {
     duration: 300,
@@ -133,24 +253,96 @@ export default function Wishlist() {
     },
   };
 
+  //close modal
+  const closeModal = () => {
+    setSelectedYear("");
+    setRankValue(5);
+    setSliderDisplayValue("5");
+    setVisibleSuggestions(false);
+    setModalVisible(false);
+  };
+
   const handleDelete = async (id, index) => {
     await supabase.from("wishlist").delete().eq("id", id);
 
-    let response = await supabase.from("wishlist").select("*");
-    sortedData = response.data.sort((a, b) => a.index - b.index);
+    let response = await supabase
+      .from("wishlist")
+      .select("*")
+      .eq("user_id", session.user.id);
 
-    const updatedRankings = sortedData.map((item) => {
-      if (item.index > index) {
-        item.index -= 1;
-      }
-      return item;
-    });
-    await supabase.from("wishlist").upsert(updatedRankings);
+    if (response) {
+      sortedData = response.data;
+      sortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
+      // await supabase.from("rankings").upsert(sortedData);
 
-    setData(updatedRankings);
+      setRankings(sortedData);
+    }
+
     LayoutAnimation.configureNext(layoutAnimConfig);
-    setRankCount(updatedRankings.length);
   };
+
+  //for rating slider in
+  const debouncedSetRankValue = debounce((value) => {
+    setRankValue(value);
+  }, 100);
+
+  //create filter list
+  const createFilterList = async () => {
+    let response = await supabase
+      .from("wishlist")
+      .select("*")
+      .eq("user_id", session.user.id);
+
+    const genreSet = new Set();
+
+    if (response) {
+      response.data.forEach((item) => {
+        item.genres.forEach((genre) => genreSet.add(genre));
+      });
+
+      if (Array.from(genreSet)) {
+        setGenreList(Array.from(genreSet).sort());
+      }
+    }
+  };
+
+  const filterByGenres = (rankings) => {
+    let filteredData = rankings;
+    if (selectedGenres.length > 0) {
+      filteredData = rankings.filter((item) =>
+        item.genres.some((genre) => selectedGenres.includes(genre))
+      );
+    }
+    filteredData.forEach((item, index) => {
+      item.index = index + 1;
+    });
+    return filteredData;
+  };
+
+  const removeGenre = (genreToRemove) => {
+    setSelectedGenres((prevGenres) =>
+      prevGenres.filter((genre) => genre !== genreToRemove)
+    );
+  };
+
+  //loading icon
+  if (!rankings) {
+    return (
+      <LinearGradient
+        colors={["#0e0111", "#311866"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="purple" />
+          <Text style={{ color: "white" }}>Loading...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient
@@ -160,21 +352,11 @@ export default function Wishlist() {
         Keyboard.dismiss();
       }}
     >
-      {modalVisible && (
-        <BlurView
-          intensity={100}
-          tint={"dark"}
-          style={StyleSheet.absoluteFill}
-        ></BlurView>
-      )}
-
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
+        onRequestClose={closeModal}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -183,7 +365,7 @@ export default function Wishlist() {
               <Image style={styles.underline} source={UNDERLINE} />
               <Pressable
                 style={styles.buttonCloseContainer}
-                onPress={() => setModalVisible(!modalVisible)}
+                onPress={closeModal}
               >
                 <View style={styles.buttonClose}>
                   <MaterialIcons name="cancel" size={30} color={"black"} />
@@ -191,31 +373,120 @@ export default function Wishlist() {
               </Pressable>
             </View>
 
-            <ScrollView style={styles.questionsContainer}>
+            <View style={styles.questionsContainer}>
               <View style={styles.titleSelectContainer}>
-                <Text style={styles.titleQuestion}> Select Title:</Text>
-                <TextInput
-                  style={styles.titleDropdown}
-                  placeholder="Enter a movie or show title..."
-                  placeholderTextColor="gray"
-                  value={entry}
-                  onChangeText={(text) => {
-                    setEntry(text);
-                  }}
-                />
+                <Text style={styles.titleQuestion}> Enter Title:</Text>
+                <View style={styles.titleTextBar}>
+                  <TextInput
+                    style={[
+                      styles.titleDropdown,
+                      { color: selectionChosen ? "purple" : "gray" },
+                    ]}
+                    placeholder="Enter a movie or show title..."
+                    placeholderTextColor="gray"
+                    value={
+                      (entry ? entry : "") +
+                      (selectedYear ? ` (${selectedYear})` : "")
+                    }
+                    onChangeText={(text) => {
+                      setEntry(text);
+                      setSelectedYear("");
+                      setSelectionChosen(false);
+                    }}
+                  />
+                  {entry && (
+                    <Pressable
+                      style={styles.clearButton}
+                      onPress={() => {
+                        setEntry("");
+                        setSelectedYear("");
+                        setSelectionChosen(false);
+                        // Optionally reset other states as needed
+                        setSuggestions([]);
+                        setVisibleSuggestions(false);
+                      }}
+                    >
+                      <MaterialIcons
+                        name="cancel"
+                        size={25}
+                        color={"grey"}
+                        style={styles.clearButton}
+                      />
+                    </Pressable>
+                  )}
+                </View>
               </View>
-              <View style={styles.titleSelectContainer}>
-                <Text style={styles.titleQuestion}> Enter Rank:</Text>
-                <TextInput
-                  style={styles.rankingInput}
-                  keyboardType="numeric"
-                  returnKeyType="done"
-                  // placeholder="Enter a number"
-                  onChangeText={(text) => setRankValue(text)}
-                />
-                <View style={styles.space}></View>
+              <View style={styles.sharedContainer}>
+                {visibleSuggestions ? (
+                  suggestions.length > 0 ? (
+                    <FlatList
+                      data={suggestions}
+                      keyExtractor={(item) => item.imdbID}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          style={styles.suggestionItem}
+                          onPress={() => {
+                            setEntry(item.Title);
+                            setSelectedYear(item.Year);
+                            setSuggestions([]);
+                            setVisibleSuggestions(false);
+                            setSelectionChosen(true);
+                          }}
+                        >
+                          <Image
+                            source={
+                              item.Poster !== "N/A"
+                                ? { uri: item.Poster }
+                                : require("../../assets/blankPoster.png")
+                            }
+                            style={styles.posterImage}
+                          />
+                          <View style={styles.suggestionText}>
+                            <Text numberOfLines={1} style={styles.titleText}>
+                              {item.Title}
+                            </Text>
+                            <Text style={styles.yearText}>({item.Year})</Text>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      style={{ maxHeight: 200 }}
+                    />
+                  ) : entry !== null && entry.trim() !== "" ? (
+                    <View style={styles.noSuggestionsContainer}>
+                      <View style={styles.noSuggestionsTextContainer}>
+                        <Text style={styles.noSuggestionsText}>
+                          No movies or TV shows match that title.
+                        </Text>
+                      </View>
+                    </View>
+                  ) : (
+                    <View style={styles.noSuggestionsContainer}>
+                      <View style={styles.noSuggestionsTextContainer}>
+                        <Text style={styles.noSuggestionsText}>
+                          Please enter a movie or TV show.
+                        </Text>
+                      </View>
+                    </View>
+                  )
+                ) : selectionChosen ? (
+                  <View style={styles.noSuggestionsContainer}>
+                    <View style={styles.noSuggestionsTextContainer}>
+                      <Text style={styles.noSuggestionsText}>
+                        Add "{entry}" to your wishlist!
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.noSuggestionsContainer}>
+                    <View style={styles.noSuggestionsTextContainer}>
+                      <Text style={styles.noSuggestionsText}>
+                        Enter a movie or TV show in the box above!
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </View>
-            </ScrollView>
+            </View>
 
             <View style={styles.bottom}>
               <Pressable
@@ -229,15 +500,46 @@ export default function Wishlist() {
                 <Text
                   style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
                 >
-                  Update Wishlist
+                  Update Ranking
                 </Text>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
+      <View style={styles.filterContainer}>
+        <View style={styles.genreBox}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {selectedGenres.map((genre) => (
+              <FilterCell
+                key={genre}
+                genre={genre}
+                onPressRemove={() => removeGenre(genre)}
+              />
+            ))}
+          </ScrollView>
+        </View>
+        <Pressable
+          style={styles.filterButton}
+          onPress={() => {
+            setFilterModal(!filterModal);
+            createFilterList();
+          }}
+        >
+          <FontAwesome name="filter" size={18} color="white" />
+          <Text style={{ color: "white" }}> Filters</Text>
+        </Pressable>
+        <FilterModal
+          modalVisible={filterModal}
+          setModalVisible={setFilterModal}
+          genreList={genreList}
+          exportGenres={setSelectedGenres}
+        />
+      </View>
+
       <FlatList
-        data={data}
+        ref={flatListRef}
+        data={filterByGenres(rankings)}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <Ranking
@@ -245,11 +547,16 @@ export default function Wishlist() {
             title={item.title}
             coverPic={item.url}
             onDelete={() => handleDelete(item.id, item.index)}
+            rating={item.rating}
             goesTo={"Wishlist Details"}
+            showSubtitle={false}
           />
         )}
         style={styles.rankList}
-        contentContainerStyle={{ paddingTop: 10, paddingBottom: 80 }}
+        contentContainerStyle={{
+          paddingHorizontal: windowWidth * 0.02,
+          paddingBottom: 80,
+        }}
       />
       <View style={styles.buttonContainer}>
         <Pressable
@@ -283,6 +590,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     padding: windowHeight * 0.2,
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   buttonContainer: {
     position: "absolute",
@@ -302,7 +610,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: windowWidth * 0.8,
-    flex: 1,
+    height: windowHeight * 0.6,
     flexDirection: "column",
     justifyContent: "center",
     backgroundColor: "white",
@@ -355,11 +663,6 @@ const styles = StyleSheet.create({
     height: 50,
   },
   questionsContainer: {
-    // width: "90%",
-    // height: windowHeight * 0.0,
-    // marginTop: 60,
-    // marginBottom: windowHeight * 0.09,
-    flex: 8,
     paddingTop: 10,
     paddingBottom: 10,
   },
@@ -374,22 +677,84 @@ const styles = StyleSheet.create({
     color: "#361866",
     marginLeft: 17,
   },
-  titleDropdown: {
+  titleTextBar: {
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 20,
     paddingLeft: 15,
+    paddingRight: 5,
     backgroundColor: "lavender",
-    color: "purple",
-    height: 50,
+    height: 60,
     borderRadius: 15,
     borderWidth: 0.5,
   },
-  space: {
-    marginBottom: 90,
+  titleDropdown: {
+    flex: 1,
+    color: "purple",
   },
-  placeholderStyle: {
-    fontSize: 16,
+  clearButton: {
+    marginLeft: 10,
+    marginRight: 0,
+    padding: 0,
+  },
+  clearButtonText: {
+    color: "darkgray",
+    fontSize: 20,
+  },
+  sharedContainer: {
+    height: 200,
+    marginLeft: 10,
+    width: "90%",
+    gap: 30,
+    justifyContent: "center",
+  },
+  suggestionsContainer: {
+    maxHeight: 200,
+    width: "80%",
+    position: "absolute",
+    top: "100%",
+    zIndex: 10,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  posterImage: {
+    height: 60,
+    width: 35,
+    marginHorizontal: 15,
+    borderWidth: 1,
+    borderColor: "grey",
+  },
+  suggestionItem: {
+    padding: 10,
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    alignItems: "center",
+  },
+  titleText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    paddingBottom: 2,
+  },
+  noSuggestionsContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  noSuggestionsTextContainer: {
+    justifyContent: "center",
+    width: windowWidth * 0.5,
+  },
+  noSuggestionsText: {
+    textAlign: "center",
+    fontSize: 20,
     color: "gray",
   },
+  slider: {
+    alignItems: "center",
+    gap: 10,
+  },
+
   selectedTextStyle: {
     color: "#602683",
     marginRight: 5,
@@ -418,8 +783,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  container: {
+  filterContainer: {
+    // backgroundColor: "#361866",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    height: windowHeight * 0.05,
     paddingHorizontal: windowWidth * 0.02,
+  },
+  filterButton: {
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    gap: 3,
+    marginLeft: "auto",
+    backgroundColor: "#361866",
+    borderColor: "white",
+    borderWidth: 1,
+    padding: 10,
+    marginVertical: 3,
+    borderRadius: "100%",
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  genreBox: {
+    flexDirection: "row",
+    marginRight: 10,
+    width: "72%",
+  },
+  container: {
     flex: 1,
   },
 });

@@ -103,22 +103,15 @@ const Comment = ({ onDeleteComment, sessionID, id, text, avatarGoesTo }) => {
     <View style={styles.oneComment}>
       <View style={styles.leftContent}>
         <Pressable
-          onPress={
-            // () =>
-            //   navigation.navigate("PeoplePage", {
-            //     screen: "Friend Movies",
-            //     data: id,
-            //   })
-            () =>
-              navigation.navigate(avatarGoesTo, {
-                // screen: "FriendProfile",
-                id: id,
-                friendNumber: friendNumber,
-                myPostData: myPostData,
-                profileData: profileData,
-                rankedNumber: rankedNumber,
-                wishlistNumber: wishlistNumber,
-              })
+          onPress={() =>
+            navigation.navigate(avatarGoesTo, {
+              id: id,
+              friendNumber: friendNumber,
+              myPostData: myPostData,
+              profileData: profileData,
+              rankedNumber: rankedNumber,
+              wishlistNumber: wishlistNumber,
+            })
           }
         >
           <View style={styles.commentAvatar}>

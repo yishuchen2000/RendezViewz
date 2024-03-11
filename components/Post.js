@@ -278,6 +278,7 @@ const Post = ({
                 sessionID={sessionID}
                 id={item[0]}
                 text={item[1]}
+                avatarGoesTo={avatarGoesTo}
               />
             );
           }}

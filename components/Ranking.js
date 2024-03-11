@@ -16,7 +16,15 @@ import getMovieDetails from "./getMovieDetails";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Ranking = ({ index, title, coverPic, onDelete, goesTo, rating }) => {
+const Ranking = ({
+  index,
+  title,
+  coverPic,
+  onDelete,
+  goesTo,
+  rating,
+  showSubtitle = true,
+}) => {
   const navigation = useNavigation();
   const [movieDetails, setMovieDetails] = useState(null);
 
@@ -49,13 +57,15 @@ const Ranking = ({ index, title, coverPic, onDelete, goesTo, rating }) => {
             <Text numberOfLines={1} style={styles.title}>
               {title}
             </Text>
-            <View style={styles.subtitle}>
-              <Text style={styles.rating}>{rating}/10 </Text>
-              <Image
-                source={require("../assets/star.png")}
-                style={styles.star}
-              ></Image>
-            </View>
+            {showSubtitle && (
+              <View style={styles.subtitle}>
+                <Text style={styles.rating}>{rating}/10 </Text>
+                <Image
+                  source={require("../assets/star.png")}
+                  style={styles.star}
+                ></Image>
+              </View>
+            )}
           </View>
         </View>
       </Pressable>
