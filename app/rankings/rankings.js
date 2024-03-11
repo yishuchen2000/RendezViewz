@@ -620,8 +620,11 @@ const styles = StyleSheet.create({
     right: windowWidth * 0.05,
     backgroundColor: "transparent",
   },
+  yearText: {
+    color: "white",
+  },
   plusButton: {
-    borderRadius: 100,
+    borderRadius: 200,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
@@ -701,10 +704,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingLeft: 15,
     paddingRight: 5,
+    margin: 10,
     backgroundColor: "rgba(133, 138, 227, 0.50)",
     borderColor: "#858AE3",
     borderWeight: 10,
-    height: 60,
+    height: 55,
     borderRadius: 15,
     borderWidth: 0.5,
   },
@@ -723,14 +727,14 @@ const styles = StyleSheet.create({
   },
   sharedContainer: {
     height: 200,
-    // marginLeft: 10,
+    marginLeft: 10,
     width: "90%",
     gap: 30,
     justifyContent: "center",
   },
   suggestionsContainer: {
     maxHeight: 200,
-    width: "100%",
+    width: "80%",
     position: "absolute",
     top: "100%",
     zIndex: 10,
@@ -746,22 +750,18 @@ const styles = StyleSheet.create({
     borderColor: "grey",
   },
   suggestionItem: {
-    marginHorizontal: 30, // Match the marginHorizontal of titleTextBar
+    padding: 10,
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     alignItems: "center",
-    paddingLeft: 15, // Match the paddingLeft of titleTextBar
-    paddingRight: 5, // Match the paddingRight of titleTextBar
-    backgroundColor: "rgba(133, 138, 227, 0.50)",
-    borderColor: "#858AE3",
-    borderWidth: 0.5,
-    height: 60,
+    marginLeft: 15,
   },
   titleText: {
     fontSize: 14,
     fontWeight: "bold",
     paddingBottom: 2,
+    color: "white",
   },
   noSuggestionsContainer: {
     width: "100%",
@@ -778,6 +778,7 @@ const styles = StyleSheet.create({
   },
   slider: {
     alignItems: "center",
+    marginLeft: 10,
     gap: 10,
   },
   sliderDisplay: {

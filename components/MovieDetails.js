@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   genreContainer: {
-    backgroundColor: "#858AE3",
+    backgroundColor: "#97DFFC",
     borderRadius: 10,
     padding: 5,
     marginBottom: 13,
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   genreItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 5,
+    // marginBottom: 5,
   },
   genreText: {
     color: "#0E0111",

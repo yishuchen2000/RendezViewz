@@ -216,6 +216,7 @@ export default function People() {
           <AntDesign name="pluscircle" size={60} color="#602683" />
         </Pressable>
       </View>
+
       <View style={styles.clapboard}>
         <Image
           source={require("../../assets/Clapboard2.png")}
@@ -317,6 +318,7 @@ const styles = StyleSheet.create({
     bottom: windowHeight * 0.05,
     right: windowWidth * 0.05,
     backgroundColor: "transparent",
+    zIndex: 1,
   },
   plusButton: {
     borderRadius: 100,
