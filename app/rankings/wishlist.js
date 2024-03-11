@@ -368,7 +368,7 @@ export default function Wishlist() {
                 onPress={closeModal}
               >
                 <View style={styles.buttonClose}>
-                  <MaterialIcons name="cancel" size={30} color={"black"} />
+                  <MaterialIcons name="cancel" size={30} color={"white"} />
                 </View>
               </Pressable>
             </View>
@@ -380,10 +380,10 @@ export default function Wishlist() {
                   <TextInput
                     style={[
                       styles.titleDropdown,
-                      { color: selectionChosen ? "purple" : "gray" },
+                      { color: selectionChosen ? "white" : "white" },
                     ]}
                     placeholder="Enter a movie or show title..."
-                    placeholderTextColor="gray"
+                    placeholderTextColor="rgba(255, 255, 255, 0.8)"
                     value={
                       (entry ? entry : "") +
                       (selectedYear ? ` (${selectedYear})` : "")
@@ -409,7 +409,7 @@ export default function Wishlist() {
                       <MaterialIcons
                         name="cancel"
                         size={25}
-                        color={"grey"}
+                        color={"white"}
                         style={styles.clearButton}
                       />
                     </Pressable>
@@ -492,13 +492,13 @@ export default function Wishlist() {
               <Pressable
                 style={[
                   styles.addButton,
-                  { backgroundColor: modalValid ? "#602683" : "gray" },
+                  { backgroundColor: modalValid ? "#858AE3" : "gray" },
                 ]}
                 onPress={handleRank}
                 disabled={!modalValid}
               >
                 <Text
-                  style={{ color: "white", fontSize: 15, fontWeight: "bold" }}
+                  style={{ color: "#0E0111", fontSize: 15, fontWeight: "bold" }}
                 >
                   Update Ranking
                 </Text>
@@ -526,8 +526,8 @@ export default function Wishlist() {
             createFilterList();
           }}
         >
-          <FontAwesome name="filter" size={18} color="black" />
-          <Text> Filters</Text>
+          <FontAwesome name="filter" size={18} color="#0E0111" />
+          <Text style={{ color: "#0E0111" }}> Filters</Text>
         </Pressable>
         <FilterModal
           modalVisible={filterModal}
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.6,
     flexDirection: "column",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: "#0E0111",
     borderRadius: 20,
     shadowColor: "#000",
     shadowOffset: {
@@ -624,7 +624,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 10,
     borderWidth: 1,
-    borderColor: "#361866",
   },
   modalHeader: {
     flexDirection: "row",
@@ -642,7 +641,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     marginTop: 30,
-    color: "#361866",
+    color: "white",
     textAlign: "center",
   },
   underline: {
@@ -653,14 +652,15 @@ const styles = StyleSheet.create({
     left: 48,
     width: "70%",
     height: 90,
-    tintColor: "#361866",
+    tintColor: "#858AE3",
   },
   buttonCloseContainer: {
     position: "absolute",
     color: "white",
-    padding: 5,
+    padding: 15,
     width: 80,
-    height: 50,
+    height: 70,
+    marginTop: 15,
   },
   questionsContainer: {
     paddingTop: 10,
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
   titleQuestion: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#361866",
+    color: "white",
     marginLeft: 17,
   },
   titleTextBar: {
@@ -683,14 +683,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingLeft: 15,
     paddingRight: 5,
-    backgroundColor: "lavender",
-    height: 60,
+    margin: 10,
+    backgroundColor: "rgba(133, 138, 227, 0.50)",
+    borderColor: "#858AE3",
+    borderWeight: 10,
+    height: 55,
     borderRadius: 15,
     borderWidth: 0.5,
   },
   titleDropdown: {
     flex: 1,
-    color: "purple",
+    color: "white",
   },
   clearButton: {
     marginLeft: 10,
@@ -736,6 +739,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     paddingBottom: 2,
+    color: "white",
   },
   noSuggestionsContainer: {
     width: "100%",
@@ -773,7 +777,7 @@ const styles = StyleSheet.create({
   bottom: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    // padding: 20,
   },
   addButton: {
     alignSelf: "center",
