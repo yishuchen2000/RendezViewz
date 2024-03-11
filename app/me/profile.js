@@ -149,6 +149,11 @@ export default function Me() {
                   <EvilIcons name="camera" size={24} color="black" />
                 </Pressable>
               </View>
+
+              <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
+                {profileData[0].username}
+              </Text>
+
             </View>
 
             <View style={styles.statsContainer}>
@@ -164,17 +169,15 @@ export default function Me() {
                 </View>
               </Pressable>
 
-              <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
-                {profileData[0].username}
-              </Text>
 
               <View
                 style={[
                   styles.statsBox,
                   {
-                    // borderColor: "white",
-                    // borderLeftWidth: 1,
-                    // borderRightWidth: 1,
+
+                    borderColor: "white",
+                    borderLeftWidth: 1,
+
                   },
                 ]}
               >
@@ -191,30 +194,35 @@ export default function Me() {
             </View>
           </View>
 
-          <View style={styles.buttonsContainer}>
+
+          {/* <View style={styles.buttonsContainer}>
             <Pressable
               style={[styles.button, styles.followButton]}
-              onPress={toggleFollow}
-            >
+              onPress={toggleFollow}>
               <Text style={[styles.text, styles.followButtonText]}>
-                {/* {isFollowed ? "Added" : "Add"} */}
-                Edit
+                {isFollowed ? 'Added' : 'Add'}
+
               </Text>
             </Pressable>
 
             <Pressable
               style={[styles.button, styles.messageButton]}
-              onPress={() => navigation.navigate("rankings")}
-            >
+
+              onPress={() => console.log('Message button pressed')}>
+
               <Text style={[styles.text, styles.messageButtonText]}>
                 Rankings
               </Text>
             </Pressable>
-          </View>
+
+          </View> */}
           <Text style={[styles.subText, styles.recent]}>About</Text>
           <View style={styles.rectangleContainer}>
             <View style={styles.leftContainer}>
-              <Text style={styles.rectangleText}>{profileData[0].info}</Text>
+              <Text style={styles.rectangleText}>
+                some info about me: i love horror films!
+              </Text>
+
             </View>
             <View style={styles.centerContainer}>
               <View style={styles.rectangleLine} />
@@ -413,7 +421,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 0.4,
-    marginTop: 20,
+
+    margin: 20,
+
   },
   statsBox: {
     alignItems: "center",

@@ -161,12 +161,14 @@ const Post = ({
               <Text style={styles.formattedTime}>{formattedTime}</Text>
             </View>
           </View>
+
           <Text style={styles.action}>{action}</Text>
         </View>
         {/* <View style={styles.divider} /> */}
 
         <View style={styles.body}>
           <View style={styles.postContent}>
+
             <View style={styles.contentContainer}>
               <Text style={styles.content}>{text}</Text>
             </View>

@@ -39,7 +39,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [buttonColor, setButtonColor] = useState("#97DFFC");
   const [firstTime, setFirstTime] = useState(false);
-
+  const [buttonColor, setButtonColor] = useState("#97DFFC");
   async function signInWithEmail() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
