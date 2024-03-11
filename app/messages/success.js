@@ -186,9 +186,9 @@ const Success = ({ navigation, route }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 20,
+              fontSize: 25,
               textAlign: "center",
-              marginTop: 20,
+              margin: 18,
             }}
           >
             Congrats! Event scheduled:
@@ -196,10 +196,9 @@ const Success = ({ navigation, route }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 28,
+              fontSize: 24,
               marginTop: 20,
-              marginBottom: 20,
-              paddingHorizontal: 20,
+              marginBottom: 10,
               textAlign: "center",
               fontWeight: "bold",
             }}
