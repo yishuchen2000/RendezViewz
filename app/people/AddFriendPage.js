@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import NewFriend from "../../components/NewFriend";
+import NewFriend from "./NewFriend";
 import supabase from "../../Supabase";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";

@@ -60,8 +60,8 @@ export default function HomeLayout() {
   }
 
   if (session && session.user) {
-    console.log("current user info!", session.user);
-    console.log("current user id!", session.user.id);
+    // console.log("current user info!", session.user);
+    // console.log("current user id!", session.user.id);
     return (
       <Tabs
         screenOptions={{

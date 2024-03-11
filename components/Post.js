@@ -18,44 +18,151 @@ import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import getMovieDetails from "./getMovieDetails";
+import Comment from "./Comment";
+import FriendProfile from "../app/people/FriendProfile";
+// import getUserInfo from "./getUserInfo";
 
 const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
 const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
 
 const Post = ({
+  showPostIDs,
+  sessionID,
   id,
   user,
   timestamp,
   text,
   liked,
   imageUrl,
-  profilePic,
   action,
-  comments,
+  rawComments,
   title,
-  goesTo,
+  avatarGoesTo,
+  posterGoesTo,
 }) => {
   const [inputText, setInputText] = useState("");
   const [showComment, setshowComment] = useState(false);
   const [movieDetails, setMovieDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profilePic, setProfilePic] = useState(null);
+
+  const [profileData, setProfileData] = useState(null);
+  const [rankedNumber, setRankedNumber] = useState(0);
+  const [wishlistNumber, setWishlistNumber] = useState(0);
+  const [friendNumber, setFriendNumber] = useState(null);
+  const [myPostData, setMyPostData] = useState(null);
 
   const navigation = useNavigation();
+  // console.log(id);
+
+  // useEffect(() => {
+  //   const fetchMovieDetails = async () => {
+  //     const details = await getMovieDetails(title);
+  //     setMovieDetails(details);
+  //     setIsLoading(false);
+  //   };
+  //   fetchMovieDetails();
+  // }, [title]);
+
+  let comments = rawComments;
+  if (comments) {
+    comments = rawComments.filter((item) => showPostIDs.includes(item[0]));
+  }
 
   useEffect(() => {
-    const fetchMovieDetails = async () => {
+    const fetchData = async () => {
       const details = await getMovieDetails(title);
       setMovieDetails(details);
+
+      const profileInfo = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", id);
+
+      setProfilePic(profileInfo.data[0].avatar_url);
+
+      setProfileData(profileInfo.data);
+
+      let friendNumber = profileInfo.data[0]["friend_ids"]
+        ? profileInfo.data[0]["friend_ids"].length
+        : 0;
+      // console.log("FRIEND NUMBER", friendNumber);
+      setFriendNumber(friendNumber);
+
+      const myPosts = await supabase
+        .from("posts")
+        .select("*")
+        .eq("user_id", id);
+      setMyPostData(myPosts.data);
+      // console.log("POST", myPosts.data);
+
+      const rankings = await supabase
+        .from("rankings")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
+
+      const wishlist = await supabase
+        .from("wishlist")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
+
+      setRankedNumber(rankings.count);
+      setWishlistNumber(wishlist.count);
       setIsLoading(false);
     };
-    fetchMovieDetails();
+    fetchData();
   }, [title]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const details = await getMovieDetails(title);
+  //     setMovieDetails(details);
+  //     setIsLoading(false);
+
+  //     const profileInfo = await supabase
+  //       .from("profiles")
+  //       .select("*")
+  //       .eq("id", id);
+
+  //     console.log("PROFILE IN FRIEND", profileInfo.data);
+  //     setProfileData(profileInfo.data);
+
+  //     let friendNumber = profileInfo.data[0]["friend_ids"]
+  //       ? profileInfo.data[0]["friend_ids"].length
+  //       : 0;
+  //     // console.log("FRIEND NUMBER", friendNumber);
+  //     setFriendNumber(friendNumber);
+
+  //     const myPosts = await supabase
+  //       .from("posts")
+  //       .select("*")
+  //       .eq("user_id", id);
+  //     setMyPostData(myPosts.data);
+  //     // console.log("POST", myPosts.data);
+
+  //     const rankings = await supabase
+  //       .from("rankings")
+  //       .select("*", { count: "exact", head: true })
+  //       .eq("user_id", id);
+
+  //     const wishlist = await supabase
+  //       .from("wishlist")
+  //       .select("*", { count: "exact", head: true })
+  //       .eq("user_id", id);
+
+  //     setRankedNumber(rankings.count);
+  //     setWishlistNumber(wishlist.count);
+
+  //     setInfoFetched(true);
+  //   };
+  //   fetchData();
+  // }, [title]);
 
   const onLikePressed = async () => {
     const response = await supabase
       .from("posts")
       .update({ liked: !liked })
-      .eq("id", id);
+      .eq("user_id", id);
     console.log(response);
   };
 
@@ -67,8 +174,8 @@ const Post = ({
         "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/me.png";
       const response = await supabase
         .from("posts")
-        .update({ comments: [...comments, ["Yishu C.", inputText, url, true]] })
-        .eq("id", id);
+        .update({ comments: [...comments, [sessionID, inputText]] })
+        .eq("user_id", id);
       console.log(response);
       setInputText("");
     } else {
@@ -84,7 +191,7 @@ const Post = ({
       .update({
         comments: [...comments.slice(0, index), ...comments.slice(index + 1)],
       })
-      .eq("id", id);
+      .eq("user_id", id);
     console.log(response);
   };
 
@@ -133,7 +240,7 @@ const Post = ({
       <Pressable
         style={styles.imageContainer}
         onPress={() =>
-          navigation.navigate(goesTo, {
+          navigation.navigate(posterGoesTo, {
             details: movieDetails,
           })
         }
@@ -164,31 +271,17 @@ const Post = ({
       <View style={styles.commentSection}>
         <FlatList
           data={comments}
-          renderItem={({ item, index }) => (
-            <View style={styles.oneComment}>
-              <View style={styles.leftContent}>
-                <View style={styles.commentAvatar}>
-                  <Image style={styles.profilePic} source={{ uri: item[2] }} />
-                </View>
-
-                <View style={styles.commentText}>
-                  <Text style={styles.userName}>{item[0]}</Text>
-                  <Text style={styles.comment}>{item[1]}</Text>
-                </View>
-              </View>
-
-              {item[3] === "true" ? (
-                <View style={styles.delete}>
-                  <TouchableOpacity
-                    style={styles.delete}
-                    onPress={() => onDeleteComment(index)}
-                  >
-                    <AntDesign name="close" size={18} color="white" />
-                  </TouchableOpacity>
-                </View>
-              ) : null}
-            </View>
-          )}
+          renderItem={({ item, index }) => {
+            return (
+              <Comment
+                onDeleteComment={() => onDeleteComment(index)}
+                sessionID={sessionID}
+                id={item[0]}
+                text={item[1]}
+                avatarGoesTo={avatarGoesTo}
+              />
+            );
+          }}
           style={styles.flatList}
         />
         <TouchableOpacity style={styles.closeComment} onPress={onCloseComment}>
@@ -199,17 +292,46 @@ const Post = ({
     );
   }
 
+  if (isLoading) {
+    return (
+      <SafeAreaView>
+        <View style={styles.container}></View>
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView>
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profile}>
-            <View style={styles.profilePicContainer}>
-              <View style={styles.profilePicBackground} />
-              <Image style={styles.profilePic} source={{ uri: profilePic }} />
-            </View>
+
+            <Pressable
+              onPress={
+                // () =>
+                //   navigation.navigate("PeoplePage", {
+                //     screen: "Friend Movies",
+                //     data: id,
+                //   })
+                () =>
+                  navigation.navigate(avatarGoesTo, {
+                    // screen: "FriendProfile",
+                    id: id,
+                    friendNumber: friendNumber,
+                    myPostData: myPostData,
+                    profileData: profileData,
+                    rankedNumber: rankedNumber,
+                    wishlistNumber: wishlistNumber,
+                  })
+              }
+            >
+              <View style={styles.profilePicContainer}>
+                <View style={styles.profilePicBackground} />
+                <Image style={styles.profilePic} source={{ uri: profilePic }} />
+              </View>
+            </Pressable>
+
             <View>
-              <Text style={styles.username}>{user}</Text>
+              <Text style={styles.username}>{profileData[0].username}</Text>
               <Text style={styles.formattedTime}>{formattedTime}</Text>
             </View>
           </View>

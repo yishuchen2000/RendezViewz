@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     //padding: 24,
     backgroundColor: "transparent",
-    backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
+    backgroundImage: "linear-gradient(to bottom, #0e0111, #311866)",
   },
   time: {
     alignItems: "center",

@@ -289,7 +289,14 @@ const AddEvent = ({ route, navigation }) => {
   };
 
   return (
-    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
+
+    <LinearGradient
+      colors={["#0e0111", "#311866"]}
+      style={styles.container}
+      onTouchStart={() => {
+        Keyboard.dismiss();
+      }}
+    >
       <View style={styles.scrollView}>
         <View style={styles.top}>
           <View style={styles.wicon}>

@@ -11,179 +11,152 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import supabase from "../Supabase";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import getMovieDetails from "./getMovieDetails";
+// import getUserInfo from "./getUserInfo";
 
 const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
 const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
 
-const Post = ({
-  profileData,
-  id,
-  user,
-  timestamp,
-  text,
-  liked,
-  imageUrl,
-  profilePic,
-  action,
-  comments,
-  title,
-  goesTo,
-}) => {
-  const [inputText, setInputText] = useState("");
-  const [showComment, setshowComment] = useState(false);
-  const [movieDetails, setMovieDetails] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+const Comment = ({ onDeleteComment, sessionID, id, text, avatarGoesTo }) => {
+  const [username, setUsername] = useState(null);
+  const [profilePic, setProfilePic] = useState(null);
+
+  const [profileData, setProfileData] = useState(null);
+  const [rankedNumber, setRankedNumber] = useState(0);
+  const [wishlistNumber, setWishlistNumber] = useState(0);
+  const [friendNumber, setFriendNumber] = useState(null);
+  const [myPostData, setMyPostData] = useState(null);
 
   const navigation = useNavigation();
+  //   console.log(id);
+  //   console.log(text);
 
   useEffect(() => {
-    const fetchMovieDetails = async () => {
-      const details = await getMovieDetails(title);
-      setMovieDetails(details);
-      setIsLoading(false);
-    };
-    fetchMovieDetails();
-  }, [title]);
-
-  const onLikePressed = async () => {
-    const response = await supabase
-      .from("posts")
-      .update({ liked: !liked })
-      .eq("id", id);
-    console.log(response);
-  };
-
-  const onCommentSend = async () => {
-    if (inputText !== "") {
-      const url =
-        "https://enpuyfxhpaelfcrutmcy.supabase.co/storage/v1/object/public/rendezviewz/people/me.png";
-      const response = await supabase
-        .from("posts")
-        .update({ comments: [...comments, ["Yishu C.", inputText, url, true]] })
+    const fetchData = async () => {
+      const profileInfo = await supabase
+        .from("profiles")
+        .select("*")
         .eq("id", id);
-      console.log(response);
-      setInputText("");
-    }
-  };
 
-  const onDeleteComment = async (index) => {
-    const response = await supabase
-      .from("posts")
-      .update({
-        comments: [...comments.slice(0, index), ...comments.slice(index + 1)],
-      })
-      .eq("id", id);
-    console.log(response);
-  };
+      setProfilePic(profileInfo.data[0].avatar_url);
+      setProfileData(profileInfo.data);
 
-  const onCloseComment = async () => {
-    setshowComment(false);
-  };
+      let friendNumber = profileInfo.data[0]["friend_ids"]
+        ? profileInfo.data[0]["friend_ids"].length
+        : 0;
+      // console.log("FRIEND NUMBER", friendNumber);
+      setFriendNumber(friendNumber);
 
-  const onShowComment = async () => {
-    setshowComment(true);
-  };
+      const myPosts = await supabase
+        .from("posts")
+        .select("*")
+        .eq("user_id", id);
+      setMyPostData(myPosts.data);
+      // console.log("POST", myPosts.data);
 
-  const getTimeDifference = (timestamp) => {
-    const currentTime = new Date();
-    const postTime = new Date(timestamp);
-    const timeDifference = Math.abs(currentTime - postTime);
+      const rankings = await supabase
+        .from("rankings")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
 
-    const seconds = Math.floor(timeDifference / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+      const wishlist = await supabase
+        .from("wishlist")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
 
-    if (seconds < 60) {
-      return "now";
-    } else if (minutes < 60) {
-      return `${minutes}m ago`;
-    } else if (hours < 24) {
-      return `${hours}h ago`;
-    } else {
-      return `${days}d ago`;
-    }
-  };
+      setRankedNumber(rankings.count);
+      setWishlistNumber(wishlist.count);
+    };
+    fetchData();
+  }, []);
 
-  const formattedTime = getTimeDifference(timestamp);
+  //   const getTimeDifference = (timestamp) => {
+  //     const currentTime = new Date();
+  //     const postTime = new Date(timestamp);
+  //     const timeDifference = Math.abs(currentTime - postTime);
 
-  let imageToRender;
-  if (isLoading) {
-    imageToRender = (
-      <ActivityIndicator
-        style={styles.imageContainer}
-        size="large"
-        color="#0000ff"
-      />
-    );
-  } else {
-    imageToRender = (
-      <Pressable
-        style={styles.imageContainer}
-        onPress={() =>
-          navigation.navigate(goesTo, {
-            details: movieDetails,
-          })
-        }
-      >
-        <Image
-          source={{
-            uri: movieDetails.Poster,
-            name: "Preview",
-          }}
-          style={styles.image}
-        />
-      </Pressable>
-    );
-  }
+  //     const seconds = Math.floor(timeDifference / 1000);
+  //     const minutes = Math.floor(seconds / 60);
+  //     const hours = Math.floor(minutes / 60);
+  //     const days = Math.floor(hours / 24);
+
+  //     if (seconds < 60) {
+  //       return "now";
+  //     } else if (minutes < 60) {
+  //       return `${minutes}m ago`;
+  //     } else if (hours < 24) {
+  //       return `${hours}h ago`;
+  //     } else {
+  //       return `${days}d ago`;
+  //     }
+  //   };
+
+  //   const formattedTime = getTimeDifference(timestamp);
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.profile}>
-            <View style={styles.profilePicContainer}>
-              <View style={styles.profilePicBackground} />
-              <Image
-                style={styles.profilePic}
-                source={{ uri: profileData[0].avatar_url }}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.username}>{profileData[0].username}</Text>
-              <Text style={styles.formattedTime}>{formattedTime}</Text>
-            </View>
+    <View style={styles.oneComment}>
+      <View style={styles.leftContent}>
+        <Pressable
+          onPress={() =>
+            navigation.navigate(avatarGoesTo, {
+              id: id,
+              friendNumber: friendNumber,
+              myPostData: myPostData,
+              profileData: profileData,
+              rankedNumber: rankedNumber,
+              wishlistNumber: wishlistNumber,
+            })
+          }
+        >
+          <View style={styles.commentAvatar}>
+            <Image style={styles.profilePic} source={{ uri: profilePic }} />
           </View>
+        </Pressable>
 
-          <Text style={styles.action}>{action}</Text>
+        <View style={styles.commentText}>
+          <Text style={styles.userName}>{username}</Text>
+          <Text style={styles.comment}>{text}</Text>
         </View>
-        {/* <View style={styles.divider} /> */}
-
-        <View style={styles.body}>
-          <View style={styles.postContent}>
-
-            <View style={styles.contentContainer}>
-              <Text style={styles.content}>{text}</Text>
-            </View>
-          </View>
-
-          {imageToRender}
-        </View>
-
-        <View style={styles.footer}></View>
       </View>
-    </SafeAreaView>
+
+      {sessionID === id ? (
+        <View style={styles.delete}>
+          <TouchableOpacity
+            style={styles.delete}
+            onPress={() => {
+              Alert.alert(
+                "Delete Comment?",
+                `Are you sure you want to remove this comment?`,
+
+                [
+                  {
+                    text: "Cancel",
+                    style: "cancel",
+                  },
+                  {
+                    text: "Delete",
+                    onPress: onDeleteComment,
+                  },
+                ],
+                { cancelable: false }
+              );
+            }}
+          >
+            <AntDesign name="close" size={18} color="white" />
+          </TouchableOpacity>
+        </View>
+      ) : null}
+    </View>
   );
 };
 
-export default Post;
+export default Comment;
 
 const styles = StyleSheet.create({
   container: {

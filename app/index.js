@@ -10,55 +10,55 @@ import {
   TextInput,
   TouchableOpacity,
   Animated,
+  PanResponder,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import supabase from "../Supabase";
 import { LinearGradient } from "expo-linear-gradient";
 import Post from "../components/Post";
+import getRecommendations from "../components/GPT";
 import Poster from "../components/Poster";
+import { StatusBar } from "expo-status-bar";
+import { StatusBarHeight } from "expo-status-bar";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+const HEADER_MAX_HEIGHT = 200;
+
 export default function Page() {
   const [session, setSession] = useState(null);
   const [friendIDs, setFriendIDs] = useState(null);
+  const [showPostIDs, setshowPostIDs] = useState(null);
 
   const [data, setData] = useState(null);
   const [input, setInput] = useState("");
 
+  // SCROLL COMPONENT
+  const scrollY = new Animated.Value(0);
+  const translateY = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [0, -200],
+  });
+
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_MAX_HEIGHT],
+    outputRange: [HEADER_MAX_HEIGHT, 0],
+    extrapolate: "clamp",
+  });
+
   const [recs, setRecs] = useState([
-    "Inception",
-    "The Godfather",
-    "Titanic",
-    "The Shawshank Redemption",
-    "Forrest Gump",
-    "Pulp Fiction",
-    "The Dark Knight",
-    "Schindler's List",
-    "Fight Club",
-    "The Matrix",
-    "The Lord of the Rings",
-    "Star Wars",
-    "Jurassic Park",
-    "Avatar",
-    "The Silence of the Lambs",
-    "Breaking Bad",
-    "Game of Thrones",
-    "Friends",
-    "Stranger Things",
-    "The Crown",
-    "The Office",
-    "Sherlock",
-    "Black Mirror",
-    "The Simpsons",
-    "Westworld",
-    "The Mandalorian",
-    "Doctor Who",
-    "The Big Bang Theory",
-    "Narcos",
-    "The Walking Dead",
+    "Frozen II",
+    "Spider-Man: Into the Spider-Verse",
+    "Moana",
+    "Toy Story 4",
+    "How to Train Your Dragon: The Hidden World",
+    "Kung Fu Panda 3",
+    "Big Hero 6",
+    "Zootopia",
+    "Raya and the Last Dragon",
+    "Onward",
   ]);
 
   const handleRecordUpdated = (payload) => {
@@ -119,13 +119,25 @@ export default function Page() {
           .select("*")
           .eq("user_id", session.user.id);
 
-        // console.log("this is the current session", session);
-        console.log(
-          "this is RANKINGS",
-          rankings.data.map((item) => item.genres)
-        );
-        // filter out the current user
-        // setFriendIDs(friends.data[0].friend_ids);
+        // RECOMMENDATION FETURE STARTS HERE!!!
+        // let genres = rankings.data.map((item) => item.genres);
+        // const genresString = genres.map((genre) => genre.join(", ")).join(", ");
+
+        // console.log("this is GENRES", genresString);
+
+        // try {
+        //   const output = await getRecommendations(genresString);
+        //   console.log("THIS IS GPT Output", output);
+        //   const jsonString = output.replace(/'/g, '"');
+        //   const responseArray = JSON.parse(jsonString);
+
+        //   console.log("THIS IS FINAL OUTPUT", responseArray);
+        //   console.log("THIS IS OUTPUT TYPE", typeof responseArray);
+
+        //   setRecs(responseArray);
+        // } catch (error) {
+        //   console.error("Error fetching recommendations:", error);
+        // }
       };
       fetchRankings();
 
@@ -146,13 +158,15 @@ export default function Page() {
 
   useEffect(() => {
     if (friendIDs) {
-      showPostIDs = [...friendIDs, session.user.id];
+      finalIDs = [...friendIDs, session.user.id];
+      setshowPostIDs(finalIDs);
       const fetchData = async () => {
         const response = await supabase
           .from("posts")
           .select("*")
-          .in("user_id", showPostIDs)
+          .in("user_id", finalIDs)
           .order("created_at", { ascending: false });
+
         setData(response.data);
       };
       fetchData();
@@ -170,6 +184,7 @@ export default function Page() {
   //   fetchData();
   // }, []);
 
+
   if (!data) {
     return (
       <LinearGradient
@@ -186,6 +201,7 @@ export default function Page() {
     );
   }
 
+
   return (
     <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       {/* <View style={styles.composer}>
@@ -200,7 +216,20 @@ export default function Page() {
           <FontAwesome name="send" size={20} color="#BBADD3" />
         </TouchableOpacity>
       </View> */}
-      <View style={styles.middle}>
+      <Animated.View
+        style={[
+          styles.header,
+          {
+            transform: [{ translateY: translateY }],
+            elevation: 4,
+            zIndex: 100,
+          },
+        ]}
+        // style={styles.header}
+      >
+        {/*        
+        <View style={styles.header}> */}
+        <Text style={[styles.subText, styles.recent]}>Recommendations</Text>
         <ScrollView
           showsHorizontalScrollIndicator={false}
           style={styles.scroll}
@@ -211,29 +240,41 @@ export default function Page() {
             <Poster title={item} goesTo={"ShowDetails"} />
           ))}
         </ScrollView>
+        {/* </View> */}
+      </Animated.View>
 
+      <View style={styles.middle}>
         <View style={styles.postList}>
           <FlatList
             data={data}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <Post
-                id={item.id}
-                user={item.user}
+                showPostIDs={showPostIDs}
+                sessionID={session.user.id}
+                id={item.user_id}
                 timestamp={item.created_at}
                 text={item.text}
                 liked={item.liked}
-                imageUrl={item.show_poster_url}
                 profilePic={item.profile_pic}
                 action={item.action}
-                comments={item.comments}
+                rawComments={item.comments}
                 title={item.movie_title}
-                goesTo={"ShowDetails"}
+                avatarGoesTo={"FriendProfile"}
+                posterGoesTo={"ShowDetails"}
               />
             )}
             keyExtractor={(item) => item.id}
             style={styles.posts}
             contentContainerStyle={{ paddingTop: 10 }}
+            ListHeaderComponent={
+              <View style={{ paddingTop: windowHeight * 0.21 }}>
+                <Text style={[styles.subText, styles.recent]}>Posts</Text>
+              </View>
+            }
+            onScroll={(e) => {
+              scrollY.setValue(e.nativeEvent.contentOffset.y);
+            }}
           />
         </View>
       </View>
@@ -262,30 +303,58 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingLeft: 8,
   },
+  subText: {
+    fontSize: 12,
+    color: "white",
+    textTransform: "uppercase",
+    fontWeight: "500",
+  },
+  recent: {
+    marginLeft: 4,
+    marginTop: 11,
+    marginBottom: 10,
+    fontSize: 18,
+  },
   middle: {
     flex: 1,
+    // height: "100%",
+    borderColor: "red",
+    // borderWidth: 1,
+    // marginTop: 10,
   },
   posts: {
     // marginTop: 12,
     flex: 1,
+    borderColor: "white",
+    // borderWidth: 1,
+    // marginTop: 30,
   },
   scroll: {
     // borderWidth: 1,
-    flex: 3,
+    flex: 1,
   },
   postList: {
     flex: 3.5,
     // borderWidth: 1,
+    // boarderColor: "blue",
   },
-  composer: {
-    flexDirection: "row",
-    backgroundColor: "white",
+  header: {
+    flexDirection: "column",
+    position: "absolute",
+    top: 0,
+    left: 8,
+    right: 0,
+
+    // flex: 1,
+    // backgroundColor: "white",
     width: "100%",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    gap: 8,
+    height: "30%",
+    // flex: 1,
+    // paddingHorizontal: 12,
+    // paddingVertical: 8,
+    // gap: 8,
     // borderColor: "green",
-    // borderWidth: 5,
+    // borderWidth: 1,
   },
 
   clapboard: {

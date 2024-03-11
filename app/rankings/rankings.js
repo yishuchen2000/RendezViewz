@@ -59,14 +59,19 @@ export default function Rankings() {
   const [modalValid, setModalValid] = useState(false);
   const [renderSwitch, flipRenderSwitch] = useState(false);
 
-  const [session, setSession] = useState(null);
-  const [rankings, setRankings] = useState(null);
+  const [session, setSession] = useState([]);
+  const [rankings, setRankings] = useState([]);
 
   const handleRecordUpdated = (payload) => {
     // console.log(payload);
     // setFriendIDs(payload.new.friend_ids);
 
     setRankings((oldData) => {
+      if (!Array.isArray(oldData)) {
+        console.warn("oldData is not an array", oldData);
+        return []; // Return an empty array or appropriate default value
+      }
+
       return oldData.map((item) => {
         if (item.id === payload.new.id) {
           return payload.new;
@@ -76,18 +81,6 @@ export default function Rankings() {
     });
   };
 
-  const handleRecordInserted = (payload) => {
-    // console.log(payload.new);
-    setRankings((rankings) => [...rankings, payload.new]);
-  };
-
-  const handleRecordDeleted = (payload) => {
-    // console.log(payload);
-    setRankings((oldData) =>
-      oldData.filter((item) => item.id !== payload.old.id)
-    );
-  };
-
   useEffect(() => {
     supabase
       .channel("schema-db-changes")
@@ -95,7 +88,7 @@ export default function Rankings() {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "rankings" },
         handleRecordUpdated
-      )
+      ) /*
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "rankings" },
@@ -105,64 +98,57 @@ export default function Rankings() {
         "postgres_changes",
         { event: "DELETE", schema: "public", table: "rankings" },
         handleRecordDeleted
-      )
+      )*/
       .subscribe();
   }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+      if (session) {
+        setSession(session);
 
-      const fetchRankings = async () => {
-        const rankings = await supabase
-          .from("rankings")
-          .select("*")
-          .eq("user_id", session.user.id);
+        const fetchRankings = async () => {
+          try {
+            const rankingsList = await supabase
+              .from("rankings")
+              .select("*")
+              .eq("user_id", session.user.id);
 
-        // console.log("this is RANKINGS", rankings.data);
-        setRankings(rankings.data);
-        // filter out the current user
-        // setFriendIDs(friends.data[0].friend_ids);
-
-        const sortedData = rankings.data.sort((a, b) => b.rating - a.rating);
-        sortedData.forEach((item, index = 0) => {
-          item.index = index + 1;
-        });
-        // console.log("this is sortedDATA", sortedData);
-        setData(sortedData);
-      };
-      fetchRankings();
+            // console.log("this is RANKINGS", rankings.data);
+            // setRankings(rankings.data);
+            // filter out the current user
+            // setFriendIDs(friends.data[0].friend_ids);
+            if (Array.isArray(rankingsList.data)) {
+              console.log("Ran this!");
+              const sortedData = rankingsList.data.sort(
+                (a, b) => b.rating - a.rating
+              );
+              sortedData.forEach((item, index = 0) => {
+                item.index = index + 1;
+              });
+              // console.log("this is sortedDATA", sortedData);
+              setRankings(sortedData);
+            }
+          } catch {
+            console.error("Failed to fetch rankings:", error);
+          }
+        };
+        fetchRankings();
+      }
     });
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const response = await supabase
-  //       .from("rankings")
-  //       .select("*")
-  //       .eq("user_id", session.user.id);
-  //     const sortedData = response.data.sort((a, b) => b.rating - a.rating);
-
-  //     sortedData.forEach((item, index = 0) => {
-  //       item.index = index + 1;
-  //     });
-
-  //     setData(sortedData);
-  //   };
-  //   fetchData();
-  // }, [renderSwitch, entry]);
-
-  //button wil stay grey until these conitions are met
+  //button wil stay grey until these conditions are met
   useEffect(() => {
-    if (selectionChosen && rankValue <= 10 && rankValue >= 0) {
-      const isDuplicate = data.some((item) => item.title === entry);
+    if (selectionChosen) {
+      const isDuplicate = rankings.some((item) => item.title === entry);
       setIsDuplicateEntry(isDuplicate);
       setModalValid(true);
     } else {
       setIsDuplicateEntry(false);
       setModalValid(false);
     }
-  }, [entry, rankValue, data]);
+  }, [selectionChosen, rankings]);
 
   // get top 10 matches to textInput
   const fetchSuggestions = useCallback(
@@ -238,14 +224,18 @@ export default function Rankings() {
       .from("rankings")
       .select("*")
       .eq("user_id", session.user.id);
-    let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    newSortedData.forEach((item, index = 0) => {
-      item.index = index + 1;
-    });
+    if (response) {
+      console.log("Data before sorting:", response.data);
+      let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    // setRankings((oldData) => [...oldData, payload.new]);
-    setData(newSortedData);
+      newSortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
+
+      // setRankings((oldData) => [...oldData, payload.new]);
+      setRankings(newSortedData);
+    }
 
     // await supabase.from("rankings").upsert(sortedData);
 
@@ -279,10 +269,6 @@ export default function Rankings() {
     setModalVisible(false);
   };
 
-  useEffect(() => {
-    console.log(`Modal visibility changed: ${modalVisible}`);
-  }, [modalVisible]);
-
   const handleDelete = async (id, index) => {
     await supabase.from("rankings").delete().eq("id", id);
 
@@ -290,14 +276,18 @@ export default function Rankings() {
       .from("rankings")
       .select("*")
       .eq("user_id", session.user.id);
-    sortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    sortedData.forEach((item, index = 0) => {
-      item.index = index + 1;
-    });
-    // await supabase.from("rankings").upsert(sortedData);
+    if (response) {
+      sortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-    setData(sortedData);
+      sortedData.forEach((item, index = 0) => {
+        item.index = index + 1;
+      });
+      // await supabase.from("rankings").upsert(sortedData);
+
+      setRankings(sortedData);
+    }
+
     LayoutAnimation.configureNext(layoutAnimConfig);
   };
 
@@ -308,26 +298,34 @@ export default function Rankings() {
 
   //create filter list
   const createFilterList = async () => {
-    let response = await supabase.from("rankings").select("*");
+    let response = await supabase
+      .from("rankings")
+      .select("*")
+      .eq("user_id", session.user.id);
 
     const genreSet = new Set();
+    console.log(genreSet);
 
     response.data.forEach((item) => {
       item.genres.forEach((genre) => genreSet.add(genre));
     });
 
-    setGenreList(Array.from(genreSet).sort());
+    if (Array.from(genreSet)) {
+      setGenreList(Array.from(genreSet).sort());
+    }
   };
 
-  const filterByGenres = (data) => {
-    let filteredData = data;
+  const filterByGenres = (rankings) => {
+    let filteredData = rankings;
     if (selectedGenres.length > 0) {
-      filteredData = data.filter((item) =>
+      filteredData = rankings.filter((item) =>
         item.genres.some((genre) => selectedGenres.includes(genre))
       );
     }
 
-    filteredData.sort((a, b) => b.rating - a.rating);
+    if (filteredData) {
+      filteredData.sort((a, b) => b.rating - a.rating);
+    }
 
     filteredData.forEach((item, index) => {
       item.index = index + 1;
@@ -342,7 +340,7 @@ export default function Rankings() {
   };
 
   //loading icon
-  if (!data) {
+  if (!rankings) {
     return (
       <LinearGradient
         colors={["#0e0111", "#311866"]}
@@ -490,15 +488,15 @@ export default function Rankings() {
                       <Slider
                         style={{ width: windowWidth * 0.65, height: 40 }}
                         minimumValue={0}
-                        maximumValue={100} // This allows for 0-10 range with decimal points.
+                        maximumValue={100}
                         step={1}
                         minimumTrackTintColor="#858AE3"
                         maximumTrackTintColor="grey"
-                        value={rankValue * 10} // Convert the rankValue back to 0-100 scale for the slider.
+                        value={rankValue * 10}
                         onValueChange={(value) => {
-                          const newValue = value / 10; // Convert back to 0-10 scale for rankValue.
+                          const newValue = value / 10;
                           debouncedSetRankValue(newValue);
-                          setSliderDisplayValue(newValue.toFixed(1)); // Update display value, keep one decimal point.
+                          setSliderDisplayValue(newValue.toFixed(1));
                         }}
                       />
                     </View>
@@ -558,7 +556,7 @@ export default function Rankings() {
 
       <FlatList
         ref={flatListRef}
-        data={filterByGenres(data)}
+        data={filterByGenres(rankings)}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <Ranking
@@ -822,7 +820,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   filterContainer: {
-    // backgroundColor: '#361866',
+
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",

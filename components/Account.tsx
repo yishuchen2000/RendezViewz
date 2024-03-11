@@ -8,19 +8,21 @@ import {
   Dimensions,
   TouchableHighlight,
   SafeAreaView,
-} from 'react-native';
-import {Button, Input} from 'react-native-elements';
-import {LinearGradient} from 'expo-linear-gradient';
-import {Session} from '@supabase/supabase-js';
+
+} from "react-native";
+import { Button, Input } from "react-native-elements";
+import { LinearGradient } from "expo-linear-gradient";
+import { Session } from "@supabase/supabase-js";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function Account({session}: {session: Session}) {
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState('');
-  const [website, setWebsite] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
+
+  const [username, setUsername] = useState("");
+  const [website, setWebsite] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
     if (session) getProfile();
@@ -91,8 +93,10 @@ export default function Account({session}: {session: Session}) {
 
   return (
     <LinearGradient
-      colors={['#0E0111', '#311866']}
-      style={[styles.container, {paddingHorizontal: windowWidth * 0.1}]}>
+
+      colors={["#0E0111", "#311866"]}
+      style={[styles.container, { paddingHorizontal: windowWidth * 0.1 }]}
+    >
       <Text style={styles.title}>Edit Account</Text>
       <SafeAreaView style={styles.container}>
         <View style={[styles.verticallySpaced, styles.mt20]}>
@@ -125,9 +129,10 @@ export default function Account({session}: {session: Session}) {
                 updateProfile({username, website, avatar_url: avatarUrl})
               }
               disabled={loading}
-              titleStyle={{color: '#0E0111'}} // Change text color
+
+              titleStyle={{ color: "#0E0111" }} // Change text color
               buttonStyle={{
-                backgroundColor: '#858AE3', // Change background color
+                backgroundColor: "#858AE3", // Change background color
                 borderRadius: windowWidth * 0.05,
                 height: windowHeight * 0.07,
                 paddingHorizontal: windowWidth * 0.05,
@@ -144,11 +149,12 @@ export default function Account({session}: {session: Session}) {
             <Button
               title="Sign Out"
               onPress={() => supabase.auth.signOut()}
-              titleStyle={{color: '#97DFFC'}} // Change text color
+
+              titleStyle={{ color: "#97DFFC" }} // Change text color
               disabled={loading}
               buttonStyle={{
-                backgroundColor: 'transparent',
-                borderColor: '#97DFFC', // Change outline color
+                backgroundColor: "transparent",
+                borderColor: "#97DFFC", // Change outline color
                 borderWidth: 2,
                 borderRadius: windowWidth * 0.05,
                 height: windowHeight * 0.07,
@@ -166,31 +172,34 @@ const styles = StyleSheet.create({
   container: {
     width: windowWidth,
     height: windowHeight,
-    alignItems: 'center',
+
+    alignItems: "center",
   },
   title: {
-    color: 'white',
+    color: "white",
     fontSize: windowWidth * 0.08,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: windowHeight * 0.04,
     marginTop: windowHeight * 0.06,
-    textAlign: 'left',
-    alignSelf: 'flex-start',
+    textAlign: "left",
+    alignSelf: "flex-start",
   },
   textWhite: {
-    color: 'white',
+    color: "white",
   },
   verticallySpaced: {
     paddingHorizontal: windowWidth * 0.1,
     paddingTop: windowHeight * 0.005,
     paddingBottom: windowHeight * 0.01,
-    alignSelf: 'stretch',
+
+    alignSelf: "stretch",
   },
   buttonSpaced: {
     paddingHorizontal: windowWidth * 0.1,
     paddingTop: windowHeight * 0.005,
     paddingBottom: windowHeight * 0.015,
-    alignSelf: 'stretch',
+
+    alignSelf: "stretch",
   },
   mt20: {
     marginTop: windowHeight * 0.02,

@@ -165,7 +165,8 @@ const Pending = ({route, navigation}) => {
   );
 
   return (
-    <LinearGradient colors={['#0e0111', '#311866']} style={styles.container}>
+
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <View style={styles.searchArea}>
         <View style={styles.searchContainer}>
           <TextInput

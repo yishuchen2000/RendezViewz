@@ -16,7 +16,15 @@ import getMovieDetails from "./getMovieDetails";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Ranking = ({ index, title, coverPic, onDelete, goesTo, rating }) => {
+const Ranking = ({
+  index,
+  title,
+  coverPic,
+  onDelete,
+  goesTo,
+  rating,
+  showSubtitle = true,
+}) => {
   const navigation = useNavigation();
   const [movieDetails, setMovieDetails] = useState(null);
 
@@ -49,13 +57,15 @@ const Ranking = ({ index, title, coverPic, onDelete, goesTo, rating }) => {
             <Text numberOfLines={1} style={styles.title}>
               {title}
             </Text>
-            <View style={styles.subtitle}>
-              <Text style={styles.rating}>{rating}/10 </Text>
-              <Image
-                source={require("../assets/star.png")}
-                style={styles.star}
-              ></Image>
-            </View>
+            {showSubtitle && (
+              <View style={styles.subtitle}>
+                <Text style={styles.rating}>{rating}/10 </Text>
+                <Image
+                  source={require("../assets/star.png")}
+                  style={styles.star}
+                ></Image>
+              </View>
+            )}
           </View>
         </View>
       </Pressable>
@@ -82,7 +92,7 @@ const Ranking = ({ index, title, coverPic, onDelete, goesTo, rating }) => {
           }}
           name="trash"
           size={25}
-          color="#602683"
+          color="#97DFFC"
         />
       </Pressable>
     </View>
@@ -95,7 +105,7 @@ const styles = StyleSheet.create({
   container: {
     height: windowHeight * 0.1,
     flexDirection: "row",
-    backgroundColor: "rgba(217, 217, 217, 0.4)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     borderColor: "#361866",
     borderRadius: 10,
     marginVertical: windowHeight * 0.002,
@@ -147,7 +157,7 @@ const styles = StyleSheet.create({
     width: 17,
     height: 17,
     resizeMode: "contain",
-    tintColor: "purple",
+    tintColor: "#97DFFC",
   },
   deleteButtonContainer: {
     position: "absolute",

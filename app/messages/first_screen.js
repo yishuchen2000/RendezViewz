@@ -170,7 +170,7 @@ export default function FirstScreen({ navigation }) {
   if (!items) {
     return (
       <LinearGradient
-        colors={["#361866", "#E29292"]}
+        colors={["#0e0111", "#311866"]}
         style={[styles.container, { paddingHorizontal: 8 }]}
       >
         <View

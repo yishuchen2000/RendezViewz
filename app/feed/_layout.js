@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Index from "../index";
 import ShowDetails from "./show_details";
+import FriendProfile from "./FriendProfile";
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,16 @@ export default function Feed() {
       <Stack.Screen
         name="ShowDetails"
         component={ShowDetails}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="FriendProfile"
+        component={FriendProfile}
         options={{
           headerTransparent: true,
           headerTintColor: "white",

@@ -13,10 +13,9 @@ import {
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
 import * as Calendar from "expo-calendar"; // Importing calendar module
 import * as Localization from "expo-localization";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 const Success = ({ navigation, route }) => {
   const { date, name, time, people, all, poster } = route.params;
@@ -211,6 +210,7 @@ const Success = ({ navigation, route }) => {
               fontSize: 24,
               marginTop: 20,
               marginBottom: 10,
+
               textAlign: "center",
               fontWeight: "bold",
             }}
@@ -273,6 +273,22 @@ const Success = ({ navigation, route }) => {
           }}
         />
       </View>
+      <ConfettiCannon
+        count={75}
+        origin={{ x: 0, y: 0 }}
+        fadeOut={true}
+        explosionSpeed={350}
+        spread={300}
+        colors={["purple", "lightblue"]}
+      />
+      <ConfettiCannon
+        count={75}
+        origin={{ x: windowWidth, y: 0 }}
+        fadeOut={true}
+        explosionSpeed={900}
+        spread={300}
+        colors={["purple", "lightblue"]}
+      />
     </LinearGradient>
   );
 };
@@ -366,7 +382,7 @@ const styles = StyleSheet.create({
     width: windowWidth,
     alignSelf: "center",
   },
-  scrollView: {},
+  scrollContainer: { paddingBottom: 60 },
   c: {
     alignItems: "center",
   },

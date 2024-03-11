@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import Friend from "../../components/Friend";
+import Friend from "./Friend";
 import supabase from "../../Supabase";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -41,16 +41,14 @@ export default function People() {
   const navigation = useNavigation();
 
   const handleFriendUpdated = (payload) => {
-    // setData((oldData) => {
-    //   return oldData.map((item) => {
-    //     if (item.id === payload.new.id) {
-    //       return payload.new;
-    //     }
-    //     return item;
-    //   });
-    // });
-    console.log("THIS IS PAYLOAD", payload.new.friend_ids);
-    setFriendIDs(payload.new.friend_ids);
+    // console.log("THIS IS PAYLOAD", payload.new.friend_ids);
+    let updatedFriendIds = payload.new.friend_ids;
+    if (session) {
+      updatedFriendIds = payload.new.friend_ids.filter(
+        (friendId) => friendId !== session.user.id
+      );
+    }
+    setFriendIDs(updatedFriendIds);
   };
 
   useEffect(() => {
@@ -77,7 +75,10 @@ export default function People() {
         // console.log("this is the current session", session);
         // console.log("this is the friend IDs", friends.data[0].friend_ids);
         // filter out the current user
-        setFriendIDs(friends.data[0].friend_ids);
+        const updatedFriendIds = friends.data[0].friend_ids.filter(
+          (friendId) => friendId !== session.user.id
+        );
+        setFriendIDs(updatedFriendIds);
       };
       fetchFriendID();
     });
@@ -112,6 +113,7 @@ export default function People() {
       return contains({ username }, formattedQuery);
     });
     setFilteredData(filteredData);
+    // console.log("FILTERED DATA", filteredData);
   };
 
   const contains = ({ username }, query) => {
