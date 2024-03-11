@@ -189,7 +189,7 @@ const Success = ({ navigation, route }) => {
               color: "white",
               fontSize: 25,
               textAlign: "center",
-              margin: 20,
+              margin: 18,
             }}
           >
             Congrats! Event scheduled:
@@ -208,9 +208,9 @@ const Success = ({ navigation, route }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 28,
+              fontSize: 24,
               marginTop: 20,
-              marginBottom: 20,
+              marginBottom: 10,
               textAlign: "center",
               fontWeight: "bold",
             }}
@@ -220,7 +220,7 @@ const Success = ({ navigation, route }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 24,
+              fontSize: 22,
               textAlign: "center",
               fontWeight: "bold",
             }}
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   posterBackground: {
     position: "absolute",
     width: windowWidth,
-    height: windowHeight * 0.5,
+    height: windowHeight * 0.3,
     resizeMode: "cover",
     borderRadius: 15,
   },
@@ -309,12 +309,12 @@ const styles = StyleSheet.create({
     marginTop: 0, // Adjust as necessary
   },
   poster: {
-    height: windowHeight * 0.5,
+    height: windowHeight * 0.3,
     width: windowWidth * 0.9, // Adjust width as necessary to maintain aspect ratio
     resizeMode: "contain",
   },
   button: {
-    marginTop: 20,
+    marginTop: 10,
     height: 40,
     width: 225,
     alignItems: "center",
