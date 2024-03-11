@@ -146,7 +146,7 @@ export default function People() {
   }
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <View style={styles.container1}>
         <View style={styles.input}></View>
 

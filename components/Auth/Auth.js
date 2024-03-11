@@ -8,6 +8,7 @@ import {
   Dimensions,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 import supabase from "../../Supabase";
 import { Button, Input } from "react-native-elements";
@@ -37,7 +38,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [firstTime, setFirstTime] = useState(false);
-
+  const [buttonColor, setButtonColor] = useState("#97DFFC");
   async function signInWithEmail() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({

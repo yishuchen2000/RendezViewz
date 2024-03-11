@@ -173,7 +173,7 @@ export default function Page() {
   if (!data) {
     return (
       <LinearGradient
-        colors={["#361866", "#E29292"]}
+        colors={["#0e0111", "#311866"]}
         style={[styles.container, { paddingHorizontal: 8 }]}
       >
         <View
@@ -187,7 +187,7 @@ export default function Page() {
   }
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       {/* <View style={styles.composer}>
         <TextInput
           style={styles.input}

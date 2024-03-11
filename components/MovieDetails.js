@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   genreContainer: {
-    backgroundColor: "#311866",
+    backgroundColor: "#858AE3",
     borderRadius: 10,
     padding: 5,
     marginBottom: 13,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   genreText: {
-    color: "white",
+    color: "#0E0111",
     marginHorizontal: 5,
     fontSize: 15,
     fontWeight: "bold",

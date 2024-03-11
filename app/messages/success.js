@@ -178,7 +178,7 @@ const Success = ({ navigation, route }) => {
   };
 
   return (
-    <LinearGradient colors={["#361866", "#E29292"]} style={styles.container}>
+    <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
@@ -206,7 +206,16 @@ const Success = ({ navigation, route }) => {
           >
             {name}
           </Text>
-          <Image source={{ uri: poster }} style={styles.poster} />
+          <View style={styles.posterBackgroundContainer}>
+            <Image
+              source={{ uri: poster }}
+              style={styles.posterBackground}
+              blurRadius={5}
+            />
+            <View style={styles.posterContainer}>
+              <Image source={{ uri: poster }} style={styles.poster} />
+            </View>
+          </View>
           <Text
             style={{
               color: "white",
@@ -273,11 +282,31 @@ const styles = StyleSheet.create({
     backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     //flexWrap: "wrap",
   },
+  posterBackgroundContainer: {
+    position: "relative",
+    width: windowWidth,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  posterBackground: {
+    position: "absolute",
+    width: windowWidth,
+    height: windowHeight * 0.5,
+    resizeMode: "cover",
+    borderRadius: 15,
+  },
+  posterContainer: {
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    overflow: "hidden",
+    marginTop: 0, // Adjust as necessary
+  },
   poster: {
-    height: windowHeight * 0.35,
-    width: windowHeight * 0.22,
-    marginBottom: 10,
-    padding: 5,
+    height: windowHeight * 0.5,
+    width: windowWidth * 0.9, // Adjust width as necessary to maintain aspect ratio
+    resizeMode: "contain",
   },
   button: {
     marginTop: 20,
