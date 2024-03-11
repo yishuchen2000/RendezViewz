@@ -22,6 +22,7 @@ const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
 const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
 
 const Post = ({
+  profileData,
   id,
   user,
   timestamp,
@@ -148,23 +149,33 @@ const Post = ({
         <View style={styles.header}>
           <View style={styles.profile}>
             <View style={styles.profilePicContainer}>
-              <Image style={styles.profilePic} source={{ uri: profilePic }} />
+              <View style={styles.profilePicBackground} />
+              <Image
+                style={styles.profilePic}
+                source={{ uri: profileData[0].avatar_url }}
+              />
             </View>
 
-            <Text style={styles.username}>{user}</Text>
+            <View>
+              <Text style={styles.username}>{profileData[0].username}</Text>
+              <Text style={styles.formattedTime}>{formattedTime}</Text>
+            </View>
           </View>
-          <Text style={{ color: "white" }}>{formattedTime}</Text>
+          <Text style={styles.action}>{action}</Text>
         </View>
+        {/* <View style={styles.divider} /> */}
 
         <View style={styles.body}>
           <View style={styles.postContent}>
-            <Text style={styles.action}>{action}</Text>
             <View style={styles.contentContainer}>
               <Text style={styles.content}>{text}</Text>
             </View>
           </View>
+
           {imageToRender}
         </View>
+
+        <View style={styles.footer}></View>
       </View>
     </SafeAreaView>
   );
@@ -174,7 +185,7 @@ export default Post;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     // borderColor: "black",
     // borderWidth: 1,
     borderRadius: 15,
@@ -206,11 +217,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginRight: 7,
   },
   divider: {
     flex: 1,
     // borderColor: "#361866",
+  },
+  profile: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  formattedTime: {
+    color: "white",
   },
   body: {
     flexDirection: "row",
@@ -279,16 +296,25 @@ const styles = StyleSheet.create({
   profilePic: {
     width: "100%",
     height: "100%",
+    borderRadius: 50, // Assuming it's a circle
+    zIndex: 2, // Make sure it's above the background
   },
   profilePicContainer: {
-    width: 35,
-    height: 35,
+    width: 45,
+    height: 45,
     margin: 5,
     marginRight: 8,
+    position: "relative",
   },
-  profile: {
-    flexDirection: "row",
-    alignItems: "center",
+  profilePicBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    borderRadius: 50, // Assuming it's a circle
+    backgroundColor: "#858AE3",
+    zIndex: 1,
   },
   username: {
     fontWeight: "bold",
@@ -297,12 +323,12 @@ const styles = StyleSheet.create({
     color: "white",
   },
   imageContainer: {
-    flex: 0.25,
-    marginBottom: 5,
-  },
-  image: {
     width: 60,
     height: 90,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
   postContent: {
     flex: 1,

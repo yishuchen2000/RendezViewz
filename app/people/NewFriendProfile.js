@@ -90,7 +90,12 @@ export default function Rankings() {
             <View style={styles.statsContainer}>
               <Pressable
                 style={styles.statsBox}
-                onPress={() => navigation.navigate("Friend Movies")}
+                onPress={() =>
+                  navigation.navigate("Friend Movies", {
+                    screen: "Friend Rankings",
+                    params: { id: id },
+                  })
+                }
               >
                 <View style={styles.statsBox}>
                   <Text style={[styles.text, { fontSize: 18 }]}>
@@ -139,7 +144,12 @@ export default function Rankings() {
 
             <Pressable
               style={[styles.button, styles.messageButton]}
-              onPress={() => navigation.navigate("Friend Movies")}
+              onPress={() =>
+                navigation.navigate("Friend Movies", {
+                  screen: "Friend Rankings",
+                  params: { id: id },
+                })
+              }
             >
               <Text style={[styles.text, styles.messageButtonText]}>
                 Rankings
@@ -161,7 +171,10 @@ export default function Rankings() {
                 <Pressable
                   style={styles.statsBox}
                   onPress={() =>
-                    navigation.navigate("rankings", { screen: "My Wishlist" })
+                    navigation.navigate("Friend Movies", {
+                      screen: "Friend Wishlist",
+                      params: { id: id },
+                    })
                   }
                 >
                   <Text style={[styles.text, { fontSize: 18 }]}>
@@ -178,6 +191,7 @@ export default function Rankings() {
               <Text style={[styles.subText, styles.recent]}>Posts</Text>
               {myPostData.map((item) => (
                 <ProfilePost
+                  profileData={profileData}
                   key={item.id}
                   id={item.id}
                   user={item.user}

@@ -62,6 +62,20 @@ export default function Me() {
         setMyPostData(myPosts.data);
         // console.log(myPosts.data);
 
+        const rankings = await supabase
+          .from("rankings")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", session.user.id);
+
+        const wishlist = await supabase
+          .from("wishlist")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", session.user.id);
+
+        setRankedNumber(rankings.count);
+        // setFriendNumber(friends.count);
+        setWishlistNumber(wishlist.count);
+
         setInfoFetched(true);
       };
       fetchData();
@@ -72,27 +86,13 @@ export default function Me() {
     setIsFollowed(!isFollowed);
   };
 
-  useEffect(() => {
-    const fetchNumbers = async () => {
-      const rankings = await supabase
-        .from("rankings")
-        .select("*", { count: "exact", head: true });
+  // useEffect(() => {
+  //   const fetchNumbers = async () => {
 
-      const friends = await supabase
-        .from("friends")
-        .select("*", { count: "exact", head: true });
-
-      const wishlist = await supabase
-        .from("wishlist")
-        .select("*", { count: "exact", head: true });
-
-      setRankedNumber(rankings.count);
-      // setFriendNumber(friends.count);
-      setWishlistNumber(wishlist.count);
-      setNumbersFetched(true);
-    };
-    fetchNumbers();
-  }, []);
+  //     setNumbersFetched(true);
+  //   };
+  //   fetchNumbers();
+  // }, []);
 
   async function accountPage() {
     setShowAccountPage(true);
@@ -106,7 +106,7 @@ export default function Me() {
     );
   }
 
-  if (!numbersFetched || !infoFetched) {
+  if (!infoFetched) {
     return (
       <LinearGradient
         colors={["#0e0111", "#311866"]}
@@ -241,6 +241,7 @@ export default function Me() {
               <Text style={[styles.subText, styles.recent]}>Posts</Text>
               {myPostData.map((item) => (
                 <ProfilePost
+                  profileData={profileData}
                   key={item.id}
                   id={item.id}
                   user={item.user}

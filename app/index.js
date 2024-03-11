@@ -166,6 +166,7 @@ export default function Page() {
           .select("*")
           .in("user_id", finalIDs)
           .order("created_at", { ascending: false });
+
         setData(response.data);
       };
       fetchData();
@@ -183,21 +184,21 @@ export default function Page() {
   //   fetchData();
   // }, []);
 
-  if (!data) {
-    return (
-      <LinearGradient
-        colors={["#0e0111", "#311866"]}
-        style={[styles.container, { paddingHorizontal: 8 }]}
-      >
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" color="purple" />
-          <Text style={{ color: "white" }}>Loading...</Text>
-        </View>
-      </LinearGradient>
-    );
-  }
+  // if (!data) {
+  //   return (
+  //     <LinearGradient
+  //       colors={["#0e0111", "#311866"]}
+  //       style={[styles.container, { paddingHorizontal: 8 }]}
+  //     >
+  //       <View
+  //         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //       >
+  //         <ActivityIndicator size="large" color="purple" />
+  //         <Text style={{ color: "white" }}>Loading...</Text>
+  //       </View>
+  //     </LinearGradient>
+  //   );
+  // }
 
   return (
     <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
@@ -250,16 +251,15 @@ export default function Page() {
                 showPostIDs={showPostIDs}
                 sessionID={session.user.id}
                 id={item.user_id}
-                user={item.user}
                 timestamp={item.created_at}
                 text={item.text}
                 liked={item.liked}
-                imageUrl={item.show_poster_url}
                 profilePic={item.profile_pic}
                 action={item.action}
                 rawComments={item.comments}
                 title={item.movie_title}
-                goesTo={"FriendProfile"}
+                avatarGoesTo={"FriendProfile"}
+                posterGoesTo={"ShowDetails"}
               />
             )}
             keyExtractor={(item) => item.id}

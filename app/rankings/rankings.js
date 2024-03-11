@@ -66,7 +66,7 @@ export default function Rankings() {
     // console.log(payload);
     // setFriendIDs(payload.new.friend_ids);
 
-    setRankings((oldData) => {
+    setRankings((oldData) => {``
       return oldData.map((item) => {
         if (item.id === payload.new.id) {
           return payload.new;
@@ -76,17 +76,17 @@ export default function Rankings() {
     });
   };
 
-  const handleRecordInserted = (payload) => {
-    // console.log(payload.new);
-    setRankings((rankings) => [...rankings, payload.new]);
-  };
+  // const handleRecordInserted = (payload) => {
+  //   // console.log(payload.new);
+  //   setRankings((rankings) => [...rankings, payload.new]);
+  // };
 
-  const handleRecordDeleted = (payload) => {
-    // console.log(payload);
-    setRankings((oldData) =>
-      oldData.filter((item) => item.id !== payload.old.id)
-    );
-  };
+  // const handleRecordDeleted = (payload) => {
+  //   // console.log(payload);
+  //   setRankings((oldData) =>
+  //     oldData.filter((item) => item.id !== payload.old.id)
+  //   );
+  // };
 
   useEffect(() => {
     supabase
@@ -96,16 +96,16 @@ export default function Rankings() {
         { event: "UPDATE", schema: "public", table: "rankings" },
         handleRecordUpdated
       )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "rankings" },
-        handleRecordInserted
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "rankings" },
-        handleRecordDeleted
-      )
+      // .on(
+      //   "postgres_changes",
+      //   { event: "INSERT", schema: "public", table: "rankings" },
+      //   handleRecordInserted
+      // )
+      // .on(
+      //   "postgres_changes",
+      //   { event: "DELETE", schema: "public", table: "rankings" },
+      //   handleRecordDeleted
+      // )
       .subscribe();
   }, []);
 

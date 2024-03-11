@@ -37,7 +37,8 @@ const Post = ({
   action,
   rawComments,
   title,
-  goesTo,
+  avatarGoesTo,
+  posterGoesTo,
 }) => {
   const [inputText, setInputText] = useState("");
   const [showComment, setshowComment] = useState(false);
@@ -63,13 +64,15 @@ const Post = ({
   //   fetchMovieDetails();
   // }, [title]);
 
-  const comments = rawComments.filter((item) => showPostIDs.includes(item[0]));
+  let comments = rawComments;
+  if (comments) {
+    comments = rawComments.filter((item) => showPostIDs.includes(item[0]));
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       const details = await getMovieDetails(title);
       setMovieDetails(details);
-      setIsLoading(false);
 
       const profileInfo = await supabase
         .from("profiles")
@@ -105,6 +108,7 @@ const Post = ({
 
       setRankedNumber(rankings.count);
       setWishlistNumber(wishlist.count);
+      setIsLoading(false);
     };
     fetchData();
   }, [title]);
@@ -236,7 +240,7 @@ const Post = ({
       <Pressable
         style={styles.imageContainer}
         onPress={() =>
-          navigation.navigate(goesTo, {
+          navigation.navigate(posterGoesTo, {
             details: movieDetails,
           })
         }
@@ -287,6 +291,13 @@ const Post = ({
     );
   }
 
+  if (isLoading) {
+    return (
+      <SafeAreaView>
+        <View style={styles.container}></View>
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -300,7 +311,7 @@ const Post = ({
                 //     data: id,
                 //   })
                 () =>
-                  navigation.navigate(goesTo, {
+                  navigation.navigate(avatarGoesTo, {
                     // screen: "FriendProfile",
                     id: id,
                     friendNumber: friendNumber,
@@ -318,7 +329,7 @@ const Post = ({
             </Pressable>
 
             <View>
-              <Text style={styles.username}>{user}</Text>
+              <Text style={styles.username}>{profileData[0].username}</Text>
               <Text style={styles.formattedTime}>{formattedTime}</Text>
             </View>
           </View>

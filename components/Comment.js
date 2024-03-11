@@ -23,73 +23,58 @@ import getMovieDetails from "./getMovieDetails";
 const LIKE_ICON_OUTLINE = require("../assets/like_regular_purple.png");
 const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
 
-const Comment = ({ onDeleteComment, sessionID, id, text }) => {
+const Comment = ({ onDeleteComment, sessionID, id, text, avatarGoesTo }) => {
   const [username, setUsername] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
+
+  const [profileData, setProfileData] = useState(null);
+  const [rankedNumber, setRankedNumber] = useState(0);
+  const [wishlistNumber, setWishlistNumber] = useState(0);
+  const [friendNumber, setFriendNumber] = useState(null);
+  const [myPostData, setMyPostData] = useState(null);
 
   const navigation = useNavigation();
   //   console.log(id);
   //   console.log(text);
 
   useEffect(() => {
-    const getUserInfo = async () => {
+    const fetchData = async () => {
       const profileInfo = await supabase
         .from("profiles")
         .select("*")
         .eq("id", id);
 
-      console.log("PROFILE INFO FROM COMP", profileInfo);
       setProfilePic(profileInfo.data[0].avatar_url);
-      setUsername(profileInfo.data[0].username);
+      setProfileData(profileInfo.data);
+
+      let friendNumber = profileInfo.data[0]["friend_ids"]
+        ? profileInfo.data[0]["friend_ids"].length
+        : 0;
+      // console.log("FRIEND NUMBER", friendNumber);
+      setFriendNumber(friendNumber);
+
+      const myPosts = await supabase
+        .from("posts")
+        .select("*")
+        .eq("user_id", id);
+      setMyPostData(myPosts.data);
+      // console.log("POST", myPosts.data);
+
+      const rankings = await supabase
+        .from("rankings")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
+
+      const wishlist = await supabase
+        .from("wishlist")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
+
+      setRankedNumber(rankings.count);
+      setWishlistNumber(wishlist.count);
     };
-
-    getUserInfo();
+    fetchData();
   }, []);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const details = await getMovieDetails(title);
-  //     setMovieDetails(details);
-  //     setIsLoading(false);
-
-  //     const profileInfo = await supabase
-  //       .from("profiles")
-  //       .select("*")
-  //       .eq("id", id);
-
-  //     console.log("PROFILE IN FRIEND", profileInfo.data);
-  //     setProfileData(profileInfo.data);
-
-  //     let friendNumber = profileInfo.data[0]["friend_ids"]
-  //       ? profileInfo.data[0]["friend_ids"].length
-  //       : 0;
-  //     // console.log("FRIEND NUMBER", friendNumber);
-  //     setFriendNumber(friendNumber);
-
-  //     const myPosts = await supabase
-  //       .from("posts")
-  //       .select("*")
-  //       .eq("user_id", id);
-  //     setMyPostData(myPosts.data);
-  //     // console.log("POST", myPosts.data);
-
-  //     const rankings = await supabase
-  //       .from("rankings")
-  //       .select("*", { count: "exact", head: true })
-  //       .eq("user_id", id);
-
-  //     const wishlist = await supabase
-  //       .from("wishlist")
-  //       .select("*", { count: "exact", head: true })
-  //       .eq("user_id", id);
-
-  //     setRankedNumber(rankings.count);
-  //     setWishlistNumber(wishlist.count);
-
-  //     setInfoFetched(true);
-  //   };
-  //   fetchData();
-  // }, [title]);
 
   //   const getTimeDifference = (timestamp) => {
   //     const currentTime = new Date();
@@ -117,9 +102,29 @@ const Comment = ({ onDeleteComment, sessionID, id, text }) => {
   return (
     <View style={styles.oneComment}>
       <View style={styles.leftContent}>
-        <View style={styles.commentAvatar}>
-          <Image style={styles.profilePic} source={{ uri: profilePic }} />
-        </View>
+        <Pressable
+          onPress={
+            // () =>
+            //   navigation.navigate("PeoplePage", {
+            //     screen: "Friend Movies",
+            //     data: id,
+            //   })
+            () =>
+              navigation.navigate(avatarGoesTo, {
+                // screen: "FriendProfile",
+                id: id,
+                friendNumber: friendNumber,
+                myPostData: myPostData,
+                profileData: profileData,
+                rankedNumber: rankedNumber,
+                wishlistNumber: wishlistNumber,
+              })
+          }
+        >
+          <View style={styles.commentAvatar}>
+            <Image style={styles.profilePic} source={{ uri: profilePic }} />
+          </View>
+        </Pressable>
 
         <View style={styles.commentText}>
           <Text style={styles.userName}>{username}</Text>
