@@ -241,14 +241,14 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   container1: {
-    backgroundColor: "transparent",
+    backgroundColor: null,
     flex: 1,
   },
   friendbox: {
-    backgroundColor: "rgba(50, 50, 50, 0.1)",
+    backgroundColor: null,
   },
   friendList: {
-    backgroundColor: "transpar",
+    backgroundColor: null,
     flex: 8,
   },
   buttons: {
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   main: {
     height: windowHeight * 0.5,
     width: windowWidth,
-    backgroundColor: "transparent",
+    backgroundColor: null,
     flexDirection: "column",
     width: windowWidth,
     height: windowHeight,
@@ -329,6 +329,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   posts: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: null,
   },
 });
