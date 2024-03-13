@@ -15,6 +15,11 @@ import { Button, Input } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import AuthSignUp from "./AuthSignUp";
 import Account from "../Account";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
+import {
+  useFonts,
+  ImperialScript_400Regular,
+} from "@expo-google-fonts/imperial-script";
 import { LinearGradient } from "expo-linear-gradient";
 
 const windowWidth = Dimensions.get("window").width;
@@ -79,6 +84,8 @@ export default function Auth() {
       style={[styles.background, { paddingHorizontal: windowWidth * 0.1 }]}
     >
       <Text style={styles.helloText}>Hello!</Text>
+      <Text style={styles.weText}>We Are </Text>
+      <Text style={styles.rendezviewzText}>Rendezviewz</Text>
       <View
         style={[styles.bottomSlideContainer, styles.bottomSlideVisible]}
       ></View>
@@ -159,6 +166,22 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: windowHeight * 0.12,
     left: windowWidth * 0.05,
+  },
+  weText: {
+    color: "white",
+    fontSize: windowHeight * 0.05,
+    position: "absolute",
+    top: windowHeight * 0.225, // Adjust as needed based on the positioning you desire
+    left: windowWidth * 0.05, // Adjust as needed based on the positioning you desire
+  },
+  rendezviewzText: {
+    color: "rgba(151, 223, 252, 1)",
+    fontSize: windowHeight * 0.095,
+    position: "absolute",
+    top: windowHeight * 0.28, // Adjust as needed based on the positioning you desire
+    left: windowWidth * 0.05, // Adjust as needed based on the positioning you desire
+    alignContent: "center",
+    fontFamily: "ImperialScript",
   },
   bottomSlideContainer: {
     position: "absolute",
