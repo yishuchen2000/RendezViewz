@@ -14,7 +14,7 @@ import getMovieDetails from "./getMovieDetails";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Ranking = ({ index, title, coverPic, goesTo }) => {
+const Ranking = ({ index, title, coverPic, rating, showSubtitle = true }) => {
   const navigation = useNavigation();
   const [movieDetails, setMovieDetails] = useState(null);
 
@@ -36,9 +36,20 @@ const Ranking = ({ index, title, coverPic, goesTo }) => {
         <View style={styles.coverPicContainer}>
           <Image style={styles.coverPic} source={{ uri: coverPic }} />
         </View>
-        <Text numberOfLines={1} style={styles.title}>
-          {title}
-        </Text>
+        <View style={styles.words}>
+          <Text numberOfLines={1} style={styles.title}>
+            {title}
+          </Text>
+          {showSubtitle && (
+            <View style={styles.subtitle}>
+              <Text style={styles.rating}>{rating}/10 </Text>
+              <Image
+                source={require("../assets/star.png")}
+                style={styles.star}
+              ></Image>
+            </View>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -96,6 +107,21 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.1,
     height: "50%",
     justifyContent: "center",
+  },
+  subtitle: {
+    flexDirection: "row",
+    paddingTop: 2,
+    paddingLeft: 5,
+    alignItems: "center",
+  },
+  rating: {
+    color: "lightgrey",
+  },
+  star: {
+    width: 17,
+    height: 17,
+    resizeMode: "contain",
+    tintColor: "#97DFFC",
   },
   deleteButton: {
     position: "absolute",

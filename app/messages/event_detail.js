@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     marginBottom: 0,
+    paddingHorizontal: 40,
   },
   date: {
     fontSize: windowWidth * 0.05,

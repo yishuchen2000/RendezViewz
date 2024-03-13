@@ -91,16 +91,12 @@ export default function FriendProfile() {
             <View style={styles.statsContainer}>
               <Pressable
                 style={styles.statsBox}
-                onPress={() => {
-                  navigation.popToTop();
-                  navigation.navigate("people", {
-                    screen: "Friend Movies",
-                    params: {
-                      screen: "Friend Rankings",
-                      params: { id: id },
-                    },
-                  });
-                }}
+                onPress={() =>
+                  navigation.navigate("Friend Movies", {
+                    screen: "Friend Rankings",
+                    id: id,
+                  })
+                }
               >
                 <View style={styles.statsBox}>
                   <Text style={[styles.text, { fontSize: 18 }]}>
@@ -168,12 +164,12 @@ export default function FriendProfile() {
               <View style={styles.wishlistInfo}>
                 <Pressable
                   style={styles.statsBox}
-                  // onPress={() =>
-                  //   navigation.navigate("Friend Movies", {
-                  //     screen: "Friend Wishlist",
-                  //     params: { id: id },
-                  //   })
-                  // }
+                  onPress={() =>
+                    navigation.navigate("Friend Movies", {
+                      screen: "Friend Wishlist",
+                      id: id,
+                    })
+                  }
                 >
                   <Text style={[styles.text, { fontSize: 18 }]}>
                     {wishlistNumber}

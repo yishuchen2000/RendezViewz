@@ -11,8 +11,8 @@ import { useRoute } from "@react-navigation/native";
 const Stack = createStackNavigator();
 
 const PeopleStack = () => {
-  // const route = useRoute();
-  // console.log("ID in layout", route.params.id);
+  //const route = useRoute();
+  //console.log("ID in layout", route.params.id);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -22,15 +22,19 @@ const PeopleStack = () => {
       />
       <Stack.Screen
         name="Friend Movies"
-        component={MyTabs}
         options={{
           headerTransparent: true,
           headerTintColor: "white",
           headerTitle: "",
           headerBackTitleVisible: false,
         }}
-        // initialParams={{ userId }}
-      />
+        // initialParams={{userId }}
+      >
+        {(props) => {
+          console.log(props.route.params); // Check what parameters are received
+          return <MyTabs {...props} id={props.route.params?.id} />;
+        }}
+      </Stack.Screen>
       {/* <Stack.Screen
         name="Friend Movies"
         options={({ route }) => ({

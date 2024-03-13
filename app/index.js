@@ -120,24 +120,24 @@ export default function Page() {
           .eq("user_id", session.user.id);
 
         // RECOMMENDATION FETURE STARTS HERE!!!
-        // let genres = rankings.data.map((item) => item.genres);
-        // const genresString = genres.map((genre) => genre.join(", ")).join(", ");
+        //   let genres = rankings.data.map((item) => item.genres);
+        //   const genresString = genres.map((genre) => genre.join(", ")).join(", ");
 
-        // console.log("this is GENRES", genresString);
+        //   console.log("this is GENRES", genresString);
 
-        // try {
-        //   const output = await getRecommendations(genresString);
-        //   console.log("THIS IS GPT Output", output);
-        //   const jsonString = output.replace(/'/g, '"');
-        //   const responseArray = JSON.parse(jsonString);
+        //   try {
+        //     const output = await getRecommendations(genresString);
+        //     console.log("THIS IS GPT Output", output);
+        //     const jsonString = output.replace(/'/g, '"');
+        //     const responseArray = JSON.parse(jsonString);
 
-        //   console.log("THIS IS FINAL OUTPUT", responseArray);
-        //   console.log("THIS IS OUTPUT TYPE", typeof responseArray);
+        //     console.log("THIS IS FINAL OUTPUT", responseArray);
+        //     console.log("THIS IS OUTPUT TYPE", typeof responseArray);
 
-        //   setRecs(responseArray);
-        // } catch (error) {
-        //   console.error("Error fetching recommendations:", error);
-        // }
+        //     setRecs(responseArray);
+        //   } catch (error) {
+        //     console.error("Error fetching recommendations:", error);
+        //   }
       };
       fetchRankings();
 
@@ -184,7 +184,6 @@ export default function Page() {
   //   fetchData();
   // }, []);
 
-
   if (!data) {
     return (
       <LinearGradient
@@ -200,7 +199,6 @@ export default function Page() {
       </LinearGradient>
     );
   }
-
 
   return (
     <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>

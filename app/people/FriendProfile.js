@@ -94,7 +94,7 @@ export default function FriendProfile() {
                 onPress={() =>
                   navigation.navigate("Friend Movies", {
                     screen: "Friend Rankings",
-                    params: { id: id },
+                    id: id,
                   })
                 }
 
@@ -136,23 +136,30 @@ export default function FriendProfile() {
           </View>
 
           <View style={styles.buttonsContainer}>
-            {/* <Pressable
+            {
+              /* <Pressable
               style={[styles.button, styles.followButton]}
               // onPress={toggleFollow}
             >
               <Text style={[styles.text, styles.followButtonText]}>
                 {isFollowed ? "Added" : "Add"}
               </Text>
-            </Pressable>
+            </Pressable>*/
 
-            <Pressable
-              style={[styles.button, styles.messageButton]}
-              // onPress={() => console.log("Message button pressed")}
-            >
-              <Text style={[styles.text, styles.messageButtonText]}>
-                Rankings
-              </Text>
-            </Pressable> */}
+              <Pressable
+                style={[styles.button, styles.messageButton]}
+                onPress={() =>
+                  navigation.navigate("Friend Movies", {
+                    screen: "Friend Rankings",
+                    id: id,
+                  })
+                }
+              >
+                <Text style={[styles.text, styles.messageButtonText]}>
+                  Rankings
+                </Text>
+              </Pressable>
+            }
           </View>
           <Text style={[styles.subText, styles.recent]}>About</Text>
           <View style={styles.rectangleContainer}>
@@ -171,7 +178,7 @@ export default function FriendProfile() {
                   onPress={() =>
                     navigation.navigate("Friend Movies", {
                       screen: "Friend Wishlist",
-                      params: { id: id },
+                      id: id,
                     })
                   }
                 >
@@ -265,8 +272,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 3,
     borderColor: "#97DFFC",
-    width: 120,
-    marginLeft: 20,
+    width: windowWidth * 0.31,
+    marginLeft: 0,
   },
   messageButtonText: {
     color: "#97DFFC",

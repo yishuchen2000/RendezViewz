@@ -256,7 +256,9 @@ const Success = ({ navigation, route }) => {
               navigation.goBack();
             }}
           >
-            <Text style={{ color: "#", fontSize: 15, fontWeight: "bold" }}>
+            <Text
+              style={{ color: "#97DFFC", fontSize: 15, fontWeight: "bold" }}
+            >
               Return home
             </Text>
           </Pressable>
