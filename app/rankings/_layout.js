@@ -1,10 +1,12 @@
-import React from 'react';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
-import Rankings from './rankings';
-import Wishlist from './wishlist';
-import RankingDetails from './ranking_details';
-import WishlistDetails from './wishlist_details';
+import React from "react";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import Rankings from "./rankings";
+import Wishlist from "./wishlist";
+import RankingDetails from "./ranking_details";
+import WishlistDetails from "./wishlist_details";
+import AddRanking from "./add_ranking";
+import AddWishlist from "./add_wishlist";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
@@ -14,15 +16,25 @@ const RankingsStack = () => (
     <Stack.Screen
       name="Rankings"
       component={Rankings}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="Ranking Details"
       component={RankingDetails}
       options={{
         headerTransparent: true,
-        headerTintColor: 'white',
-        headerTitle: '',
+        headerTintColor: "white",
+        headerTitle: "",
+        headerBackTitleVisible: false,
+      }}
+    />
+    <Stack.Screen
+      name="Add Ranking"
+      component={AddRanking}
+      options={{
+        headerTransparent: true,
+        headerTintColor: "white",
+        headerTitle: "",
         headerBackTitleVisible: false,
       }}
     />
@@ -35,15 +47,15 @@ const WishlistStack = () => {
       <Stack.Screen
         name="Wishlist"
         component={Wishlist}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Wishlist Details"
         component={WishlistDetails}
         options={{
           headerTransparent: true,
-          headerTintColor: 'white',
-          headerTitle: '',
+          headerTintColor: "white",
+          headerTitle: "",
           headerBackTitleVisible: false,
         }}
       />
@@ -56,10 +68,11 @@ export default function MyTabs() {
     <Tab.Navigator
       screenOptions={{
         unmountOnBlur: true,
-        tabBarStyle: {backgroundColor: '#0E0111'},
-        tabBarLabelStyle: {fontSize: 14, fontWeight: 'bold', color: 'white'},
-        tabBarIndicatorStyle: {backgroundColor: 'white'},
-      }}>
+        tabBarStyle: { backgroundColor: "#0E0111" },
+        tabBarLabelStyle: { fontSize: 14, fontWeight: "bold", color: "white" },
+        tabBarIndicatorStyle: { backgroundColor: "white" },
+      }}
+    >
       <Tab.Screen name="My Rankings" component={RankingsStack} />
       <Tab.Screen name="My Wishlist" component={WishlistStack} />
     </Tab.Navigator>

@@ -62,9 +62,6 @@ export default function Rankings() {
   const [rankings, setRankings] = useState([]);
 
   const handleRecordUpdated = (payload) => {
-    // console.log(payload);
-    // setFriendIDs(payload.new.friend_ids);
-
     setRankings((oldData) => {
       if (!Array.isArray(oldData)) {
         console.warn("oldData is not an array", oldData);
@@ -219,13 +216,27 @@ export default function Rankings() {
       },
     ]);
 
+    const { data: newPost } = await supabase.from("posts").upsert([
+      {
+        id: newId,
+        text: "",
+        liked: false,
+        comments: [],
+        movie_title: movieDetails.Title,
+        user_id: session.user.id,
+        action: `Gave ${movieDetails.Title} (${
+          movieDetails.Year
+        }) a ${parseFloat(rankValue)}/10`,
+        created_at: new Date(),
+      },
+    ]);
+
     let response = await supabase
       .from("rankings")
       .select("*")
       .eq("user_id", session.user.id);
 
     if (response) {
-      console.log("Data before sorting:", response.data);
       let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
 
       newSortedData.forEach((item, index = 0) => {
@@ -577,8 +588,8 @@ export default function Rankings() {
         <Pressable
           style={styles.plusButton}
           onPress={() => {
-            setModalVisible(!modalVisible);
             setEntry(null);
+            navigation.navigate("Add Ranking");
           }}
         >
           <AntDesign name="pluscircle" size={60} color="#602683" />
