@@ -6,6 +6,8 @@ import People from "./people";
 import AddFriendPage from "./AddFriendPage";
 import FriendProfile from "./FriendProfile";
 import NewFriendProfile from "./NewFriendProfile";
+import MessageScreen from "./MessageScreen";
+import ChatScreen from "./ChatScreen";
 import { useRoute } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
@@ -28,27 +30,12 @@ const PeopleStack = () => {
           headerTitle: "",
           headerBackTitleVisible: false,
         }}
-        // initialParams={{userId }}
       >
         {(props) => {
-          console.log(props.route.params); // Check what parameters are received
+          console.log(props.route.params);
           return <MyTabs {...props} id={props.route.params?.id} />;
         }}
       </Stack.Screen>
-      {/* <Stack.Screen
-        name="Friend Movies"
-        options={({ route }) => ({
-          headerTransparent: true,
-          headerTintColor: "white",
-          headerTitle: "",
-          headerBackTitleVisible: false,
-          // Pass userId as a screen prop to MyTabs
-          screenProps: { id: route.params.id },
-        })}
-      >
-        {(props) => <MyTabs {...props} />}
-      </Stack.Screen> */}
-
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
@@ -70,17 +57,37 @@ const PeopleStack = () => {
         }}
       />
       <Stack.Screen
-        name="AddFriendPage" //addFriend
+        name="AddFriendPage"
         component={AddFriendPage}
         options={{
           title: "Add a Friend!",
           headerStyle: {
-            backgroundColor: "#361866", // Set the background color of the header
+            backgroundColor: "#361866",
           },
           headerTitleStyle: {
-            color: "white", // Set the font color of the title
+            color: "white",
           },
-          headerTintColor: "white", // Set the color of the back arrow
+          headerTintColor: "white",
+        }}
+      />
+      <Stack.Screen
+        name="MessageScreen"
+        component={MessageScreen}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="ChatScreen"
+        component={ChatScreen}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
         }}
       />
     </Stack.Navigator>

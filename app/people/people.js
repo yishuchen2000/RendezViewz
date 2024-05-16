@@ -20,8 +20,6 @@ import { AntDesign } from "@expo/vector-icons";
 import filter from "lodash.filter";
 import { useNavigation } from "@react-navigation/native";
 import AddFriendPage from "./AddFriendPage";
-import { MaterialIcons } from "@expo/vector-icons";
-import Slider from "@react-native-community/slider";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -183,18 +181,28 @@ export default function People() {
         </View>
 
         <View style={styles.friendList}>
-          {/* <Text style={styles.title}>Add</Text> */}
           <FlatList
             data={filteredData}
             renderItem={({ item }) => (
-              <View style={styles.friendbox}>
-                <Friend
-                  id={item.id}
-                  user={item.username}
-                  profilePic={item.avatar_url}
-                  onDeleteFriend={() => onDeleteFriend(item.id)}
-                />
-              </View>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("ChatScreen", {
+                    id: item.id,
+                    username: item.username,
+                    profilePic: item.avatar_url,
+                    currentUserID: session.user.id,
+                  })
+                }
+              >
+                <View style={styles.friendbox}>
+                  <Friend
+                    id={item.id}
+                    user={item.username}
+                    profilePic={item.avatar_url}
+                    onDeleteFriend={() => onDeleteFriend(item.id)}
+                  />
+                </View>
+              </Pressable>
             )}
             keyExtractor={(item) => item.id}
             style={styles.posts}
@@ -202,13 +210,6 @@ export default function People() {
         </View>
       </View>
       <View style={styles.buttonContainer}>
-        {/* <Pressable
-          style={styles.plusButton}
-          onPress={() => {
-            setModalVisible(!modalVisible);
-            setEntry(null);
-          }}
-        > */}
         <Pressable
           style={styles.plusButton}
           onPress={() =>
