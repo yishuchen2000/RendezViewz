@@ -101,16 +101,10 @@ const Friend = ({ id, user, profilePic, onDeleteFriend, goesTo }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable
-          onPress={
-            // () =>
-            //   navigation.navigate("PeoplePage", {
-            //     screen: "Friend Movies",
-            //     data: id,
-            //   })
-            () =>
+        <View style={styles.profile}>
+          <Pressable
+            onPress={() =>
               navigation.navigate("FriendProfile", {
-                // screen: "FriendProfile",
                 id: id,
                 friendNumber: friendNumber,
                 myPostData: myPostData,
@@ -118,16 +112,14 @@ const Friend = ({ id, user, profilePic, onDeleteFriend, goesTo }) => {
                 rankedNumber: rankedNumber,
                 wishlistNumber: wishlistNumber,
               })
-          }
-        >
-          <View style={styles.profile}>
+            }
+          >
             <View style={styles.profilePicContainer}>
               <Image style={styles.profilePic} source={{ uri: profilePic }} />
             </View>
-            <Text style={styles.username}>{user}</Text>
-          </View>
-        </Pressable>
-        {/* <Text>{timestamp}</Text> */}
+          </Pressable>
+          <Text style={styles.username}>{user}</Text>
+        </View>
       </View>
 
       <Pressable style={styles.deleteButtonContainer}>
