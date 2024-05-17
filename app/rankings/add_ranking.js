@@ -50,27 +50,6 @@ const AddRanking = () => {
   const [comments, setComments] = useState("");
 
   useEffect(() => {
-    supabase
-      .channel("schema-db-changes")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "rankings" },
-        handleRecordUpdated
-      ) /*
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "rankings" },
-        handleRecordInserted
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "rankings" },
-        handleRecordDeleted
-      )*/
-      .subscribe();
-  }, []);
-
-  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setSession(session);
@@ -98,53 +77,6 @@ const AddRanking = () => {
         fetchRankings();
       }
     });
-  }, []);
-
-  const handleRecordUpdated = (payload) => {
-    setRankings((oldData) => {
-      if (!Array.isArray(oldData)) {
-        console.warn("oldData is not an array", oldData);
-        return [];
-      }
-      return oldData.map((item) =>
-        item.id === payload.new.id ? payload.new : item
-      );
-    });
-  };
-
-  const handleRecordInserted = (payload) => {
-    setRankings((oldData) => [...oldData, payload.new]);
-  };
-
-  const handleRecordDeleted = (payload) => {
-    setRankings((oldData) =>
-      oldData.filter((item) => item.id !== payload.old.id)
-    );
-  };
-
-  useEffect(() => {
-    supabase
-      .channel("schema-db-changes")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "rankings" },
-        handleRecordUpdated
-      )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "rankings" },
-        handleRecordInserted
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "rankings" },
-        handleRecordDeleted
-      )
-      .subscribe();
-
-    return () => {
-      supabase.channel("schema-db-changes").unsubscribe();
-    };
   }, []);
 
   useEffect(() => {
@@ -251,6 +183,7 @@ const AddRanking = () => {
       });
 
       setRankings(newSortedData);
+      navigation.navigate("Rankings");
     }
   };
 
