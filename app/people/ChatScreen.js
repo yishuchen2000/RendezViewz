@@ -52,10 +52,10 @@ const ChatScreen = () => {
       const messages = await supabase
         .from("messages")
         .select("*")
-        .or(`from.eq.${id},from.eq./${currentUserID}`)
+        .or(`from.eq.${id},from.eq.${currentUserID}`)
         .or(`to.eq.${id},to.eq.${currentUserID}`)
         .order("date", { ascending: false });
-      // console.log("these are all messages", messages.data);
+      console.log("these are all messages", messages.data);
 
       if (messages.data) {
         setMessages([
@@ -72,7 +72,7 @@ const ChatScreen = () => {
             };
           }),
         ]);
-        // console.log("messages fetched from supabase in new form", messages);
+        console.log("messages fetched from supabase in new form", messages);
       }
     };
     fetchMessages();
