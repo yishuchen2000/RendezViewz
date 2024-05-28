@@ -11,10 +11,8 @@ import {
   Keyboard,
   LayoutAnimation,
   Alert,
-  ScrollView,
   Switch,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import Slider from "@react-native-community/slider";
@@ -22,6 +20,7 @@ import { debounce } from "lodash";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import supabase from "../../Supabase";
 import getMovieDetails from "../../components/getMovieDetails";
 import searchByTitle from "../../components/searchByTitle";
@@ -46,7 +45,7 @@ const AddRanking = () => {
   const [session, setSession] = useState([]);
   const [rankings, setRankings] = useState([]);
   const [isDuplicateEntry, setIsDuplicateEntry] = useState(false);
-  const [commentsEnabled, setCommentsEnabled] = useState(false);
+  const [commentsEnabled, setCommentsEnabled] = useState(true);
   const [comments, setComments] = useState("");
 
   useEffect(() => {
@@ -77,7 +76,7 @@ const AddRanking = () => {
         fetchRankings();
       }
     });
-  }, []);
+  }, [rankings]);
 
   useEffect(() => {
     if (selectionChosen) {
@@ -129,6 +128,7 @@ const AddRanking = () => {
   };
 
   const handleRank = async () => {
+    console.log(entry);
     const movieDetails = await getMovieDetails(entry);
 
     if (!movieDetails || movieDetails.Response === "False") {
@@ -199,7 +199,11 @@ const AddRanking = () => {
         Keyboard.dismiss();
       }}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid={true}
+        extraScrollHeight={Platform.OS === "ios" ? 150 : 200}
+      >
         <View style={styles.header}>
           <Text style={styles.modalTitle}>Add Content</Text>
           <Image style={styles.underline} source={UNDERLINE} />
@@ -366,7 +370,13 @@ const AddRanking = () => {
             </Text>
           </Pressable>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
+      <View style={styles.clapboard}>
+        <Image
+          source={require("../../assets/Clapboard2.png")}
+          style={{ flex: 1, width: windowWidth, resizeMode: "stretch" }}
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -548,6 +558,11 @@ const styles = StyleSheet.create({
     padding: 15,
     textAlignVertical: "top",
     color: "white",
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
 });
 

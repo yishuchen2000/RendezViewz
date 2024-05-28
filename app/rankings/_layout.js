@@ -59,6 +59,16 @@ const WishlistStack = () => {
           headerBackTitleVisible: false,
         }}
       />
+      <Stack.Screen
+        name="Add Wishlist"
+        component={AddWishlist}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { View, Modal, Text, Pressable, StyleSheet } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 
 function FilterModal({
   modalVisible,
@@ -74,6 +77,12 @@ function FilterModal({
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            <Pressable
+              style={styles.buttonCloseContainer}
+              onPress={() => setModalVisible(false)}
+            >
+              <MaterialIcons name="cancel" size={30} color={"white"} />
+            </Pressable>
             <Text style={styles.modalTitle}>Filter by Genre</Text>
             {renderGenresInColumns()}
             <Pressable style={styles.applyButton} onPress={applyFilters}>
@@ -98,6 +107,15 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     width: "90%",
+    position: "relative",
+  },
+  buttonCloseContainer: {
+    position: "absolute",
+    color: "white",
+    padding: 15,
+    width: 60,
+    height: 60,
+    zIndex: 1,
   },
   modalTitle: {
     marginBottom: 10,

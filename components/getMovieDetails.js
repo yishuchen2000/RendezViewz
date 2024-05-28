@@ -1,6 +1,7 @@
 const getMovieDetails = async (movieTitle) => {
   try {
     const apiKey = "95bd2e13";
+
     const response = await fetch(
       `http://www.omdbapi.com/?t=${movieTitle}&plot="full"&apikey=${apiKey}`
     );
