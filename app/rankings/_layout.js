@@ -73,7 +73,7 @@ const WishlistStack = () => {
   );
 };
 
-export default function MyTabs() {
+export default function RankingTabs() {
   return (
     <Tab.Navigator
       screenOptions={{

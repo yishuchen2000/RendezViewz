@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, ScrollView, Text, Button, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet, Text, Image } from "react-native";
 import {
   Bubble,
   GiftedChat,
@@ -12,6 +12,7 @@ import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import supabase from "../../Supabase";
 import Feather from "@expo/vector-icons/Feather";
+import { useNavigation } from "@react-navigation/native";
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
@@ -19,14 +20,21 @@ const ChatScreen = () => {
   const route = useRoute();
   const { id, username, profilePic, currentUserID } = route.params;
 
+  const navigation = useNavigation();
+
+  const goToAddEvent = () => {
+    navigation.navigate("messages", {
+      screen: "AddEvent",
+    });
+  };
+
   const handleRecordInserted = (payload) => {
-    // console.log("PAYLOAD", payload);
     const newMessage = {
-      _id: payload.new.id, // unique message id
+      _id: payload.new.id,
       text: payload.new.msg,
       createdAt: new Date(payload.new.date),
       user: {
-        _id: payload.new.from == currentUserID ? 1 : 2, // id of the sender
+        _id: payload.new.from == currentUserID ? 1 : 2,
         name: username,
         avatar: profilePic,
       },
@@ -55,41 +63,35 @@ const ChatScreen = () => {
         .or(`from.eq.${id},from.eq.${currentUserID}`)
         .or(`to.eq.${id},to.eq.${currentUserID}`)
         .order("date", { ascending: false });
-      console.log("these are all messages", messages.data);
-
       if (messages.data) {
         setMessages([
           ...messages.data.map((message) => {
             return {
-              _id: message.id, // unique id of the
+              _id: message.id,
               text: message.msg,
               createdAt: new Date(message.date),
               user: {
-                _id: message.from == currentUserID ? 1 : 2, // id from the user
+                _id: message.from == currentUserID ? 1 : 2,
                 name: username,
                 avatar: profilePic,
               },
             };
           }),
         ]);
-        console.log("messages fetched from supabase in new form", messages);
       }
     };
     fetchMessages();
   }, []);
 
   const onSend = async (messages) => {
-    // console.log("SENT", messages[0].createdAt);
     const uploadMessage = await supabase.from("messages").insert({
       date: messages[0].createdAt,
       msg: messages[0].text,
       from: currentUserID,
       to: id,
     });
-    // console.log("INSERT MESSAGE", uploadMessage);
   };
 
-  // The send button
   const renderSend = (props) => {
     return (
       <View>
@@ -110,7 +112,6 @@ const ChatScreen = () => {
     );
   };
 
-  // The text bubble
   const renderBubble = (props) => {
     return (
       <Bubble
@@ -120,7 +121,7 @@ const ChatScreen = () => {
             backgroundColor: "rgba(151, 223, 252, 0.5)",
           },
           left: {
-            backgroundColor: "rgba(151, 223, 252, 0.5)",
+            backgroundColor: "rgba(151, 223, 252, 0.2)",
           },
         }}
         textStyle={{
@@ -131,28 +132,23 @@ const ChatScreen = () => {
             color: "#fff",
           },
         }}
+        timeTextStyle={{
+          right: {
+            color: "#ccc", // Same shade as the left messages
+          },
+          left: {
+            color: "#999",
+          },
+        }}
       />
     );
   };
 
-  // the input bar
   const renderInputToolbar = (props) => {
     return (
       <InputToolbar
         {...props}
-        containerStyle={{ backgroundColor: "rgba(255, 255, 255, 0.4)" }}
-        renderActions={() => (
-          <View
-            style={{
-              height: 44,
-              justifyContent: "center",
-              alignItems: "center",
-              marginLeft: 10,
-            }}
-          >
-            <Feather name="calendar" size={24} color="#97DFFC" />
-          </View>
-        )}
+        containerStyle={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}
       />
     );
   };
@@ -161,8 +157,23 @@ const ChatScreen = () => {
     return <FontAwesome name="angle-double-down" size={22} color="#333" />;
   };
 
+  const renderHeader = () => {
+    return (
+      <View style={styles.headerContainer}>
+        <View style={styles.headerCenter}>
+          <Image source={{ uri: profilePic }} style={styles.profilePic} />
+          <Text style={styles.username}>{username}</Text>
+        </View>
+        <Pressable onPress={goToAddEvent} style={styles.calendarIcon}>
+          <Feather name="calendar" size={28} color="#fff" />
+        </Pressable>
+      </View>
+    );
+  };
+
   return (
     <LinearGradient colors={["#0e0111", "#311866"]} style={styles.background}>
+      {renderHeader()}
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
@@ -177,6 +188,7 @@ const ChatScreen = () => {
         renderInputToolbar={renderInputToolbar}
         textInputProps={styles.composer}
         bottomOffset={80}
+        minInputToolbarHeight={70} // Adjust this value as needed to give space between the last message and the text input
       />
     </LinearGradient>
   );
@@ -188,8 +200,39 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: "transparent",
-    // backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     paddingTop: 10,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 0,
+    paddingHorizontal: 10,
+    borderBottomWidth: 0.2,
+    borderBottomColor: "rgba(255, 255, 255, 0.4)",
+  },
+  headerCenter: {
+    flexDirection: "column",
+    alignItems: "center",
+    flex: 1,
+  },
+  profilePic: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginBottom: 5,
+  },
+  username: {
+    color: "#fff",
+    fontSize: 16,
+    paddingBottom: 10,
+  },
+  calendarIcon: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
     flex: 1,
@@ -198,12 +241,16 @@ const styles = StyleSheet.create({
   },
   composer: {
     backgroundColor: "#fff",
-    borderRadius: 15,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.9)",
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     fontSize: 16,
-    marginVertical: 4,
-    paddingTop: 8,
+    marginTop: 6,
+    marginBottom: 10,
+    paddingVertical: 8,
+    maxHeight: 120, // Set a maximum height for the text input
+    marginLeft: 5,
+    minHeight: 30,
   },
 });

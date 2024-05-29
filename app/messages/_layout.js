@@ -1,4 +1,3 @@
-//This is the stack that helps navigating back and forth between the different pages
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FirstScreen from "./first_screen";
@@ -13,56 +12,47 @@ export default function MessagesLayout() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="first_screen" //authentication and top tracks page
+        name="FirstScreen"
         component={FirstScreen}
-        options={{ headerShown: false }} //no header for this page
+        options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Inbox" //song detail page
+        name="Inbox"
         component={MyEventTabs}
         options={{
           title: "Invite Inbox",
-          headerStyle: {
-            backgroundColor: "#361866", // Set the background color of the header
-          },
-          headerTitleStyle: {
-            color: "white", // Set the font color of the title
-          },
-          headerTintColor: "white", // Set the color of the back arrow
+          headerStyle: { backgroundColor: "#000814" },
+          headerTitleStyle: { color: "white" },
+          headerTintColor: "white",
+          headerBackTitleVisible: "false",
         }}
       />
       <Stack.Screen
-        name="event_detail" //song detail page
+        name="EventDetail"
         component={EventDetail}
         options={{
           title: "Event Details",
-          headerStyle: {
-            backgroundColor: "#000814", // Set the background color of the header
-          },
-          headerTitleStyle: {
-            color: "white", // Set the font color of the title
-          },
-          headerTintColor: "white", // Set the color of the back arrow
+          headerStyle: { backgroundColor: "#000814" },
+          headerTitleStyle: { color: "white" },
+          headerTintColor: "white",
+          headerBackTitleVisible: "false",
         }}
       />
       <Stack.Screen
-        name="add_event" //song detail page
+        name="AddEvent"
         component={AddEvent}
         options={{
           title: "Schedule a new Watch Party!",
-          headerStyle: {
-            backgroundColor: "#000814", // Set the background color of the header
-          },
-          headerTitleStyle: {
-            color: "white", // Set the font color of the title
-          },
-          headerTintColor: "white", // Set the color of the back arrow
+          headerStyle: { backgroundColor: "#000814" },
+          headerTitleStyle: { color: "white" },
+          headerTintColor: "white",
+          headerBackTitleVisible: "false",
         }}
       />
       <Stack.Screen
-        name="success" //song detail page
+        name="Success"
         component={Success}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, headerBackTitleVisible: "false" }}
       />
     </Stack.Navigator>
   );

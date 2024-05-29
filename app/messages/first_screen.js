@@ -132,7 +132,7 @@ export default function FirstScreen({ navigation }) {
     return (
       <Pressable
         onPress={() =>
-          navigation.navigate("event_detail", {
+          navigation.navigate("EventDetail", {
             date: item.date,
             name: item.name,
             people: item.people,
@@ -219,7 +219,7 @@ export default function FirstScreen({ navigation }) {
         <View style={styles.buttonContainer}>
           <Pressable
             style={styles.button}
-            onPress={() => navigation.navigate("add_event", {})}
+            onPress={() => navigation.navigate("AddEvent", {})}
           >
             <AntDesign name="pluscircle" size={50} color="#602683" />
           </Pressable>

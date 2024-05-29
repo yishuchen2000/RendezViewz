@@ -13,66 +13,42 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
-  TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { debounce } from "lodash";
-import { initialItems } from "./eventdata";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-//import { MultiSelect } from "react-native-element-dropdown";
-import { Dropdown } from "react-native-element-dropdown";
-import { Entypo } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
-import Icon from "react-native-vector-icons/MaterialIcons";
-//import DateTimePicker from "@react-native-community/datetimepicker";
+import {
+  Ionicons,
+  MaterialIcons,
+  Entypo,
+  FontAwesome,
+  FontAwesome5,
+} from "@expo/vector-icons";
 import DatePicker from "react-native-modern-datepicker";
 import MultiSelect from "react-native-multiple-select";
-//import DropDownPicker from "react-native-dropdown-listpicker";
-import { MultipleSelectList } from "react-native-dropdown-select-list";
 import CustomModal from "./custommodal";
 import getMovieDetails from "../../components/getMovieDetails";
 import searchByTitle from "../../components/searchByTitle";
-
 import dayjs from "dayjs";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const shows = [
-  { label: "Alice in Wonderland", value: "1" },
-  { label: "Barbie", value: "2" },
-  { label: "Bees", value: "3" },
-  { label: "The Godfather", value: "4" },
-  { label: "The Notebook", value: "5" },
-  { label: "The Shining", value: "6" },
-  { label: "Titanic", value: "7" },
-];
-
 const AddEvent = ({ route, navigation }) => {
   const [show, setShow] = useState(null);
   const [poster, setPoster] = useState(null);
   const [person, setPerson] = useState([]);
-
-  //const [items, setItems] = useState(initialItems);
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(dayjs().format("YYYY-MM-DD"));
-  //const [mode, setMode] = useState("date");
-  const [showPicker, setShowPicker] = useState(false);
   const [time, setTime] = useState(dayjs().format("HH:mm"));
   const [showTimePicker, setShowTimePicker] = useState(false);
-
   const [pickeddate, setpickeddate] = useState(true);
   const [pickedtime, setpickedtime] = useState(true);
-  const [text, setText] = useState(false);
-  const [textT, setTextT] = useState(false);
+  const [text, setText] = useState(dayjs().format("YYYY-MM-DD"));
+  const [textT, setTextT] = useState(dayjs().format("HH:mm"));
   const [modalVisible, setModalVisible] = useState(false);
   const [modalon, setModalon] = useState(false);
-
   const [Plist, setPlist] = useState([]);
-
-  //for movie or show selection
   const [suggestions, setSuggestions] = useState([]);
   const [visibleSuggestions, setVisibleSuggestions] = useState(false);
   const [selectedYear, setSelectedYear] = useState("");
@@ -87,12 +63,10 @@ const AddEvent = ({ route, navigation }) => {
         }
         const peopleData = response.data.map((person) => ({
           label: person.user,
-          value: person.id.toString(), // Assuming you want to use the person's ID as the value
+          value: person.id.toString(),
           photo: person.profile_pic,
         }));
         setPlist(peopleData);
-        //console.log(peopleData);
-        //setPeople(peopleData); // Update the people array with the fetched data
       } catch (error) {
         console.error("Error fetching people:", error.message);
       }
@@ -101,32 +75,26 @@ const AddEvent = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // Set the initial date state to today's date when the component mounts
-    setDate(dayjs().format("YYYY-MM-DD"));
+    setDate(dayjs().format("YYYY/MM/DD"));
     setTime(dayjs().format("HH:mm"));
   }, []);
-  //Date
 
-  // functions for date modal
   function handleOnPressOpen() {
     setOpen(!open);
     setModalon(!modalon);
   }
+
   function handleChange(selectedDate) {
-    // Set date to pressed date
-    setDate(dayjs(selectedDate).format("YYYY-MM-DD"));
-    //console.log(selectedDate);
+    setDate(selectedDate);
   }
+
   function handleChange1(date) {
-    // Format the selected date
     setText(date);
-    //console.log(text);
     setpickeddate(false);
     setOpen(!open);
     setModalon(!modalon);
   }
 
-  // functions for time modal
   function handleTimePickerPressOpen() {
     setShowTimePicker(!showTimePicker);
     setModalon(!modalon);
@@ -134,49 +102,38 @@ const AddEvent = ({ route, navigation }) => {
 
   function handleTimeChange(selectedTime) {
     setTime(selectedTime);
-    //console.log(selectedTime);
     setTextT(selectedTime);
-    //console.log(textT);
     setpickedtime(false);
-
     setShowTimePicker(!showTimePicker);
     setModalon(!modalon);
   }
 
   const handleSelectedPeople = (selectedPeople) => {
-    // Extracting only the labels from the Plist array based on the selected values
     const personLabels = Plist.filter((person) =>
       selectedPeople.includes(person.value)
     ).map((person) => person.label);
-    // Setting the person state with the extracted labels
     setPerson(personLabels);
-    //console.log("main doc set people:", personLabels);
   };
 
   const handleAddEvent = async () => {
     if (pickeddate) {
-      // Show an alert for missing date
       Alert.alert("Error", "Please select a date before sending the invite.");
       return;
     }
     if (pickedtime) {
-      // Show an alert for missing time
       Alert.alert("Error", "Please select a time before sending the invite.");
       return;
     }
     if (!show) {
-      // Show an alert for missing show
       Alert.alert("Error", "Please select a show before sending the invite.");
       return;
     }
     if (person.length === 0) {
-      // Show an alert for missing people
       Alert.alert("Error", "Please select people before sending the invite.");
       return;
     }
 
     try {
-      // Check if an event with the same date and show already exists
       const { data, error } = await supabase
         .from("party")
         .select()
@@ -187,16 +144,14 @@ const AddEvent = ({ route, navigation }) => {
         throw new Error(error.message);
       }
 
-      // If a row with the same date and show exists, raise an error
       if (data && data.length > 0) {
         Alert.alert(
           "Error",
           "An event with the same date and show already exists."
         );
-        return; // Prevent navigation if event already exists
+        return;
       }
 
-      // If the entry doesn't exist, proceed with the insertion
       const { insertError } = await supabase
         .from("party")
         .insert([{ date: date, people: person, show: show, time: time }]);
@@ -205,8 +160,7 @@ const AddEvent = ({ route, navigation }) => {
         throw new Error(insertError.message);
       }
 
-      // Show success message to the user
-      navigation.navigate("success", {
+      navigation.navigate("Success", {
         date: date,
         name: show,
         people: person,
@@ -231,9 +185,7 @@ const AddEvent = ({ route, navigation }) => {
 
   const renderPeopleCircles = () => {
     return person.map((personName, index) => {
-      // Find the corresponding person object in the Plist array
       const selectedPerson = Plist.find((item) => item.label === personName);
-      // Check if the person is found
       if (selectedPerson) {
         const photoUri = selectedPerson.photo;
         return (
@@ -248,15 +200,14 @@ const AddEvent = ({ route, navigation }) => {
           </View>
         );
       }
-      return null; // Return null if the person is not found
+      return null;
     });
   };
 
   useEffect(() => {
     const showPoster = async () => {
       const movieDetails = await getMovieDetails(show);
-      posterPic = movieDetails.Poster;
-      setPoster(posterPic);
+      setPoster(movieDetails.Poster);
     };
     showPoster();
   }, [selectionChosen]);
@@ -266,7 +217,7 @@ const AddEvent = ({ route, navigation }) => {
       if (query) {
         const results = await searchByTitle(query.trim());
         setSuggestions(results);
-        setVisibleSuggestions(true); //show suggestions when user stops typing
+        setVisibleSuggestions(true);
       }
     }, 1000),
     []
@@ -284,12 +235,11 @@ const AddEvent = ({ route, navigation }) => {
   }, [show, fetchSuggestions]);
 
   dismissKeyboard = () => {
-    Keyboard.dismiss;
+    Keyboard.dismiss();
     return false;
   };
 
   return (
-
     <LinearGradient
       colors={["#0e0111", "#311866"]}
       style={styles.container}
@@ -309,7 +259,7 @@ const AddEvent = ({ route, navigation }) => {
             <CustomModal
               modalVisible={modalVisible}
               closeModal={closeModal}
-              handleSelectedPeople={handleSelectedPeople} // Make sure you're passing it here
+              handleSelectedPeople={handleSelectedPeople}
               plist={Plist}
             />
           </View>
@@ -328,39 +278,38 @@ const AddEvent = ({ route, navigation }) => {
           <Modal animationType="none" transparent={true} visible={open}>
             <View style={styles.centeredView}>
               {modalon && (
-                <View
-                  //activeOpacity={1}
-                  //onPress={closeModal}
-                  style={styles.blur}
-                >
+                <View style={styles.blur}>
                   <View style={styles.modalView}>
                     <DatePicker
                       options={{
-                        backgroundColor: "white",
-                        textHeaderColor: "purple",
-                        textDefaultColor: "rgba(230, 70, 150, 1)",
-                        selectedTextColor: "white",
-                        mainColor: "purple",
-                        textSecondaryColor: "purple",
+                        backgroundColor: "black",
+                        borderRadius: 10,
+                        borderWidth: 3,
+                        textHeaderColor: "white",
+                        textDefaultColor: "#858AE3",
+                        selectedTextColor: "black",
+                        mainColor: "white",
+                        textSecondaryColor: "white",
                       }}
                       testID="dateTimePicker"
-                      value={date}
                       mode="calendar"
                       selected={date}
                       onDateChange={handleChange}
                     />
                     <View
                       style={{
-                        backgroundColor: "purple",
-                        borderRadius: 10,
-                        marginBottom: 10,
+                        backgroundColor: "#858AE3",
+                        borderRadius: 100,
+                        width: windowWidth * 0.3,
                       }}
                     >
-                      {/* Call handleDateSelect when the "Select" button is pressed */}
                       <Button
                         title="Select"
-                        color="white"
-                        onPress={() => handleChange1(date)}
+                        color="black"
+                        onPress={() => {
+                          console.log(date);
+                          handleChange1(date);
+                        }}
                       />
                     </View>
                   </View>
@@ -375,22 +324,19 @@ const AddEvent = ({ route, navigation }) => {
           >
             <View style={styles.centeredView}>
               {modalon && (
-                <View
-                  //activeOpacity={1}
-                  //onPress={closeModal}
-                  style={styles.blur}
-                >
+                <View style={styles.blur}>
                   <View style={styles.modalView}>
                     <DatePicker
                       options={{
-                        backgroundColor: "white",
-                        textHeaderColor: "purple",
-                        textDefaultColor: "rgba(230, 70, 150, 1)",
+                        backgroundColor: "black",
+                        textHeaderColor: "#858AE3",
+                        textDefaultColor: "white",
                         selectedTextColor: "white",
-                        mainColor: "purple",
+                        mainColor: "#858AE3",
                         textSecondaryColor: "purple",
                       }}
                       mode="time"
+                      value={time} // Set the current time as the initial value
                       onTimeChange={handleTimeChange}
                     />
                   </View>
@@ -401,7 +347,7 @@ const AddEvent = ({ route, navigation }) => {
         </View>
         <View style={styles.ccontainer}>
           <View style={styles.eachBox}>
-            <Ionicons name="ios-film-outline" size={30} color="white" />
+            <Ionicons name="film-outline" size={30} color="white" />
             <View style={styles.input}>
               <TextInput
                 style={[
@@ -489,7 +435,7 @@ const AddEvent = ({ route, navigation }) => {
           )}
 
           <View style={styles.eachBox}>
-            <Ionicons name="ios-people" size={30} color="white" />
+            <Ionicons name="people" size={30} color="white" />
             <Pressable onPress={openModal} style={styles.input}>
               <View style={styles.input1}>
                 <Text
@@ -533,9 +479,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "90%",
     top: windowHeight * 0.1,
-    //alignItems: "center",
-    //borderWidth: 5,
-    //borderColor: "red",
   },
   space: {
     height: 500,
@@ -543,29 +486,24 @@ const styles = StyleSheet.create({
   bottom: {
     height: 300,
     justifyContent: "end",
-    //borderWidth: 5,
-    //borderColor: "green",
   },
-
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "start",
-    //padding: 24,
     backgroundColor: "transparent",
   },
   ccontainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "start",
-    //padding: 24,
     backgroundColor: "transparent",
   },
   clapboard: {
     height: windowHeight * 0.03,
     width: windowWidth,
     position: "absolute",
-    bottom: windowHeight * 0,
+    bottom: 0,
     alignSelf: "center",
   },
   item: {
@@ -584,22 +522,14 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingHorizontal: 10,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
-    //borderColor: "blue",
-    //borderWidth: 5,
   },
   input1: {
     width: windowWidth * 0.7,
     height: 30,
     flexDirection: "column",
     justifyContent: "center",
-    //paddingBottom: 30,
-    //alignItems: "center",
-    //borderRadius: 15,
-    //margin: 10,
     paddingHorizontal: 10,
     backgroundColor: "transparent",
-    //borderColor: "green",
-    //borderWidth: 5,
   },
   button: {
     alignSelf: "center",
@@ -611,7 +541,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     bottom: windowHeight * 0.15,
-    //right: 20,
   },
   selecttext: {
     color: "purple",
@@ -623,10 +552,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     margin: 5,
-    //borderColor: "purple",
   },
   eachBox1: {
-    felx: 1,
+    flex: 1,
     padding: 5,
     width: windowWidth * 0.88,
     height: windowHeight * 0.41,
@@ -635,8 +563,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 5,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    //borderColor: "red",
-    //borderWidth: 5,
   },
   dropdown: {
     color: "purple",
@@ -650,25 +576,19 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust the alpha value for the darkness
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
   dropdown1: {
     color: "purple",
-    //height: windowHeight * 0.3,
     width: windowWidth * 0.65,
     borderRadius: 50,
-    //borderColor: "gray",
-    //borderWidth: 5,
   },
   dropdown2: {
     color: "purple",
     height: 30,
     width: windowWidth * 0.65,
-    //borderRadius: 50,
-    //borderColor: "black",
-    //borderWidth: 5,
   },
   icon: {
     marginRight: 2,
@@ -694,13 +614,10 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     shadowColor: "#000",
-    //activeColor: "red",
     marginTop: 8,
     marginRight: 7,
     paddingLeft: 5,
     paddingRight: 5,
-    //paddingHorizontal: 12,
-    //paddingVertical: 8,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -721,13 +638,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "black",
   },
-  placeholderStyle: {
-    fontSize: 16,
-    color: "gray",
-  },
   placeholderStyle2: {
     fontSize: 16,
-    //alignSelf: "flex-start",
     color: "gray",
   },
   centeredView: {
@@ -742,20 +654,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     margin: 5,
-
     alignSelf: "center",
   },
   modalView: {
     margin: 10,
-    backgroundColor: "white",
+    backgroundColor: "black",
     borderRadius: 10,
+    borderColor: "white",
     width: "90%",
     padding: 35,
     alignItems: "center",
   },
   datepick: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
-    height: "100%",
     width: "75%",
     justifyContent: "center",
     alignItems: "center",
@@ -764,15 +675,11 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.043,
   },
   wicon: {
-    //margin: 5,
     width: "45%",
     height: "100%",
-
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    //borderWidth: 5,
-    //borderColor: "purple",
   },
   placeholder: {
     color: "grey",
@@ -781,8 +688,6 @@ const styles = StyleSheet.create({
     color: "purple",
   },
   photo: {
-    //borderWidth: 5,
-    //borderColor: "purple",
     width: 50,
     height: 50,
   },
@@ -794,8 +699,6 @@ const styles = StyleSheet.create({
     paddingLeft: 25,
     margin: 10,
     flexWrap: "wrap",
-    //borderWidth: 5,
-    //borderColor: "purple",
   },
   personCircle: {
     margin: 5,
@@ -809,29 +712,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "white",
     textAlign: "center",
-  },
-  titleTextBar: {
-    // flexDirection: "row",
-    // alignItems: "center",
-    // marginHorizontal: 20,
-    // paddingLeft: 15,
-    // paddingRight: 5,
-    // backgroundColor: "lavender",
-    // height: 60,
-    // borderRadius: 15,
-    // borderWidth: 0.5,
-    width: windowWidth * 0.7,
-    height: 30,
-    flexDirection: "column",
-    justifyContent: "center",
-    //paddingBottom: 30,
-    //alignItems: "center",
-    //borderRadius: 15,
-    //margin: 10,
-    paddingHorizontal: 10,
-    backgroundColor: "transparent",
-    //borderColor: "green",
-    //borderWidth: 5,
   },
   titleDropdown: {
     flex: 1,

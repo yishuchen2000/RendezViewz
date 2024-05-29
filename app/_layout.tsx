@@ -1,4 +1,6 @@
-import { Tabs } from "expo-router";
+import React, { useState, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   View,
   Text,
@@ -12,19 +14,92 @@ import {
   useFonts,
   ImperialScript_400Regular,
 } from "@expo-google-fonts/imperial-script";
-// import AppLoading from "expo-app-loading";
 import * as SplashScreen from "expo-splash-screen";
-
-import "react-native-url-polyfill/auto";
 import supabase from "../Supabase";
-import React, { createContext, useContext, useState, useEffect } from "react";
 import Auth from "../components/Auth/Auth";
-import Account from "../components/Account";
+import RankingTabs from "./rankings/_layout";
+import PeopleStack from "./people/_layout";
+import MessagesLayout from "./messages/_layout";
+import FeedLayout from "./feed/_layout";
+import ProfilePage from "./me/_layout";
 import { Session } from "@supabase/supabase-js";
 
-// const SessionContext = createContext(null);
+const Tab = createBottomTabNavigator();
 
-export default function HomeLayout() {
+function MyTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        unmountOnBlur: true,
+        headerTitle: "RendezViewz",
+        headerStyle: {
+          backgroundColor: "#311866",
+        },
+        headerTitleStyle: {
+          color: "white",
+          fontFamily: "ImperialScript",
+          fontSize: 30,
+        },
+        tabBarStyle: { backgroundColor: "#311866" },
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "#BBADD3",
+      }}
+    >
+      <Tab.Screen
+        name="feed"
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ size, color }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+        }}
+        component={FeedLayout}
+      />
+      <Tab.Screen
+        name="messages"
+        component={MessagesLayout}
+        options={{
+          tabBarLabel: "Calendar",
+          tabBarIcon: ({ size, color }) => (
+            <FontAwesome name="calendar-o" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="rankings"
+        component={RankingTabs}
+        options={{
+          tabBarLabel: "Rankings",
+          tabBarIcon: ({ size, color }) => (
+            <Entypo name="add-to-list" size={size + 5} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="people"
+        component={PeopleStack}
+        options={{
+          tabBarLabel: "People",
+          tabBarIcon: ({ size, color }) => (
+            <FontAwesome name="group" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="me"
+        options={{
+          tabBarLabel: "Me",
+          tabBarIcon: ({ size, color }) => (
+            <Ionicons name="person-circle" size={size + 5} color={color} />
+          ),
+        }}
+        component={ProfilePage}
+      />
+    </Tab.Navigator>
+  );
+}
+
+export default function App() {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
@@ -55,7 +130,6 @@ export default function HomeLayout() {
     loadFontsAndNavigate();
   }, [fontsLoaded]);
 
-  // Ensure the splash screen remains visible until fonts are loaded
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -66,77 +140,7 @@ export default function HomeLayout() {
   }
 
   if (session && session.user) {
-    // console.log("current user info!", session.user);
-    // console.log("current user id!", session.user.id);
-    return (
-      <Tabs
-        screenOptions={{
-          unmountOnBlur: true,
-          headerTitle: "RendezViewz",
-          headerStyle: {
-            backgroundColor: "#311866",
-            //borderBottomWidth: 0,
-          },
-          headerTitleStyle: {
-            color: "white",
-            fontFamily: "ImperialScript",
-            fontSize: 30,
-          },
-          tabBarStyle: { backgroundColor: "#311866" },
-          tabBarActiveTintColor: "white",
-          tabBarInactiveTintColor: "#BBADD3",
-        }}
-      >
-        <Tabs.Screen name="index" options={{ href: null }} redirect />
-        <Tabs.Screen
-          name="feed"
-          options={{
-            tabBarLabel: "Home",
-            tabBarIcon: ({ size, color }) => (
-              <Ionicons name="home" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="messages"
-          options={{
-            tabBarLabel: "Calendar",
-            tabBarIcon: ({ size, color }) => (
-              <FontAwesome name="calendar-o" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="rankings"
-          options={{
-            tabBarLabel: "Rankings",
-            tabBarIcon: ({ size, color }) => (
-              <Entypo name="add-to-list" size={size + 5} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="people"
-          options={{
-            tabBarLabel: "People",
-            tabBarIcon: ({ size, color }) => (
-              <FontAwesome name="group" size={size} color={color} />
-            ),
-          }}
-        />
-
-        <Tabs.Screen
-          name="me"
-          options={{
-            tabBarLabel: "Me",
-            tabBarIcon: ({ focused, size, color }) => (
-              <Ionicons name="person-circle" size={size + 5} color={color} />
-            ),
-          }}
-          initialParams={session}
-        />
-      </Tabs>
-    );
+    return <MyTabs />;
   }
 
   return (
@@ -145,84 +149,5 @@ export default function HomeLayout() {
         <Auth />
       </View>
     </TouchableWithoutFeedback>
-  );
-
-  return (
-    <View>
-      {session && session.user ? (
-        <Account key={session.user.id} session={session} />
-      ) : (
-        <Auth />
-      )}
-    </View>
-  );
-
-  return (
-    <Tabs
-      screenOptions={{
-        unmountOnBlur: true,
-        headerTitle: "RendezViewz",
-        headerStyle: {
-          backgroundColor: "#311866",
-          //borderBottomWidth: 0,
-        },
-        headerTitleStyle: {
-          color: "white",
-          fontFamily: "ImperialScript",
-          fontSize: 30,
-        },
-        tabBarStyle: { backgroundColor: "#311866" },
-        tabBarActiveTintColor: "white",
-        tabBarInactiveTintColor: "#BBADD3",
-      }}
-    >
-      <Tabs.Screen name="index" options={{ href: null }} redirect />
-      <Tabs.Screen
-        name="feed"
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ size, color }) => (
-            <Ionicons name="home" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          tabBarLabel: "Calendar",
-          tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="calendar-o" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="rankings"
-        options={{
-          tabBarLabel: "Rankings",
-          tabBarIcon: ({ size, color }) => (
-            <Entypo name="add-to-list" size={size + 5} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="people"
-        options={{
-          tabBarLabel: "People",
-          tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="group" size={size} color={color} />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="me"
-        options={{
-          tabBarLabel: "Me",
-          tabBarIcon: ({ focused, size, color }) => (
-            <Ionicons name="person-circle" size={size + 5} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
   );
 }

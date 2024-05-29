@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 //   console.log("session in me", session);
 // };
 
-export default function Feed() {
+export default function ProfilePage() {
   // useEffect(() => {
   //   const getSession = ({ route }) => {
   //     const { session } = route.params;
