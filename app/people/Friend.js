@@ -34,16 +34,6 @@ const Friend = ({ id, user, profilePic, onDeleteFriend, goesTo }) => {
   const [numbersFetched, setNumbersFetched] = useState(false);
   const [infoFetched, setInfoFetched] = useState(false);
 
-  // console.log("Current ID", id);
-
-  // const [data, setData] = useState([]);
-
-  // const [userID, setUserID] = useState(null);
-  // const route = useRoute();
-  // const { data } = route.params;
-  // console.log(data);
-  // setUserID(data);
-
   useEffect(() => {
     // console.log("id info in profile!", session.user.id);
     const fetchData = async () => {

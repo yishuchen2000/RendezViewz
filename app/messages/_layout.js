@@ -50,6 +50,7 @@ export default function MessagesLayout() {
         component={AddEvent}
         options={{
           title: "Schedule a new Watch Party!",
+          headerBackTitleVisible: false,
           headerStyle: {
             backgroundColor: "#000814", // Set the background color of the header
           },

@@ -153,7 +153,6 @@ export default function Me() {
               <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
                 {profileData[0].username}
               </Text>
-
             </View>
 
             <View style={styles.statsContainer}>
@@ -169,15 +168,12 @@ export default function Me() {
                 </View>
               </Pressable>
 
-
               <View
                 style={[
                   styles.statsBox,
                   {
-
                     borderColor: "white",
                     borderLeftWidth: 1,
-
                   },
                 ]}
               >
@@ -193,7 +189,6 @@ export default function Me() {
               </View>
             </View>
           </View>
-
 
           {/* <View style={styles.buttonsContainer}>
             <Pressable
@@ -222,7 +217,6 @@ export default function Me() {
               <Text style={styles.rectangleText}>
                 some info about me: i love horror films!
               </Text>
-
             </View>
             <View style={styles.centerContainer}>
               <View style={styles.rectangleLine} />
@@ -334,13 +328,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   rectangleContainer: {
-    marginTop: 10,
+    marginTop: 5,
+    marginBottom: 5,
     backgroundColor: "#97DFFC33",
     borderRadius: 40,
     paddingHorizontal: 10,
     marginVertical: 5,
     flexDirection: "row",
     alignItems: "center",
+    height: 160,
   },
   leftContainer: {
     flex: 2,
@@ -423,7 +419,6 @@ const styles = StyleSheet.create({
     flex: 0.4,
 
     margin: 20,
-
   },
   statsBox: {
     alignItems: "center",

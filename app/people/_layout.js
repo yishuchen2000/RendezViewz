@@ -8,6 +8,7 @@ import FriendProfile from "./FriendProfile";
 import NewFriendProfile from "./NewFriendProfile";
 import MessageScreen from "./MessageScreen";
 import ChatScreen from "./ChatScreen";
+import AddEvent from "../messages/add_event";
 import { useRoute } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
@@ -83,6 +84,16 @@ const PeopleStack = () => {
       <Stack.Screen
         name="ChatScreen"
         component={ChatScreen}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="AddEvent"
+        component={AddEvent}
         options={{
           headerTransparent: true,
           headerTintColor: "white",

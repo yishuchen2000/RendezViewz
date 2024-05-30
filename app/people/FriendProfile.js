@@ -281,13 +281,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   rectangleContainer: {
-    marginTop: 10,
+    marginTop: 5,
+    marginBottom: 5,
     backgroundColor: "#97DFFC33",
     borderRadius: 40,
     paddingHorizontal: 10,
     marginVertical: 5,
     flexDirection: "row",
     alignItems: "center",
+    height: 160,
   },
   leftContainer: {
     flex: 2,

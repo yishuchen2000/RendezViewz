@@ -4,6 +4,7 @@ import {
   Bubble,
   GiftedChat,
   Send,
+  Pressable,
   InputToolbar,
 } from "react-native-gifted-chat";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -150,7 +151,20 @@ const ChatScreen = () => {
               marginLeft: 10,
             }}
           >
-            <Feather name="calendar" size={24} color="#97DFFC" />
+            <Pressable
+              onPress={() =>
+                navigation.navigate("FriendProfile", {
+                  id: id,
+                  friendNumber: friendNumber,
+                  myPostData: myPostData,
+                  profileData: profileData,
+                  rankedNumber: rankedNumber,
+                  wishlistNumber: wishlistNumber,
+                })
+              }
+            >
+              <Feather name="calendar" size={24} color="#97DFFC" />
+            </Pressable>
           </View>
         )}
       />

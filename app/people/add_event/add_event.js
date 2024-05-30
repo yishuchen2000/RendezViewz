@@ -18,22 +18,13 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { debounce } from "lodash";
-import { initialItems } from "./eventdata";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-//import { MultiSelect } from "react-native-element-dropdown";
-import { Dropdown } from "react-native-element-dropdown";
-import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
-import Icon from "react-native-vector-icons/MaterialIcons";
-//import DateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-modern-datepicker";
-import MultiSelect from "react-native-multiple-select";
-//import DropDownPicker from "react-native-dropdown-listpicker";
-import { MultipleSelectList } from "react-native-dropdown-select-list";
 import CustomModal from "./custommodal";
-import getMovieDetails from "../../components/getMovieDetails";
-import searchByTitle from "../../components/searchByTitle";
+import getMovieDetails from "../../../components/getMovieDetails";
+import searchByTitle from "../../../components/searchByTitle";
 
 import dayjs from "dayjs";
 
@@ -462,7 +453,7 @@ const AddEvent = ({ route, navigation }) => {
                         source={
                           item.Poster !== "N/A"
                             ? { uri: item.Poster }
-                            : require("../../assets/blankPoster.png")
+                            : require("../../../assets/blankPoster.png")
                         }
                         style={styles.posterImage}
                       />
@@ -517,7 +508,7 @@ const AddEvent = ({ route, navigation }) => {
       </Pressable>
       <View style={styles.clapboard}>
         <Image
-          source={require("../../assets/Clapboard2.png")}
+          source={require("../../../assets/Clapboard2.png")}
           style={{
             flex: 1,
             width: windowWidth,
