@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -8,7 +8,6 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
-  Modal,
   Text,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -18,8 +17,7 @@ import supabase from "../../Supabase";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import filter from "lodash.filter";
-import { useNavigation } from "@react-navigation/native";
-import AddFriendPage from "./AddFriendPage";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -27,19 +25,13 @@ const windowHeight = Dimensions.get("window").height;
 export default function People() {
   const [session, setSession] = useState(null);
   const [friendIDs, setFriendIDs] = useState(null);
-
   const [data, setData] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [entry, setEntry] = useState(null);
-  const [modalValid, setModalValid] = useState(false);
-
   const navigation = useNavigation();
 
   const handleFriendUpdated = (payload) => {
-    // console.log("THIS IS PAYLOAD", payload.new.friend_ids);
     let updatedFriendIds = payload.new.friend_ids;
     if (session) {
       updatedFriendIds = payload.new.friend_ids.filter(
@@ -61,44 +53,83 @@ export default function People() {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-
-      const fetchFriendID = async () => {
-        const friends = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", session.user.id);
-
-        // console.log("this is the current session", session);
-        // console.log("this is the friend IDs", friends.data[0].friend_ids);
-        // filter out the current user
-        const updatedFriendIds = friends.data[0].friend_ids.filter(
-          (friendId) => friendId !== session.user.id
-        );
-        setFriendIDs(updatedFriendIds);
-      };
-      fetchFriendID();
-    });
+    const fetchSession = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        setSession(session);
+        if (session) {
+          const friends = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", session.user.id);
+          const updatedFriendIds = friends.data[0].friend_ids.filter(
+            (friendId) => friendId !== session.user.id
+          );
+          setFriendIDs(updatedFriendIds);
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      }
+    };
+    fetchSession();
   }, []);
 
-  useEffect(() => {
-    if (friendIDs) {
-      // console.log("TYPE", typeof friendIDs);
-      const fetchFriends = async () => {
-        // console.log("searching matched friends!");
-        const response = await supabase
-          .from("profiles")
-          .select("*")
-          .in("id", friendIDs);
-        // console.log("out", response);
-        // console.log("error", error);
-        setData(response.data);
-        setFilteredData(response.data);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchFriendsWithMessages = async () => {
+        if (friendIDs) {
+          try {
+            const response = await supabase
+              .from("profiles")
+              .select("*")
+              .in("id", friendIDs);
+
+            const friendsData = response.data;
+
+            for (const friend of friendsData) {
+              const { data: messages, error: messagesError } = await supabase
+                .from("messages")
+                .select("msg, date")
+                .or(`from.eq.${friend.id},to.eq.${friend.id}`)
+                .order("date", { ascending: false })
+                .limit(1);
+
+              if (messagesError) {
+                console.error("Error fetching messages:", messagesError);
+              } else if (messages.length > 0) {
+                friend.recentMessage = messages[0].msg;
+                friend.recentMessageDate = messages[0].date;
+              } else {
+                friend.recentMessage = "No recent messages";
+                friend.recentMessageDate = null;
+              }
+            }
+
+            friendsData.sort((a, b) => {
+              if (a.recentMessageDate && b.recentMessageDate) {
+                return (
+                  new Date(b.recentMessageDate) - new Date(a.recentMessageDate)
+                );
+              } else if (a.recentMessageDate) {
+                return -1;
+              } else {
+                return 1;
+              }
+            });
+
+            setData(friendsData);
+            setFilteredData(friendsData);
+          } catch (error) {
+            console.error("Error fetching friends:", error);
+          }
+        }
       };
-      fetchFriends();
-    }
-  }, [friendIDs]);
+
+      fetchFriendsWithMessages();
+    }, [friendIDs])
+  );
 
   const clearSearch = () => {
     setFilteredData(data);
@@ -111,7 +142,6 @@ export default function People() {
       return contains({ username }, formattedQuery);
     });
     setFilteredData(filteredData);
-    // console.log("FILTERED DATA", filteredData);
   };
 
   const contains = ({ username }, query) => {
@@ -238,7 +268,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "transparent",
-    // backgroundImage: "linear-gradient(to bottom, #361866, #E29292)",
     paddingTop: 10,
   },
   container1: {

@@ -1,59 +1,204 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import FirstScreen from "./first_screen";
-import EventDetail from "./event_detail";
-import AddEvent from "./add_event";
-import Success from "./success";
-import MyEventTabs from "./Inbox/_layout";
+import { useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Pressable,
+  Alert,
+  Dimensions,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { EvilIcons } from "@expo/vector-icons";
+import supabase from "../../Supabase";
 
-const Stack = createNativeStackNavigator();
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
-export default function MessagesLayout() {
+const Friend = ({ id, user, profilePic, onDeleteFriend, goesTo }) => {
+  const navigation = useNavigation();
+  const [session, setSession] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const [rankedNumber, setRankedNumber] = useState(0);
+  const [wishlistNumber, setWishlistNumber] = useState(0);
+  const [friendNumber, setFriendNumber] = useState(null);
+  const [myPostData, setMyPostData] = useState(null);
+  const [recentMessage, setRecentMessage] = useState("");
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+    };
+    fetchSession();
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      const fetchData = async () => {
+        const profileInfo = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", id);
+
+        setProfileData(profileInfo.data);
+
+        let friendNumber = profileInfo.data[0]["friend_ids"]
+          ? profileInfo.data[0]["friend_ids"].length
+          : 0;
+        setFriendNumber(friendNumber);
+
+        const myPosts = await supabase
+          .from("posts")
+          .select("*")
+          .eq("user_id", id);
+        setMyPostData(myPosts.data);
+
+        const rankings = await supabase
+          .from("rankings")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", id);
+
+        const wishlist = await supabase
+          .from("wishlist")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", id);
+
+        setRankedNumber(rankings.count);
+        setWishlistNumber(wishlist.count);
+
+        const messages = await supabase
+          .from("messages")
+          .select("*")
+          .or(`from.eq.${id},from.eq.${session.user.id}`)
+          .or(`to.eq.${id},to.eq.${session.user.id}`)
+          .order("date", { ascending: false })
+          .limit(1);
+
+        console.log(messages);
+
+        if (messages.data && messages.data.length > 0) {
+          setRecentMessage(messages.data[0].msg);
+        } else {
+          setRecentMessage("No recent messages");
+        }
+      };
+      fetchData();
+    }
+  }, [id, session]);
+
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="FirstScreen"
-        component={FirstScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Inbox"
-        component={MyEventTabs}
-        options={{
-          title: "Invite Inbox",
-          headerStyle: { backgroundColor: "#000814" },
-          headerTitleStyle: { color: "white" },
-          headerTintColor: "white",
-          headerBackTitleVisible: "false",
-        }}
-      />
-      <Stack.Screen
-        name="EventDetail"
-        component={EventDetail}
-        options={{
-          title: "Event Details",
-          headerStyle: { backgroundColor: "#000814" },
-          headerTitleStyle: { color: "white" },
-          headerTintColor: "white",
-          headerBackTitleVisible: "false",
-        }}
-      />
-      <Stack.Screen
-        name="AddEvent"
-        component={AddEvent}
-        options={{
-          title: "Schedule a new Watch Party!",
-          headerStyle: { backgroundColor: "#000814" },
-          headerTitleStyle: { color: "white" },
-          headerTintColor: "white",
-          headerBackTitleVisible: "false",
-        }}
-      />
-      <Stack.Screen
-        name="Success"
-        component={Success}
-        options={{ headerShown: false, headerBackTitleVisible: "false" }}
-      />
-    </Stack.Navigator>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.profile}>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("FriendProfile", {
+                id: id,
+                friendNumber: friendNumber,
+                myPostData: myPostData,
+                profileData: profileData,
+                rankedNumber: rankedNumber,
+                wishlistNumber: wishlistNumber,
+              })
+            }
+          >
+            <View style={styles.profilePicContainer}>
+              <Image style={styles.profilePic} source={{ uri: profilePic }} />
+            </View>
+          </Pressable>
+          <View style={styles.profileTextContainer}>
+            <Text style={styles.username}>{user}</Text>
+            <Text style={styles.recentMessage}>{recentMessage}</Text>
+          </View>
+        </View>
+      </View>
+
+      <Pressable style={styles.deleteButtonContainer}>
+        <EvilIcons
+          style={styles.deleteButton}
+          onPress={() => {
+            Alert.alert(
+              "Delete Friend?",
+              `Are you sure you want to remove ${user} from friends?`,
+
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Delete",
+                  onPress: onDeleteFriend,
+                },
+              ],
+              { cancelable: false }
+            );
+          }}
+          name="trash"
+          size={25}
+          color="#97DFFC"
+        />
+      </Pressable>
+    </View>
   );
-}
+};
+
+export default Friend;
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
+    borderColor: "#361866",
+    borderRadius: 15,
+    padding: 10,
+    paddingLeft: 14,
+    width: "100%",
+    margin: 2,
+    height: windowHeight * 0.1,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  profilePic: {
+    width: "100%",
+    height: "100%",
+  },
+  profilePicContainer: {
+    width: 45,
+    height: 45,
+    marginRight: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  profile: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileTextContainer: {
+    flexDirection: "column",
+  },
+  username: {
+    fontWeight: "bold",
+    fontSize: 17,
+    color: "white",
+  },
+  recentMessage: {
+    fontSize: 14,
+    color: "grey",
+    marginTop: 2,
+    paddingLeft: 5,
+  },
+  deleteButtonContainer: {
+    position: "absolute",
+    right: 0,
+    bottom: 20,
+    width: windowWidth * 0.1,
+    height: "50%",
+    justifyContent: "center",
+  },
+});

@@ -5,6 +5,7 @@ import {
   GiftedChat,
   Send,
   InputToolbar,
+  Avatar,
 } from "react-native-gifted-chat";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -21,6 +22,69 @@ const ChatScreen = () => {
   const { id, username, profilePic, currentUserID } = route.params;
 
   const navigation = useNavigation();
+
+  const [profileData, setProfileData] = useState(null);
+  const [rankedNumber, setRankedNumber] = useState(0);
+  const [wishlistNumber, setWishlistNumber] = useState(0);
+  const [friendNumber, setFriendNumber] = useState(null);
+  const [myPostData, setMyPostData] = useState(null);
+
+  const [isFollowed, setIsFollowed] = useState(false);
+
+  const [numbersFetched, setNumbersFetched] = useState(false);
+  const [infoFetched, setInfoFetched] = useState(false);
+
+  // console.log("Current ID", id);
+
+  // const [data, setData] = useState([]);
+
+  // const [userID, setUserID] = useState(null);
+  // const route = useRoute();
+  // const { data } = route.params;
+  // console.log(data);
+  // setUserID(data);
+
+  useEffect(() => {
+    // console.log("id info in profile!", session.user.id);
+    const fetchData = async () => {
+      const profileInfo = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", id);
+
+      // console.log("PROFILE IN FRIEND", profileInfo.data);
+      setProfileData(profileInfo.data);
+
+      let friendNumber = profileInfo.data[0]["friend_ids"]
+        ? profileInfo.data[0]["friend_ids"].length
+        : 0;
+      // console.log("FRIEND NUMBER", friendNumber);
+      setFriendNumber(friendNumber);
+
+      const myPosts = await supabase
+        .from("posts")
+        .select("*")
+        .eq("user_id", id);
+      setMyPostData(myPosts.data);
+      // console.log("POST", myPosts.data);
+
+      const rankings = await supabase
+        .from("rankings")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
+
+      const wishlist = await supabase
+        .from("wishlist")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", id);
+
+      setRankedNumber(rankings.count);
+      setWishlistNumber(wishlist.count);
+
+      setInfoFetched(true);
+    };
+    fetchData();
+  }, []);
 
   const goToAddEvent = () => {
     navigation.navigate("messages", {
@@ -157,13 +221,46 @@ const ChatScreen = () => {
     return <FontAwesome name="angle-double-down" size={22} color="#333" />;
   };
 
+  const renderAvatar = (props) => {
+    return (
+      <Avatar
+        {...props}
+        onPressAvatar={() =>
+          navigation.navigate("FriendProfile", {
+            id: id,
+            friendNumber: friendNumber,
+            myPostData: myPostData,
+            profileData: profileData,
+            rankedNumber: rankedNumber,
+            wishlistNumber: wishlistNumber,
+          })
+        }
+        containerStyle={{ left: styles.avatar }}
+        imageStyle={{ left: styles.avatarImage }}
+      />
+    );
+  };
+
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
-        <View style={styles.headerCenter}>
+        <Pressable
+          style={styles.headerCenter}
+          onPress={() =>
+            navigation.navigate("FriendProfile", {
+              id: id,
+              friendNumber: friendNumber,
+              myPostData: myPostData,
+              profileData: profileData,
+              rankedNumber: rankedNumber,
+              wishlistNumber: wishlistNumber,
+            })
+          }
+        >
           <Image source={{ uri: profilePic }} style={styles.profilePic} />
           <Text style={styles.username}>{username}</Text>
-        </View>
+        </Pressable>
+
         <Pressable onPress={goToAddEvent} style={styles.calendarIcon}>
           <Feather name="calendar" size={28} color="#fff" />
         </Pressable>
@@ -186,9 +283,10 @@ const ChatScreen = () => {
         scrollToBottom
         scrollToBottomComponent={scrollToBottomComponent}
         renderInputToolbar={renderInputToolbar}
+        renderAvatar={renderAvatar}
         textInputProps={styles.composer}
         bottomOffset={80}
-        minInputToolbarHeight={70} // Adjust this value as needed to give space between the last message and the text input
+        minInputToolbarHeight={52} // Adjust this value as needed to give space between the last message and the text input
       />
     </LinearGradient>
   );
@@ -227,6 +325,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingBottom: 10,
   },
+  avatar: {
+    borderWidth: 1,
+    borderColor: "white",
+  },
   calendarIcon: {
     position: "absolute",
     top: 10,
@@ -251,6 +353,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     maxHeight: 120, // Set a maximum height for the text input
     marginLeft: 5,
-    minHeight: 30,
+  },
+  avatar: {
+    marginRight: 0, // Ensure this doesn't add extra space
+  },
+  avatarImage: {
+    borderRadius: 15,
   },
 });
