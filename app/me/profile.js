@@ -131,7 +131,7 @@ export default function Me() {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.header}>
             <Pressable onPress={accountPage} style={styles.titleBar}>
-              <FontAwesome name="gear" size={24} color="white" />
+              <FontAwesome name="gear" size={24} color="white" marginTop={5} />
             </Pressable>
 
             <View style={styles.centeredView}>
@@ -153,7 +153,6 @@ export default function Me() {
               <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
                 {profileData[0].username}
               </Text>
-
             </View>
 
             <View style={styles.statsContainer}>
@@ -169,15 +168,12 @@ export default function Me() {
                 </View>
               </Pressable>
 
-
               <View
                 style={[
                   styles.statsBox,
                   {
-
                     borderColor: "white",
                     borderLeftWidth: 1,
-
                   },
                 ]}
               >
@@ -193,7 +189,6 @@ export default function Me() {
               </View>
             </View>
           </View>
-
 
           {/* <View style={styles.buttonsContainer}>
             <Pressable
@@ -219,10 +214,7 @@ export default function Me() {
           <Text style={[styles.subText, styles.recent]}>About</Text>
           <View style={styles.rectangleContainer}>
             <View style={styles.leftContainer}>
-              <Text style={styles.rectangleText}>
-                some info about me: i love horror films!
-              </Text>
-
+              <Text style={styles.rectangleText}>bio goes here</Text>
             </View>
             <View style={styles.centerContainer}>
               <View style={styles.rectangleLine} />
@@ -336,11 +328,13 @@ const styles = StyleSheet.create({
   rectangleContainer: {
     marginTop: 10,
     backgroundColor: "#97DFFC33",
-    borderRadius: 40,
+    borderRadius: 20,
     paddingHorizontal: 10,
+    paddingVertical: 10,
     marginVertical: 5,
     flexDirection: "row",
     alignItems: "center",
+    height: 90,
   },
   leftContainer: {
     flex: 2,
@@ -364,7 +358,7 @@ const styles = StyleSheet.create({
   rectangleLine: {
     width: 3,
     backgroundColor: "#858AE3",
-    height: "30%",
+    height: "80%",
     alignSelf: "center",
   },
   wishlistInfo: {
@@ -423,7 +417,6 @@ const styles = StyleSheet.create({
     flex: 0.4,
 
     margin: 20,
-
   },
   statsBox: {
     alignItems: "center",

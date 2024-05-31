@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   container: {
     height: windowHeight * 0.1,
     flexDirection: "row",
-    backgroundColor: "rgba(217, 217, 217, 0.4)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     borderColor: "#361866",
     borderRadius: 10,
     marginVertical: windowHeight * 0.002,
