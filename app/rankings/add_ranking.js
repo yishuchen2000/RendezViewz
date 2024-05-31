@@ -44,7 +44,6 @@ const AddRanking = () => {
   const [modalValid, setModalValid] = useState(false);
   const [session, setSession] = useState([]);
   const [rankings, setRankings] = useState([]);
-  const [isDuplicateEntry, setIsDuplicateEntry] = useState(false);
   const [commentsEnabled, setCommentsEnabled] = useState(true);
   const [comments, setComments] = useState("");
 
@@ -79,15 +78,8 @@ const AddRanking = () => {
   }, [rankings]);
 
   useEffect(() => {
-    if (selectionChosen) {
-      const isDuplicate = rankings.some((item) => item.title === entry);
-      setIsDuplicateEntry(isDuplicate);
-      setModalValid(true);
-    } else {
-      setIsDuplicateEntry(false);
-      setModalValid(false);
-    }
-  }, [selectionChosen, rankings]);
+    setModalValid(selectionChosen);
+  }, [selectionChosen]);
 
   const fetchSuggestions = useCallback(
     debounce(async (query) => {
@@ -128,7 +120,6 @@ const AddRanking = () => {
   };
 
   const handleRank = async () => {
-    console.log(entry);
     const movieDetails = await getMovieDetails(entry);
 
     if (!movieDetails || movieDetails.Response === "False") {
@@ -136,54 +127,126 @@ const AddRanking = () => {
       return;
     }
 
-    if (isDuplicateEntry) {
-      Alert.alert(`${entry} is already ranked on this list.`);
-      return;
-    }
+    const existingEntry = rankings.find((item) => item.title === entry);
 
-    newId = Date.now();
+    if (existingEntry) {
+      // Update existing entry
+      const { data: updatedData, error } = await supabase
+        .from("rankings")
+        .update({
+          title: movieDetails.Title,
+          url: movieDetails.Poster,
+          rating: parseFloat(rankValue),
+          genres: movieDetails.Genre,
+        })
+        .eq("id", existingEntry.id);
 
-    const { data: upsertedData } = await supabase.from("rankings").upsert([
-      {
+      if (error) {
+        console.error("Failed to update ranking:", error);
+        Alert.alert("Error", "Failed to update ranking. Please try again.");
+        return;
+      }
+
+      if (commentsEnabled) {
+        const postData = {
+          id: Date.now(),
+          text: comments,
+          liked: false,
+          comments: [],
+          movie_title: movieDetails.Title,
+          user_id: session.user.id,
+          action: `Updated ranking of this to ${parseFloat(rankValue)}/10`,
+          created_at: new Date(),
+        };
+
+        const { data: newPost, error: postError } = await supabase
+          .from("posts")
+          .insert([postData]);
+
+        if (postError) {
+          console.error("Failed to create post:", postError);
+          Alert.alert("Error", "Failed to create post. Please try again.");
+          return;
+        }
+      }
+
+      let response = await supabase
+        .from("rankings")
+        .select("*")
+        .eq("user_id", session.user.id);
+
+      if (response) {
+        let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
+
+        newSortedData.forEach((item, index = 0) => {
+          item.index = index + 1;
+        });
+
+        setRankings(newSortedData);
+        navigation.navigate("Rankings");
+      }
+    } else {
+      // Insert new entry
+      const newId = Date.now();
+
+      const { data: upsertedData, error } = await supabase
+        .from("rankings")
+        .upsert([
+          {
+            id: newId,
+            title: movieDetails.Title,
+            index: 0,
+            url: movieDetails.Poster,
+            rating: parseFloat(rankValue),
+            genres: movieDetails.Genre,
+            user_id: session.user.id,
+          },
+        ]);
+
+      if (error) {
+        console.error("Failed to insert ranking:", error);
+        Alert.alert("Error", "Failed to insert ranking. Please try again.");
+        return;
+      }
+
+      const postData = {
         id: newId,
-        title: movieDetails.Title,
-        index: 0,
-        url: movieDetails.Poster,
-        rating: parseFloat(rankValue),
-        genres: movieDetails.Genre,
+        text: commentsEnabled ? comments : "",
+        liked: false,
+        comments: [],
+        movie_title: movieDetails.Title,
         user_id: session.user.id,
-      },
-    ]);
+        action: `Gave this a ${parseFloat(rankValue)}/10`,
+        created_at: new Date(),
+      };
 
-    const postData = {
-      id: newId,
-      text: commentsEnabled ? comments : "",
-      liked: false,
-      comments: [],
-      movie_title: movieDetails.Title,
-      user_id: session.user.id,
-      action: `Gave ${movieDetails.Title} a ${parseFloat(rankValue)}/10`,
-      created_at: new Date(),
-    };
+      if (commentsEnabled) {
+        const { data: newPost, error: postError } = await supabase
+          .from("posts")
+          .upsert([postData]);
 
-    if (commentsEnabled) {
-      const { data: newPost } = await supabase.from("posts").upsert([postData]);
-    }
+        if (postError) {
+          console.error("Failed to create post:", postError);
+          Alert.alert("Error", "Failed to create post. Please try again.");
+          return;
+        }
+      }
 
-    let response = await supabase
-      .from("rankings")
-      .select("*")
-      .eq("user_id", session.user.id);
+      let response = await supabase
+        .from("rankings")
+        .select("*")
+        .eq("user_id", session.user.id);
 
-    if (response) {
-      let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
+      if (response) {
+        let newSortedData = response.data.sort((a, b) => b.rating - a.rating);
 
-      newSortedData.forEach((item, index = 0) => {
-        item.index = index + 1;
-      });
+        newSortedData.forEach((item, index = 0) => {
+          item.index = index + 1;
+        });
 
-      setRankings(newSortedData);
-      navigation.navigate("Rankings");
+        setRankings(newSortedData);
+        navigation.navigate("Rankings");
+      }
     }
   };
 

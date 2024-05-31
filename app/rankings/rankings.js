@@ -46,11 +46,13 @@ export default function Rankings() {
     fetchSession();
 
     const subscription = supabase
-      .channel("schema-db-changes")
+      .channel("public:rankings")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "rankings" },
-        handleRecordInserted
+        { event: "*", schema: "public", table: "rankings" },
+        (payload) => {
+          handleRankingChange(payload);
+        }
       )
       .subscribe();
 
@@ -74,7 +76,7 @@ export default function Rankings() {
     }
   };
 
-  const handleRecordInserted = async () => {
+  const handleRankingChange = async (payload) => {
     const { data: rankingsList } = await supabase
       .from("rankings")
       .select("*")
@@ -83,6 +85,8 @@ export default function Rankings() {
     const sortedData = rankingsList.sort((a, b) => b.rating - a.rating);
     sortedData.forEach((item, index) => (item.index = index + 1));
     setRankings(sortedData);
+
+    LayoutAnimation.configureNext(layoutAnimConfig);
   };
 
   const handleDelete = async (id) => {
