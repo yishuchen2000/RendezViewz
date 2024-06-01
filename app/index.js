@@ -260,6 +260,7 @@ export default function Page() {
                 title={item.movie_title}
                 avatarGoesTo={"FriendProfile"}
                 posterGoesTo={"ShowDetails"}
+                liked_by={item.liked_by}
               />
             )}
             keyExtractor={(item) => item.id}

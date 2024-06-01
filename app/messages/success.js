@@ -19,6 +19,9 @@ import ConfettiCannon from "react-native-confetti-cannon";
 
 const Success = ({ navigation, route }) => {
   const { date, name, time, people, all, poster } = route.params;
+  console.log(date);
+  console.log(time);
+
   const photoMap = {};
   all.forEach((person) => {
     if (person.label && person.photo) {
@@ -127,7 +130,15 @@ const Success = ({ navigation, route }) => {
   };
 
   const formatDateAndTime = (date, time) => {
-    const dateTime = new Date(`${date}T${time}`);
+    // Replace / with - in the date string to ensure the correct format
+    const formattedDateString = date.replace(/\//g, "-");
+    const dateTime = new Date(`${formattedDateString}T${time}`);
+
+    if (isNaN(dateTime.getTime())) {
+      // Return an error message if the date is invalid
+      return "Invalid Date";
+    }
+
     const monthNames = [
       "January",
       "February",
@@ -142,6 +153,7 @@ const Success = ({ navigation, route }) => {
       "November",
       "December",
     ];
+
     const day = dateTime.getDate();
     const monthIndex = dateTime.getMonth();
     const monthName = monthNames[monthIndex];
@@ -165,6 +177,7 @@ const Success = ({ navigation, route }) => {
       hour: "2-digit",
       minute: "2-digit",
     });
+
     return (
       <>
         <Text style={{ fontWeight: "normal" }}>
@@ -239,7 +252,7 @@ const Success = ({ navigation, route }) => {
               </Text>
             </Pressable>
           ) : null}
-          <Pressable
+          {/* <Pressable
             style={styles.button}
             onPress={addToCalendar} // Call function on button press
           >
@@ -248,7 +261,7 @@ const Success = ({ navigation, route }) => {
             >
               Export event to calendar
             </Text>
-          </Pressable>
+          </Pressable> */}
           <Pressable
             style={styles.button1}
             onPress={() => {

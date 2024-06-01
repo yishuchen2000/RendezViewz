@@ -26,13 +26,27 @@ const windowHeight = Dimensions.get("window").height;
 export default function FirstScreen({ navigation }) {
   const [selected, setSelected] = useState("");
   const [items, setItems] = useState({});
+  const [userId, setUserId] = useState(null);
+  const [session, setSession] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = async (session) => {
+    console.log(session);
     try {
       const { data, error } = await supabase
-        .from("party")
-        .select("*")
-        .order("date", { ascending: false });
+        // .from("party")
+        // .select("*")
+        // .order("date", { ascending: false });
+
+        .from("invites")
+        .select(
+          `
+              *,
+      party ( accepted, show, date, time, people, people_ids, host, accepted, public ),
+      profiles ( username )
+      `
+        )
+        .eq("accepted", true)
+        .eq("to", session.user.id);
 
       if (error) {
         console.error("Error fetching data:", error.message);
@@ -55,7 +69,7 @@ export default function FirstScreen({ navigation }) {
 
         // Add events to the formattedData object
         data.forEach((event) => {
-          const { date, show, people, time } = event;
+          const { date, show, people, time } = event.party;
 
           if (!formattedData[date]) {
             formattedData[date] = [];
@@ -77,8 +91,17 @@ export default function FirstScreen({ navigation }) {
   };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      fetchData();
+    const unsubscribe = navigation.addListener("focus", async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+      console.log(session.user.id);
+      setUserId(session.user.id);
+
+      if (session) {
+        fetchData(session);
+      }
     });
 
     return unsubscribe;
@@ -210,7 +233,9 @@ export default function FirstScreen({ navigation }) {
         <View style={styles.buttonContainer1}>
           <Pressable
             style={styles.button1}
-            onPress={() => navigation.navigate("Inbox", {})}
+            onPress={() =>
+              navigation.navigate("Inbox", { currentUser: session?.user.id })
+            }
           >
             <Feather name="mail" size={30} color="white" />
           </Pressable>

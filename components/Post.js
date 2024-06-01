@@ -39,6 +39,7 @@ const Post = ({
   title,
   avatarGoesTo,
   posterGoesTo,
+  liked_by,
 }) => {
   const [inputText, setInputText] = useState("");
   const [showComment, setshowComment] = useState(false);
@@ -159,6 +160,7 @@ const Post = ({
   // }, [title]);
 
   const onLikePressed = async () => {
+    const updated_liked_by = liked_by;
     const response = await supabase
       .from("posts")
       .update({ liked: !liked })
@@ -304,7 +306,6 @@ const Post = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profile}>
-
             <Pressable
               onPress={
                 // () =>

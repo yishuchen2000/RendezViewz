@@ -27,75 +27,141 @@ const Events = ({ route, navigation }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [flatListData, setFlatListData] = useState([]);
   const [items, setItems] = useState({});
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase
-        .from("party")
-        .select("*")
-        .order("date", { ascending: true });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log(session);
+      setSession(session);
 
-      if (error) {
-        console.error("Error fetching data:", error.message);
-      } else {
+      const currentTime = new Date().toISOString();
+      const fetchData = async () => {
+        const currentDate = new Date();
+
+        // case 1: you are invited to an event and you accepted it
+        const { data1, error1 } = await supabase
+          .from("invites")
+          .select(
+            `
+            *,
+    party ( id, accepted, show, date, time, people, people_ids, host, accepted, public ),
+    profiles ( username )
+    `
+          )
+          .eq("accepted", true)
+          .eq("to", session.user.id)
+          .gt("event_time", currentTime)
+          .order("event_time", { ascending: true });
+
+        console.log("data", data);
+
         const fData = {};
+        // filter data
 
         // Add events to the formattedData object
         data.forEach((event) => {
-          const { date, show, people, time } = event;
+          const { id, date, time, show, people } = event.party;
+          const itemDate = new Date(date);
 
           if (!fData[date]) {
             fData[date] = [];
           }
+          console.log(itemDate);
+          console.log(currentDate);
 
           fData[date].push({
             name: show,
             people: people,
             time: time,
             date: date,
+            id: id,
           });
         });
 
         setItems(fData);
-      }
-    };
-    fetchData();
+        console.log("fDATA", items);
+      };
+      fetchData();
+    });
   }, []);
 
-  const handleDelete = async (key) => {
-    try {
-      // Split the key into its components
-      const parts = key.split("-");
-      const newKey = parts.slice(0, -1).join("-");
-      const showname = parts.slice(-1)[0];
+  const handleInvitesUpdated = (payload) => {
+    console.log("THIS IS PAYLOAD", payload.new);
 
-      // Perform the delete operation using the extracted date
-      const { error } = await supabase
-        .from("party")
-        .delete()
-        .eq("date", newKey)
-        .eq("show", showname);
+    if (payload.new.accepted) {
+      // insert
+      const { event_id, event_time, name, people } = payload.new;
+      // Convert event_time (timestamp) to date and time
+      const eventDate = new Date(event_time);
 
-      if (error) {
-        throw new Error(error.message);
+      // Format date as YYYY-MM-DD
+      const year = eventDate.getFullYear();
+      const month = String(eventDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+      const day = String(eventDate.getDate()).padStart(2, "0");
+      const date = `${year}-${month}-${day}`;
+
+      // Format time as HH:mm:ss
+      const hours = String(eventDate.getHours()).padStart(2, "0");
+      const minutes = String(eventDate.getMinutes()).padStart(2, "0");
+      const seconds = String(eventDate.getSeconds()).padStart(2, "0");
+      const time = `${hours}:${minutes}:${seconds}`;
+
+      // const itemDate = new Date(date);
+      const updated_items = items;
+
+      if (!updated_items[date]) {
+        updated_items[date] = [];
       }
+      // console.log(itemDate);
+      // console.log(currentDate);
 
-      // Update the UI after successful deletion
-      const updatedData = flatListData.filter((data) => data.key !== key);
-      setFlatListData(updatedData);
-
-      const isDeletedInFiltered = filteredData.some((item) => item.key === key);
-      if (isDeletedInFiltered) {
-        const updatedFilteredData = filteredData.filter(
-          (data) => data.key !== key
-        );
-        setFilteredData(updatedFilteredData);
-      }
-
-      Alert.alert("Success", "Event deleted successfully!");
-    } catch (error) {
-      Alert.alert("Error", `Failed to delete event: ${error.message}`);
+      updated_items[date].push({
+        name: name,
+        people: people,
+        time: time,
+        date: date,
+        id: event_id,
+      });
+      console.log("items", updated_items);
+      setItems(updated_items);
+      setFlatListData(updated_items);
     }
+  };
+
+  useEffect(() => {
+    supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "invites" },
+        handleInvitesUpdated
+      )
+      .subscribe();
+  }, []);
+
+  const handleDelete = async (invite_id, event_id, accepted_friend_ids) => {
+    const invites_response = await supabase
+      .from("invites")
+      .update({ accepted: !accepted })
+      .eq("id", invite_id);
+
+    // change accept status on the general event table
+    // filter for same host, same show, same time
+
+    // filter through all items, find the item with the same event_id, get the party - accepted - array
+    // item.party.accepted
+    const updated_accepted = accepted_friend_ids;
+    if (!accepted_friend_ids.includes(session.user.id)) {
+      updated_accepted.push(session.user.id);
+    }
+    // console.log("updated_accepted", updated_accepted);
+
+    const party_response = await supabase
+      .from("party")
+      .update({ accepted: updated_accepted })
+      .eq("id", event_id);
+
+    // console.log("party_response", party_response);
   };
 
   useEffect(() => {
@@ -108,6 +174,8 @@ const Events = ({ route, navigation }) => {
           time: movie.time,
           name: movie.name,
           people: movie.people,
+          event_id: movie.id,
+          accepted_friend_ids: movie.accepted,
         });
       });
       return acc;
@@ -178,7 +246,12 @@ const Events = ({ route, navigation }) => {
                   },
                   {
                     text: "Delete",
-                    onPress: () => handleDelete(item.key),
+                    onPress: () =>
+                      handleDelete(
+                        item.id,
+                        item.event_id,
+                        item.accepted_friend_ids
+                      ),
                   },
                 ],
                 { cancelable: false }
@@ -272,7 +345,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     //padding: 24,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    backgroundColor: "rgba(151, 223, 252, 0.17)",
     borderRadius: 15,
     alignSelf: "center",
   },
@@ -295,15 +368,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   timet: {
-    color: "gray",
+    color: "white",
   },
   datet: {
-    color: "gray",
+    color: "white",
     marginRight: 5,
   },
   showt: {
-    color: "purple",
+    color: "#97DFFC",
     fontSize: 16,
+    marginTop: 8,
   },
   searchContainer: {
     height: windowHeight * 0.04,

@@ -79,7 +79,7 @@ const AddFriendPage = ({ route, navigation }) => {
   const onAddFriend = async (id) => {
     console.log("id to add", id);
     const updatedFriendIDs = [...friendIDs, id];
-    console.log("Updated FriendIDs!", updatedFriendIDs);
+    // console.log("Updated FriendIDs!", updatedFriendIDs);
 
     const addFriend = await supabase
       .from("profiles")

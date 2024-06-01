@@ -101,7 +101,7 @@ const CustomModal = ({
               <TextInput
                 numberOfLines={1}
                 style={{ color: "purple", textAlign: "left", width: "85%" }}
-                placeholder="Search event by name"
+                placeholder="Search friend by name"
                 placeholderTextColor="gray"
                 returnKeyType="search"
                 value={searchInput}
