@@ -24,7 +24,7 @@ const windowHeight = Dimensions.get("window").height;
 
 const UNDERLINE = require("../../assets/underline.png");
 
-export default function Rankings({ userId }) {
+export default function FriendRankings({ userId }) {
   const flatListRef = useRef();
 
   const [data, setData] = useState([]);
@@ -132,6 +132,7 @@ export default function Rankings({ userId }) {
             title={item.title}
             coverPic={item.url}
             rating={item.rating}
+            goesTo={"FriendProfileRankingDetails"}
           />
         )}
         style={styles.rankList}

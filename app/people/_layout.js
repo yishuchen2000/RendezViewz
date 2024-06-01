@@ -8,6 +8,8 @@ import FriendProfile from "./FriendProfile";
 import NewFriendProfile from "./NewFriendProfile";
 import MessageScreen from "./MessageScreen";
 import ChatScreen from "./ChatScreen";
+import FriendRankingDetails from "./friendRankingDetails";
+import FriendWishlistDetails from "./FriendWishlistDetails";
 import { useRoute } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
@@ -39,6 +41,26 @@ const PeopleStack = () => {
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfile}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="FriendProfileRankingDetails"
+        component={FriendRankingDetails}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="FriendWishlistDetails"
+        component={FriendWishlistDetails}
         options={{
           headerTransparent: true,
           headerTintColor: "white",

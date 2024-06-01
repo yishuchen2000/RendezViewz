@@ -221,32 +221,12 @@ const ChatScreen = () => {
     return <FontAwesome name="angle-double-down" size={22} color="#333" />;
   };
 
-  const renderAvatar = (props) => {
-    return (
-      <Avatar
-        {...props}
-        onPressAvatar={() =>
-          navigation.navigate("FriendProfile", {
-            id: id,
-            friendNumber: friendNumber,
-            myPostData: myPostData,
-            profileData: profileData,
-            rankedNumber: rankedNumber,
-            wishlistNumber: wishlistNumber,
-          })
-        }
-        containerStyle={{ left: styles.avatar }}
-        imageStyle={{ left: styles.avatarImage }}
-      />
-    );
-  };
-
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
         <Pressable
           style={styles.headerCenter}
-          onPress={() =>
+          onPress={() => {
             navigation.navigate("FriendProfile", {
               id: id,
               friendNumber: friendNumber,
@@ -254,8 +234,8 @@ const ChatScreen = () => {
               profileData: profileData,
               rankedNumber: rankedNumber,
               wishlistNumber: wishlistNumber,
-            })
-          }
+            });
+          }}
         >
           <Image source={{ uri: profilePic }} style={styles.profilePic} />
           <Text style={styles.username}>{username}</Text>
@@ -265,6 +245,27 @@ const ChatScreen = () => {
           <Feather name="calendar" size={28} color="#fff" />
         </Pressable>
       </View>
+    );
+  };
+
+  const renderAvatar = (props) => {
+    return (
+      <Avatar
+        {...props}
+        onPressAvatar={() => {
+          console.log(profileData);
+          navigation.navigate("FriendProfile", {
+            id: id,
+            friendNumber: friendNumber,
+            myPostData: myPostData,
+            profileData: profileData,
+            rankedNumber: rankedNumber,
+            wishlistNumber: wishlistNumber,
+          });
+        }}
+        containerStyle={{ left: styles.avatar }}
+        imageStyle={{ left: styles.avatarImage }}
+      />
     );
   };
 

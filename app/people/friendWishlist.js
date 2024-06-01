@@ -132,6 +132,7 @@ export default function Wishlist({ userId }) {
             title={item.title}
             coverPic={item.url}
             rating={item.rating}
+            goesTo={"FriendWishlistDetails"}
             showSubtitle={false}
           />
         )}

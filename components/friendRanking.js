@@ -14,7 +14,14 @@ import getMovieDetails from "./getMovieDetails";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Ranking = ({ index, title, coverPic, rating, showSubtitle = true }) => {
+const Ranking = ({
+  index,
+  title,
+  coverPic,
+  rating,
+  goesTo,
+  showSubtitle = true,
+}) => {
   const navigation = useNavigation();
   const [movieDetails, setMovieDetails] = useState(null);
 
@@ -32,25 +39,33 @@ const Ranking = ({ index, title, coverPic, rating, showSubtitle = true }) => {
       <View style={styles.indexBox}>
         <Text style={styles.index}>{index}.</Text>
       </View>
-      <View style={styles.entry}>
-        <View style={styles.coverPicContainer}>
-          <Image style={styles.coverPic} source={{ uri: coverPic }} />
+      <Pressable
+        onPress={() =>
+          navigation.navigate(goesTo, {
+            details: movieDetails,
+          })
+        }
+      >
+        <View style={styles.entry}>
+          <View style={styles.coverPicContainer}>
+            <Image style={styles.coverPic} source={{ uri: coverPic }} />
+          </View>
+          <View style={styles.words}>
+            <Text numberOfLines={1} style={styles.title}>
+              {title}
+            </Text>
+            {showSubtitle && (
+              <View style={styles.subtitle}>
+                <Text style={styles.rating}>{rating}/10 </Text>
+                <Image
+                  source={require("../assets/star.png")}
+                  style={styles.star}
+                ></Image>
+              </View>
+            )}
+          </View>
         </View>
-        <View style={styles.words}>
-          <Text numberOfLines={1} style={styles.title}>
-            {title}
-          </Text>
-          {showSubtitle && (
-            <View style={styles.subtitle}>
-              <Text style={styles.rating}>{rating}/10 </Text>
-              <Image
-                source={require("../assets/star.png")}
-                style={styles.star}
-              ></Image>
-            </View>
-          )}
-        </View>
-      </View>
+      </Pressable>
     </View>
   );
 };

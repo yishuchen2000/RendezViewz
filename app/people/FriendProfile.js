@@ -40,7 +40,7 @@ export default function FriendProfile() {
     rankedNumber,
     wishlistNumber,
   } = route.params;
-  console.log("USER_IDin FriendProfile", id);
+  console.log("USER_ID in FriendProfile", id);
   // console.log("friendNUMBER", friendNumber);
   // console.log("myPostData", myPostData);
   // console.log("profileData", profileData);
