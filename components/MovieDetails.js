@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -6,13 +6,81 @@ import {
   Dimensions,
   ScrollView,
   Image,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import supabase from "../Supabase";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+const clapboardImage = require("../assets/Clapboard2.png"); // Adjust the path as necessary
+
 const MovieDetails = ({ item }) => {
+  const addToWishlist = async () => {
+    try {
+      const { data, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      if (
+        !data ||
+        !data.session ||
+        !data.session.user ||
+        !data.session.user.id
+      ) {
+        Alert.alert("Error", "User not logged in.");
+        return;
+      }
+
+      const userId = data.session.user.id;
+
+      // Check if the movie is already in the wishlist
+      const { data: wishlistData, error: wishlistError } = await supabase
+        .from("wishlist")
+        .select("title")
+        .eq("user_id", userId);
+
+      if (wishlistError) {
+        throw wishlistError;
+      }
+
+      const alreadyInWishlist = wishlistData.some(
+        (wishlistItem) => wishlistItem.title === item.Title
+      );
+
+      if (alreadyInWishlist) {
+        Alert.alert("Error", `${item.Title} is already in your wishlist.`);
+        return;
+      }
+
+      const newId = Date.now();
+      const { data: upsertedData, error: upsertError } = await supabase
+        .from("wishlist")
+        .upsert([
+          {
+            id: newId,
+            title: item.Title,
+            url: item.Poster,
+            genres: item.Genre,
+            user_id: userId,
+          },
+        ]);
+
+      if (upsertError) {
+        throw upsertError;
+      }
+
+      Alert.alert("Success", `${item.Title} has been added to your wishlist.`);
+    } catch (error) {
+      Alert.alert("Error", "Failed to add to wishlist.");
+      console.error("Failed to add to wishlist:", error);
+    }
+  };
+
   const renderWriters = () => {
     if (item.Writer === "N/A") {
       return null;
@@ -88,6 +156,9 @@ const MovieDetails = ({ item }) => {
           <View style={styles.detailsContainer}>
             <Text style={styles.title}>{item.Title}</Text>
             <View style={styles.genreContainer}>{renderGenreList()}</View>
+            <TouchableOpacity style={styles.addButton} onPress={addToWishlist}>
+              <Text style={styles.addButtonText}>+ Add to Wishlist</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.lowerBody}>
             <View style={styles.plotBox}>
@@ -138,6 +209,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: "center",
   },
+  addButton: {
+    backgroundColor: "#858AE3",
+    borderRadius: 20,
+    padding: 10,
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  addButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   genreContainer: {
     backgroundColor: "#97DFFC",
     borderRadius: 10,
@@ -180,11 +263,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 2,
     overflow: "hidden",
-    marginTop: 0, // Adjust as necessary
+    marginTop: 0,
   },
   poster: {
     height: windowHeight * 0.5,
-    width: windowWidth * 0.9, // Adjust width as necessary to maintain aspect ratio
+    width: windowWidth * 0.9,
     resizeMode: "contain",
   },
   peopleContainer: {
@@ -243,6 +326,11 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     color: "white",
     fontSize: 15,
+  },
+  clapboard: {
+    height: windowHeight * 0.03,
+    width: windowWidth,
+    alignSelf: "center",
   },
 });
 
