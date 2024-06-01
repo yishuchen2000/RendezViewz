@@ -28,6 +28,9 @@ const UNDERLINE = require("../../assets/underline.png");
 
 export default function FriendProfile() {
   const navigation = useNavigation();
+  // const [data, setData] = useState([]);
+
+  // const [userID, setUserID] = useState(null);
   const route = useRoute();
   const {
     id,
@@ -37,8 +40,24 @@ export default function FriendProfile() {
     rankedNumber,
     wishlistNumber,
   } = route.params;
-  console.log("USER_IDin FriendProfile", id);
+  console.log("USER_ID in FriendProfile", id);
+  // console.log("friendNUMBER", friendNumber);
+  // console.log("myPostData", myPostData);
+  // console.log("profileData", profileData);
   const [isFollowed, setIsFollowed] = useState(false);
+
+  // if (!numbersFetched || !infoFetched) {
+  // return (
+  //   <LinearGradient
+  //     colors={["#361866", "#E29292"]}
+  //     style={[styles.container, { paddingHorizontal: 8 }]}
+  //   >
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <ActivityIndicator size="large" color="purple" />
+  //       <Text style={{ color: "white" }}>Loading...</Text>
+  //     </View>
+  //   </LinearGradient>
+  // );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,8 +65,15 @@ export default function FriendProfile() {
         colors={["#0e0111", "#311866"]}
         style={[styles.container, { paddingHorizontal: 8 }]}
       >
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContent}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.header}>
+            {/* <Pressable onPress={accountPage} style={styles.titleBar}>
+              <FontAwesome name="gear" size={24} color="white" />
+            </Pressable> */}
+
             <View style={styles.centeredView}>
               <View style={styles.profileImageContainer}>
                 <Image
@@ -56,6 +82,12 @@ export default function FriendProfile() {
                   }}
                   style={styles.profileImage}
                 />
+                {/* <Pressable
+                  style={styles.cameraIcon}
+                  onPress={() => console.log("Camera icon pressed")}
+                >
+                  <EvilIcons name="camera" size={24} color="black" />
+                </Pressable> */}
               </View>
             </View>
 
@@ -68,6 +100,8 @@ export default function FriendProfile() {
                     id: id,
                   })
                 }
+
+                // onPress={() => navigation.navigate("Friend Movies", { id: id })}
               >
                 <View style={styles.statsBox}>
                   <Text style={[styles.text, { fontSize: 18 }]}>
@@ -76,11 +110,25 @@ export default function FriendProfile() {
                   <Text style={[styles.text, styles.subText]}>Ranked</Text>
                 </View>
               </Pressable>
+
               <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>
                 {profileData[0].username}
               </Text>
-              <View style={[styles.statsBox, {}]}>
-                <Pressable style={[styles.statsBox]}>
+
+              <View
+                style={[
+                  styles.statsBox,
+                  {
+                    // borderColor: "white",
+                    // borderLeftWidth: 1,
+                    // borderRightWidth: 1,
+                  },
+                ]}
+              >
+                <Pressable
+                  style={[styles.statsBox]}
+                  // onPress={() => navigation.navigate("people")}
+                >
                   <Text style={[styles.text, { fontSize: 18 }]}>
                     {friendNumber}
                   </Text>
@@ -90,10 +138,38 @@ export default function FriendProfile() {
             </View>
           </View>
 
+          <View style={styles.buttonsContainer}>
+            {
+              /* <Pressable
+              style={[styles.button, styles.followButton]}
+              // onPress={toggleFollow}
+            >
+              <Text style={[styles.text, styles.followButtonText]}>
+                {isFollowed ? "Added" : "Add"}
+              </Text>
+            </Pressable>*/
+
+              <Pressable
+                style={[styles.button, styles.messageButton]}
+                onPress={() =>
+                  navigation.navigate("Friend Movies", {
+                    screen: "Friend Rankings",
+                    id: id,
+                  })
+                }
+              >
+                <Text style={[styles.text, styles.messageButtonText]}>
+                  Rankings
+                </Text>
+              </Pressable>
+            }
+          </View>
           <Text style={[styles.subText, styles.recent]}>About</Text>
           <View style={styles.rectangleContainer}>
             <View style={styles.leftContainer}>
-              <Text style={styles.rectangleText}>{profileData[0].info}</Text>
+              <Text style={styles.rectangleText}>
+                <Text style={styles.rectangleText}>{profileData[0].info}</Text>
+              </Text>
             </View>
             <View style={styles.centerContainer}>
               <View style={styles.rectangleLine} />
@@ -120,7 +196,15 @@ export default function FriendProfile() {
 
           <View style={styles.info}>
             <View style={styles.postBar}>
-              <Text style={[styles.subText, styles.recent]}>Posts</Text>
+              <Text
+                style={[
+                  styles.subText,
+                  styles.recent,
+                  { marginTop: windowHeight * 0.02 },
+                ]}
+              >
+                Posts
+              </Text>
               {myPostData.map((item) => (
                 <ProfilePost
                   profileData={profileData}
@@ -199,8 +283,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 3,
     borderColor: "#97DFFC",
-    width: 120,
-    marginLeft: 20,
+    width: windowWidth * 0.31,
+    marginLeft: 0,
   },
   messageButtonText: {
     color: "#97DFFC",
@@ -240,7 +324,7 @@ const styles = StyleSheet.create({
   rectangleLine: {
     width: 3,
     backgroundColor: "#858AE3",
-    height: "80%",
+    height: "30%",
     alignSelf: "center",
   },
   wishlistInfo: {
@@ -268,7 +352,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   centeredView: {
+    // borderWidth: 1,
+    // borderColor: "white",
     alignItems: "center",
+    paddingTop: 32,
     justifyContent: "center",
     flex: 1,
   },
@@ -304,7 +391,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   subText: {
-    paddingTop: 10,
     fontSize: 12,
     color: "white",
     textTransform: "uppercase",

@@ -284,7 +284,6 @@ const ChatScreen = () => {
         scrollToBottom
         scrollToBottomComponent={scrollToBottomComponent}
         renderInputToolbar={renderInputToolbar}
-        renderAvatar={renderAvatar}
         textInputProps={styles.composer}
         bottomOffset={80}
         minInputToolbarHeight={52} // Adjust this value as needed to give space between the last message and the text input
