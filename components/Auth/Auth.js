@@ -162,7 +162,7 @@ export default function Auth() {
 const styles = StyleSheet.create({
   helloText: {
     color: "white",
-    fontSize: windowHeight * 0.08,
+    fontSize: windowHeight * 0.07,
     position: "absolute",
     top: windowHeight * 0.12,
     left: windowWidth * 0.05,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   rendezviewzText: {
     color: "rgba(151, 223, 252, 1)",
-    fontSize: windowHeight * 0.095,
+    fontSize: windowHeight * 0.084,
     position: "absolute",
     top: windowHeight * 0.28, // Adjust as needed based on the positioning you desire
     left: windowWidth * 0.05, // Adjust as needed based on the positioning you desire

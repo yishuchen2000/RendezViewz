@@ -304,7 +304,6 @@ const Post = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.profile}>
-
             <Pressable
               onPress={
                 // () =>

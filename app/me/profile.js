@@ -189,32 +189,10 @@ export default function Me() {
               </View>
             </View>
           </View>
-
-          {/* <View style={styles.buttonsContainer}>
-            <Pressable
-              style={[styles.button, styles.followButton]}
-              onPress={toggleFollow}>
-              <Text style={[styles.text, styles.followButtonText]}>
-                {isFollowed ? 'Added' : 'Add'}
-
-              </Text>
-            </Pressable>
-
-            <Pressable
-              style={[styles.button, styles.messageButton]}
-
-              onPress={() => console.log('Message button pressed')}>
-
-              <Text style={[styles.text, styles.messageButtonText]}>
-                Rankings
-              </Text>
-            </Pressable>
-
-          </View> */}
           <Text style={[styles.subText, styles.recent]}>About</Text>
           <View style={styles.rectangleContainer}>
             <View style={styles.leftContainer}>
-              <Text style={styles.rectangleText}>bio goes here</Text>
+              <Text style={styles.rectangleText}>{profileData[0].info}</Text>
             </View>
             <View style={styles.centerContainer}>
               <View style={styles.rectangleLine} />
@@ -334,7 +312,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     flexDirection: "row",
     alignItems: "center",
-    height: 90,
+    minHeight: 60,
+    maxHeight: 150,
   },
   leftContainer: {
     flex: 2,

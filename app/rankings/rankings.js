@@ -51,6 +51,7 @@ export default function Rankings() {
         "postgres_changes",
         { event: "*", schema: "public", table: "rankings" },
         (payload) => {
+          fetchSession();
           handleRankingChange(payload);
         }
       )
@@ -77,44 +78,60 @@ export default function Rankings() {
   };
 
   const handleRankingChange = async (payload) => {
-    const { data: rankingsList } = await supabase
-      .from("rankings")
-      .select("*")
-      .eq("user_id", session.user.id);
+    if (!session) {
+      //There should always be a session, and it keeps falling in here right now
+      return;
+    }
+    try {
+      const { data: rankingsList } = await supabase
+        .from("rankings")
+        .select("*")
+        .eq("user_id", session.user.id);
 
-    const sortedData = rankingsList.sort((a, b) => b.rating - a.rating);
-    sortedData.forEach((item, index) => (item.index = index + 1));
-    setRankings(sortedData);
+      const sortedData = rankingsList.sort((a, b) => b.rating - a.rating);
+      sortedData.forEach((item, index) => (item.index = index + 1));
+      setRankings(sortedData);
 
-    LayoutAnimation.configureNext(layoutAnimConfig);
+      LayoutAnimation.configureNext(layoutAnimConfig);
+    } catch (error) {
+      console.error("Failed to handle ranking change:", error);
+    }
   };
 
   const handleDelete = async (id) => {
-    await supabase.from("rankings").delete().eq("id", id);
+    try {
+      await supabase.from("rankings").delete().eq("id", id);
 
-    const { data: response } = await supabase
-      .from("rankings")
-      .select("*")
-      .eq("user_id", session.user.id);
+      const { data: response } = await supabase
+        .from("rankings")
+        .select("*")
+        .eq("user_id", session.user.id);
 
-    const sortedData = response.sort((a, b) => b.rating - a.rating);
-    sortedData.forEach((item, index) => (item.index = index + 1));
-    setRankings(sortedData);
+      const sortedData = response.sort((a, b) => b.rating - a.rating);
+      sortedData.forEach((item, index) => (item.index = index + 1));
+      setRankings(sortedData);
 
-    LayoutAnimation.configureNext(layoutAnimConfig);
+      LayoutAnimation.configureNext(layoutAnimConfig);
+    } catch (error) {
+      console.error("Failed to delete ranking:", error);
+    }
   };
 
   const createFilterList = async () => {
-    const { data: response } = await supabase
-      .from("rankings")
-      .select("*")
-      .eq("user_id", session.user.id);
+    try {
+      const { data: response } = await supabase
+        .from("rankings")
+        .select("*")
+        .eq("user_id", session.user.id);
 
-    const genreSet = new Set();
-    response.forEach((item) =>
-      item.genres.forEach((genre) => genreSet.add(genre))
-    );
-    setGenreList(Array.from(genreSet).sort());
+      const genreSet = new Set();
+      response.forEach((item) =>
+        item.genres.forEach((genre) => genreSet.add(genre))
+      );
+      setGenreList(Array.from(genreSet).sort());
+    } catch (error) {
+      console.error("Failed to create filter list:", error);
+    }
   };
 
   const filterByGenres = (rankings) => {
