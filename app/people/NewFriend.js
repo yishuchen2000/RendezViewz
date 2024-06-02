@@ -242,6 +242,7 @@ const styles = StyleSheet.create({
     // height: 32,
     width: "100%",
     height: "100%",
+    borderRadius: 22.5,
     // marginRight: 4,
     // borderRadius: "50%",
     // borderTopRightRadius: '100%',
@@ -252,6 +253,7 @@ const styles = StyleSheet.create({
     height: 45,
     // margin: 5,
     marginRight: 15,
+    borderRadius: 22.5,
   },
   profile: {
     flexDirection: "row",

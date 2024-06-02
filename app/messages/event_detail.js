@@ -20,7 +20,6 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const EventDetail = ({ route }) => {
-  console.log("PASSED IN INFO", route.params);
   const { date, name, time, people, people_ids, accepted } = route.params;
   const [showAllPeople, setShowAllPeople] = useState(false);
   const [showURL, setShowURL] = useState(null);

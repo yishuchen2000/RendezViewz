@@ -189,6 +189,7 @@ const styles = StyleSheet.create({
   profilePic: {
     width: "100%",
     height: "100%",
+    borderRadius: 22.5,
   },
   profilePicContainer: {
     width: 45,
@@ -196,6 +197,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 22.5,
   },
   profile: {
     flexDirection: "row",
