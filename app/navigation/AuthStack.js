@@ -1,8 +1,9 @@
-// Auth.js
+// AuthStack.js
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Auth from "./Auth";
-import AuthSignUp from "./AuthSignUp";
+import Auth from "../../components/Auth/Auth";
+import AuthSignUp from "../../components/Auth/AuthSignUp";
+import Account from "../../components/Auth/Account";
 
 const Stack = createStackNavigator();
 
@@ -24,20 +25,18 @@ const AuthStack = () => {
           headerBackTitleVisible: false,
         }}
       />
-    </Stack.Navigator>
-  );
-};
-
-const AuthPage = () => {
-  return (
-    <Stack.Navigator>
       <Stack.Screen
-        name="AuthPage"
-        component={AuthStack}
-        options={{ headerShown: false }}
+        name="Account"
+        component={Account}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
       />
     </Stack.Navigator>
   );
 };
 
-export default AuthPage;
+export default AuthStack;

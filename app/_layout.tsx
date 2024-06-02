@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+import { View, Text, ActivityIndicator, Button } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import {
@@ -16,15 +11,15 @@ import {
 } from "@expo-google-fonts/imperial-script";
 import * as SplashScreen from "expo-splash-screen";
 import supabase from "../Supabase";
-import Auth from "../components/Auth/Auth";
+import AuthStack from "./navigation/AuthStack";
 import RankingTabs from "./rankings/_layout";
 import PeopleStack from "./people/_layout";
 import MessagesLayout from "./messages/_layout";
 import FeedLayout from "./feed/_layout";
 import ProfilePage from "./me/_layout";
-import { Session } from "@supabase/supabase-js";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 function MyTabs() {
   return (
@@ -100,15 +95,18 @@ function MyTabs() {
 }
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      setLoadingProfile(false);
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      setLoadingProfile(false);
     });
   }, []);
 
@@ -130,24 +128,32 @@ export default function App() {
     loadFontsAndNavigate();
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setSession(null); // Clear the session state
+  };
+
+  if (!fontsLoaded || loadingProfile) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="blue" />
         <Text>Loading...</Text>
+        <Button title="Sign Out" onPress={handleSignOut} />
       </View>
     );
   }
 
-  if (session && session.user) {
-    return <MyTabs />;
-  }
-
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={{ flex: 1 }}>
-        <Auth />
-      </View>
-    </TouchableWithoutFeedback>
+    <NavigationContainer independent={true}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {session && session.user ? (
+          <>
+            <Stack.Screen name="MainApp" component={MyTabs} />
+          </>
+        ) : (
+          <Stack.Screen name="Auth" component={AuthStack} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

@@ -18,7 +18,7 @@ import ProfilePost from "../../components/ProfilePost";
 //import Rankings from "./rankings/rankings";
 import { useNavigation } from "@react-navigation/native";
 import MyTabs from "../rankings/_layout";
-import Account from "../../components/Account";
+import Account from "../../components/Auth/Account";
 import { Session } from "@supabase/supabase-js";
 //import MyTabs from "./rankings";
 import { EvilIcons } from "@expo/vector-icons";

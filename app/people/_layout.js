@@ -90,6 +90,7 @@ const PeopleStack = () => {
             color: "white",
           },
           headerTintColor: "white",
+          headerBackTitleVisible: false,
         }}
       />
       <Stack.Screen

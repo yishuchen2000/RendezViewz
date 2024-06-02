@@ -14,7 +14,7 @@ import supabase from "../../Supabase";
 import { Button, Input } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import AuthSignUp from "./AuthSignUp";
-import Account from "../Account";
+import Account from "./Account";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import {
   useFonts,
@@ -53,23 +53,6 @@ export default function Auth() {
 
     if (error) Alert.alert(error.message);
     setLoading(false);
-  }
-
-  async function signUpWithEmail() {
-    setLoading(true);
-    // setFirstTime(true);
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-
-    if (error) Alert.alert(error.message);
-    // if (!session)
-    //   Alert.alert("Please check your inbox for email verification!");
-    // setLoading(false);
   }
 
   // if (firstTime) {

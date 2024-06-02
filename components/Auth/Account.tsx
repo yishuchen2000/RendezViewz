@@ -1,5 +1,5 @@
-import {useState, useEffect} from 'react';
-import supabase from '../Supabase';
+import { useState, useEffect } from "react";
+import supabase from "../../Supabase";
 import {
   StyleSheet,
   View,
@@ -8,16 +8,15 @@ import {
   Dimensions,
   TouchableHighlight,
   SafeAreaView,
-
 } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import { Session } from "@supabase/supabase-js";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
-export default function Account({session}: {session: Session}) {
+export default function Account({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true);
 
   const [username, setUsername] = useState("");
@@ -31,12 +30,12 @@ export default function Account({session}: {session: Session}) {
   async function getProfile() {
     try {
       setLoading(true);
-      if (!session?.user) throw new Error('No user on the session!');
+      if (!session?.user) throw new Error("No user on the session!");
 
-      const {data, error, status} = await supabase
-        .from('profiles')
+      const { data, error, status } = await supabase
+        .from("profiles")
         .select(`username, website, avatar_url`)
-        .eq('id', session?.user.id)
+        .eq("id", session?.user.id)
         .single();
       if (error && status !== 406) {
         throw error;
@@ -67,7 +66,7 @@ export default function Account({session}: {session: Session}) {
   }) {
     try {
       setLoading(true);
-      if (!session?.user) throw new Error('No user on the session!');
+      if (!session?.user) throw new Error("No user on the session!");
 
       const updates = {
         id: session?.user.id,
@@ -77,7 +76,7 @@ export default function Account({session}: {session: Session}) {
         updated_at: new Date(),
       };
 
-      const {error} = await supabase.from('profiles').upsert(updates);
+      const { error } = await supabase.from("profiles").upsert(updates);
 
       if (error) {
         throw error;
@@ -93,7 +92,6 @@ export default function Account({session}: {session: Session}) {
 
   return (
     <LinearGradient
-
       colors={["#0E0111", "#311866"]}
       style={[styles.container, { paddingHorizontal: windowWidth * 0.1 }]}
     >
@@ -102,9 +100,9 @@ export default function Account({session}: {session: Session}) {
         <View style={[styles.verticallySpaced, styles.mt20]}>
           <Input
             label="Username"
-            value={username || ''}
+            value={username || ""}
             labelStyle={styles.textWhite}
-            onChangeText={text => setUsername(text)}
+            onChangeText={(text) => setUsername(text)}
             inputStyle={styles.textWhite}
           />
         </View>
@@ -124,12 +122,11 @@ export default function Account({session}: {session: Session}) {
             underlayColor="transparent" // Set the underlay color to transparent
           >
             <Button
-              title={loading ? 'Loading ...' : 'Update'}
+              title={loading ? "Loading ..." : "Update"}
               onPress={() =>
-                updateProfile({username, website, avatar_url: avatarUrl})
+                updateProfile({ username, website, avatar_url: avatarUrl })
               }
               disabled={loading}
-
               titleStyle={{ color: "#0E0111" }} // Change text color
               buttonStyle={{
                 backgroundColor: "#858AE3", // Change background color
@@ -149,7 +146,6 @@ export default function Account({session}: {session: Session}) {
             <Button
               title="Sign Out"
               onPress={() => supabase.auth.signOut()}
-
               titleStyle={{ color: "#97DFFC" }} // Change text color
               disabled={loading}
               buttonStyle={{
