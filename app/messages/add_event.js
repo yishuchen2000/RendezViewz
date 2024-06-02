@@ -35,9 +35,12 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const AddEvent = ({ route, navigation }) => {
+  // data initially used by Yishu
   const [show, setShow] = useState(null);
   const [poster, setPoster] = useState(null);
   const [person, setPerson] = useState([]);
+  const [personValue, setPersonValue] = useState([]);
+  const [allSelected, setAllSelected] = useState([]);
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [time, setTime] = useState(dayjs().format("HH:mm"));
@@ -54,25 +57,65 @@ const AddEvent = ({ route, navigation }) => {
   const [selectedYear, setSelectedYear] = useState("");
   const [selectionChosen, setSelectionChosen] = useState(false);
 
+  // variables added by Char
+  const [session, setSession] = useState(null);
+  const [friendIDs, setFriendIDs] = useState(null);
+  const [currentUser, setCurrentUserData] = useState(null);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await supabase.from("friends").select("*");
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      console.log("USER", session.user);
+
+      const fetchFriendID = async () => {
+        const friends = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
+
+        const user = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
+        // console.log("current User DAta", user.data[0]);
+        setCurrentUserData(user.data[0]);
+
+        if (friends.error) {
+          throw new Error(friends.error.message);
+        }
+        const updatedFriendIds = friends.data[0].friend_ids.filter(
+          (friendId) => friendId !== session.user.id
+        );
+        setFriendIDs(updatedFriendIds);
+      };
+      fetchFriendID();
+    });
+  }, []);
+
+  useEffect(() => {
+    if (friendIDs) {
+      // console.log("TYPE", typeof friendIDs);
+      const fetchFriends = async () => {
+        // console.log("searching matched friends!");
+        const response = await supabase
+          .from("profiles")
+          .select("*")
+          .in("id", friendIDs);
+
         if (response.error) {
           throw new Error(response.error.message);
         }
         const peopleData = response.data.map((person) => ({
-          label: person.user,
+          label: person.username,
           value: person.id.toString(),
-          photo: person.profile_pic,
+          photo: person.avatar_url,
         }));
+
         setPlist(peopleData);
-      } catch (error) {
-        console.error("Error fetching people:", error.message);
-      }
-    };
-    fetchData();
-  }, []);
+      };
+      fetchFriends();
+    }
+  }, [friendIDs]);
 
   useEffect(() => {
     setDate(dayjs().format("YYYY/MM/DD"));
@@ -108,11 +151,28 @@ const AddEvent = ({ route, navigation }) => {
     setModalon(!modalon);
   }
 
+  // const handleSelectedPeople = (selectedPeople) => {
+  // const personLabels = Plist.filter((person) =>
+  //   selectedPeople.includes(person.value)
+  // ).map((person) => person.label);
+  // setPerson(personLabels);
+  // };
+
   const handleSelectedPeople = (selectedPeople) => {
-    const personLabels = Plist.filter((person) =>
+    const all_selected = Plist.filter((person) =>
       selectedPeople.includes(person.value)
-    ).map((person) => person.label);
-    setPerson(personLabels);
+    );
+    setAllSelected(all_selected);
+
+    const personLabels = all_selected.map((person) => person.label);
+    const personValues = all_selected.map((person) => person.value);
+
+    // Prepend session.user.id to the personValues array
+    const updatedPersonValues = [session.user.id, ...personValues];
+    const updatedPersonLabels = [currentUser.username, ...personLabels];
+
+    setPerson(updatedPersonLabels);
+    setPersonValue(updatedPersonValues);
   };
 
   const handleAddEvent = async () => {
@@ -152,20 +212,70 @@ const AddEvent = ({ route, navigation }) => {
         return;
       }
 
-      const { insertError } = await supabase
+      // insert new event
+      const { data: newPartyData, error: newPartyError } = await supabase
         .from("party")
-        .insert([{ date: date, people: person, show: show, time: time }]);
+        .insert([
+          {
+            show: show,
+            date: date,
+            time: time,
+            people: person,
+            people_ids: personValue,
+            host: session.user.id,
+            public: false,
+            accepted: [session.user.id.toString()],
+          },
+        ])
+        .select();
 
-      if (insertError) {
-        throw new Error(insertError.message);
+      if (newPartyError) {
+        console.error("Error inserting party:", newPartyError);
+        return;
       }
 
+      const eventId = newPartyData[0].id;
+      // console.log(eventId);
+
+      const formattedDateString = date.replace(/\//g, "-");
+      const timestamp = new Date(`${formattedDateString}T${time}`);
+      // console.log(timestamp);
+
+      // send out notification
+      for (const individual of allSelected) {
+        if (individual.value != session.user.id) {
+          const invite = await supabase.from("invites").insert([
+            {
+              created_at: new Date(),
+              from: session.user.id,
+              to: individual.value,
+              event_time: timestamp,
+              people: person,
+              people_ids: personValue,
+              name: show,
+              event_id: eventId,
+            },
+          ]);
+          // console.log(invite);
+        }
+      }
+
+      // navigate to success
+      const updatedPeopleData = [
+        {
+          label: currentUser.username,
+          value: currentUser.id.toString(),
+          photo: currentUser.avatar_url,
+        },
+        ...Plist,
+      ];
+      // setPlist(updatedPeopleData);
       navigation.navigate("Success", {
         date: date,
         name: show,
         people: person,
         time: time,
-        all: Plist,
+        all: updatedPeopleData,
         poster: poster,
       });
     } catch (error) {

@@ -14,13 +14,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import * as Calendar from "expo-calendar"; // Importing calendar module
 import * as Localization from "expo-localization";
-import getMovieDetails from "../../components/getMovieDetails";
+import getMovieDetails from "../../../components/getMovieDetails";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const EventDetail = ({ route }) => {
-  console.log("PASSED IN INFO", route.params);
   const { date, name, time, people, people_ids, accepted } = route.params;
   const [showAllPeople, setShowAllPeople] = useState(false);
   const [showURL, setShowURL] = useState(null);
@@ -253,7 +252,7 @@ const EventDetail = ({ route }) => {
       </ScrollView>
       <View style={styles.clapboard}>
         <Image
-          source={require("../../assets/Clapboard2.png")}
+          source={require("../../../assets/Clapboard2.png")}
           style={{
             flex: 1,
             width: windowWidth,
