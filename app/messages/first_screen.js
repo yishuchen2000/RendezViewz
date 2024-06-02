@@ -32,21 +32,27 @@ export default function FirstScreen({ navigation }) {
   const fetchData = async (session) => {
     console.log(session);
     try {
+      // fetch invites that are accepted
       const { data, error } = await supabase
-        // .from("party")
-        // .select("*")
-        // .order("date", { ascending: false });
-
         .from("invites")
         .select(
           `
               *,
-      party ( accepted, show, date, time, people, people_ids, host, accepted, public ),
+      party ( id, accepted, show, date, time, people, people_ids, host, accepted, public ),
       profiles ( username )
       `
         )
         .eq("accepted", true)
         .eq("to", session.user.id);
+
+      // fetch events where the host is the current user
+      const response = await supabase
+        .from("party")
+        .select("*")
+        .eq("host", session.user.id)
+        .order("date", { ascending: false });
+      console.log("data2", response.data);
+      const data2 = response.data;
 
       if (error) {
         console.error("Error fetching data:", error.message);
@@ -68,8 +74,22 @@ export default function FirstScreen({ navigation }) {
         }
 
         // Add events to the formattedData object
+        // add accepted invites
         data.forEach((event) => {
-          const { date, show, people, time } = event.party;
+          const { id, date, time, show, people, host, accepted, people_ids } =
+            event.party;
+
+          console.log(
+            "[1]",
+            id,
+            date,
+            time,
+            show,
+            people,
+            host,
+            accepted,
+            people_ids
+          );
 
           if (!formattedData[date]) {
             formattedData[date] = [];
@@ -80,6 +100,43 @@ export default function FirstScreen({ navigation }) {
             people: people,
             time: time,
             date: date,
+            id: id,
+            host_id: host,
+            accepted_friend_ids: accepted,
+            people_ids: people_ids,
+          });
+        });
+
+        // add events with current user as host
+        data2.forEach((event) => {
+          const { id, date, time, show, people, host, accepted, people_ids } =
+            event;
+
+          console.log(
+            "[2]",
+            id,
+            date,
+            time,
+            show,
+            people,
+            host,
+            accepted,
+            people_ids
+          );
+
+          if (!formattedData[date]) {
+            formattedData[date] = [];
+          }
+
+          formattedData[date].push({
+            name: show,
+            people: people,
+            time: time,
+            date: date,
+            id: id,
+            host_id: host,
+            accepted_friend_ids: accepted,
+            people_ids: people_ids,
           });
         });
 
@@ -107,36 +164,134 @@ export default function FirstScreen({ navigation }) {
     return unsubscribe;
   }, [navigation]);
 
-  const removeEvent = async (date, eventName) => {
-    try {
-      // Delete the event from Supabase
-      const { error } = await supabase
-        .from("party")
-        .delete()
-        .eq("date", date)
-        .eq("show", eventName);
+  const removeEvent = async (
+    id,
+    event_id,
+    accepted_friend_ids,
+    host_id,
+    date,
+    eventName
+  ) => {
+    if (!id) {
+      id = event_id;
+    }
+    if (!event_id) {
+      event_id = id;
+    }
+    console.log(
+      "INPUT DATA TO DELETE",
+      id,
+      event_id,
+      accepted_friend_ids,
+      host_id,
+      date,
+      eventName
+    );
+    // [1] you are the host - delete event for everyone
+    if (host_id === session.user.id) {
+      try {
+        // delete all event invites from invites
+        const { error2 } = await supabase
+          .from("invites")
+          .delete()
+          .eq("event_id", event_id);
 
-      if (error) {
-        throw new Error(error.message);
+        // Delete the event from party
+        const { error } = await supabase
+          .from("party")
+          .delete()
+          .eq("id", event_id);
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        if (error2) {
+          throw new Error(error2.message);
+        }
+
+        // Update the UI after successful deletion
+        const updatedItems = { ...items };
+        console.log("updatedItems", updatedItems);
+        const index = updatedItems[date].findIndex(
+          (event) => event.id === event_id
+        );
+        if (index !== -1) {
+          updatedItems[date].splice(index, 1);
+          setItems(updatedItems);
+          // setFlatListData(updatedItems);
+        }
+
+        Alert.alert("Success", "Event deleted successfully!");
+      } catch (error) {
+        Alert.alert(
+          "Error",
+          `Failed to delete event in case [1]: ${error.message}`
+        );
       }
+    } else {
+      try {
+        // [2] you are a participant - change current pending to false, delete the uuid from the party table
+        // change accept status on the general event table
+        const { error2 } = await supabase
+          .from("invites")
+          .update({ accepted: false })
+          .eq("event_id", event_id)
+          .eq("to", session.user.id);
 
-      // Update the UI after successful deletion
-      const updatedItems = { ...items };
-      const index = updatedItems[date].findIndex(
-        (event) => event.name === eventName
-      );
-      if (index !== -1) {
-        updatedItems[date].splice(index, 1);
-        setItems(updatedItems);
+        // remove the current uuid from the corresponding party entry
+
+        // filter through all items, find the item with the same event_id, get the party - accepted - array
+        // item.party.accepted
+        const updated_accepted = accepted_friend_ids;
+        if (!accepted_friend_ids.includes(session.user.id)) {
+          updated_accepted.push(session.user.id);
+        }
+        const { error } = await supabase
+          .from("party")
+          .update({ accepted: updated_accepted })
+          .eq("id", event_id);
+
+        // console.log("updated_accepted", updated_accepted);
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        if (error2) {
+          throw new Error(error2.message);
+        }
+
+        // Update the UI after successful deletion
+        const updatedItems = { ...items };
+        console.log("updatedItems", updatedItems);
+        const index = updatedItems[date].findIndex(
+          (event) => event.id === event_id
+        );
+        if (index !== -1) {
+          updatedItems[date].splice(index, 1);
+          setItems(updatedItems);
+          // setFlatListData(updatedItems);
+        }
+
+        Alert.alert("Success", "Event deleted successfully!");
+      } catch (error) {
+        Alert.alert(
+          "Error",
+          `Failed to delete event in case [2]: ${error.message}`
+        );
       }
-
-      Alert.alert("Success", "Event deleted successfully!");
-    } catch (error) {
-      Alert.alert("Error", `Failed to delete event: ${error.message}`);
     }
   };
 
-  const doublecheck = (date, eventName) => {
+  const doublecheck = (
+    id,
+    event_id,
+    accepted_friend_ids,
+    host_id,
+    date,
+    eventName
+  ) => {
     Alert.alert(
       "Confirm Deletion",
       "Are you sure you want to remove this event?",
@@ -145,7 +300,18 @@ export default function FirstScreen({ navigation }) {
           text: "Cancel",
           style: "cancel",
         },
-        { text: "Delete", onPress: () => removeEvent(date, eventName) },
+        {
+          text: "Delete",
+          onPress: () =>
+            removeEvent(
+              id,
+              event_id,
+              accepted_friend_ids,
+              host_id,
+              date,
+              eventName
+            ),
+        },
       ],
       { cancelable: false }
     );
@@ -160,6 +326,8 @@ export default function FirstScreen({ navigation }) {
             name: item.name,
             people: item.people,
             time: item.time,
+            people_ids: item.people_ids,
+            accepted: item.accepted_friend_ids,
           })
         }
       >
@@ -179,7 +347,17 @@ export default function FirstScreen({ navigation }) {
               </Text>
             </View>
             <Pressable
-              onPress={() => doublecheck(item.date, item.name)}
+              onPress={() =>
+                doublecheck(
+                  item.id,
+                  item.event_id,
+                  item.accepted_friend_ids,
+                  item.host_id,
+                  item.date,
+                  item.time,
+                  item.name
+                )
+              }
               style={styles.removeButton}
             >
               <AntDesign name="close" size={20} color="gray" />

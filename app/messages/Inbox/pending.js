@@ -42,7 +42,7 @@ const Pending = ({ route, navigation }) => {
             `
     *,
     profiles ( username ),
-    party ( accepted )
+    party ( accepted, people_ids )
     `
           )
           .is("accepted", null)
@@ -135,10 +135,11 @@ const Pending = ({ route, navigation }) => {
         name: item.name,
         people: item.people,
         event_id: item.event_id,
+        people_ids: item.party.people_ids,
         accepted_friend_ids: item.party.accepted,
       };
     }, []);
-    // console.log("current data seg", formattedData);
+    console.log("current data seg", formattedData);
     setFlatListData(formattedData);
   }, [items]);
 
@@ -171,11 +172,13 @@ const Pending = ({ route, navigation }) => {
     <Pressable
       onPress={() => {
         //console.log(flatListData);
-        navigation.navigate("event_detail", {
+        navigation.navigate("EventDetail", {
           date: item.date,
           name: item.name,
           people: item.people,
           time: item.time,
+          people_ids: item.people_ids,
+          accepted: item.accepted_friend_ids,
         });
       }}
     >
@@ -264,6 +267,22 @@ const Pending = ({ route, navigation }) => {
       </View>
     </Pressable>
   );
+
+  if (!items) {
+    return (
+      <LinearGradient
+        colors={["#0e0111", "#311866"]}
+        style={[styles.container, { paddingHorizontal: 8 }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="purple" />
+          <Text style={{ color: "white" }}>Loading...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient colors={["#0e0111", "#311866"]} style={styles.container}>
