@@ -31,7 +31,7 @@ const Events = ({ route, navigation }) => {
   const [session, setSession] = useState(null);
 
   const fetchData = async (session) => {
-    console.log(session);
+    // console.log(session);
     // const currentDate = new Date();
     const currentTime = new Date().toISOString();
     try {
@@ -56,7 +56,7 @@ const Events = ({ route, navigation }) => {
         .select("*")
         .eq("host", session.user.id)
         .order("date", { ascending: false });
-      console.log("data2", response.data);
+      // console.log("data2", response.data);
       const data2 = response.data;
 
       if (error) {
@@ -144,7 +144,7 @@ const Events = ({ route, navigation }) => {
           });
         });
 
-        console.log("PEOPLE IDS???", formattedData);
+        // console.log("PEOPLE IDS???", formattedData);
 
         setItems(formattedData);
       }
@@ -178,15 +178,15 @@ const Events = ({ route, navigation }) => {
     date,
     eventName
   ) => {
-    console.log(
-      "INPUT DATA TO DELETE",
-      id,
-      event_id,
-      accepted_friend_ids,
-      host_id,
-      date,
-      eventName
-    );
+    // console.log(
+    //   "INPUT DATA TO DELETE",
+    //   id,
+    //   event_id,
+    //   accepted_friend_ids,
+    //   host_id,
+    //   date,
+    //   eventName
+    // );
     // [1] you are the host - delete event for everyone
     if (host_id === session.user.id) {
       try {
@@ -212,7 +212,7 @@ const Events = ({ route, navigation }) => {
 
         // Update the UI after successful deletion
         const updatedItems = { ...items };
-        console.log("updatedItems", updatedItems);
+        // console.log("updatedItems", updatedItems);
         const index = updatedItems[date].findIndex(
           (event) => event.id === event_id
         );
@@ -264,7 +264,7 @@ const Events = ({ route, navigation }) => {
 
         // Update the UI after successful deletion
         const updatedItems = { ...items };
-        console.log("updatedItems", updatedItems);
+        // console.log("updatedItems", updatedItems);
         const index = updatedItems[date].findIndex(
           (event) => event.id === event_id
         );
@@ -286,7 +286,7 @@ const Events = ({ route, navigation }) => {
 
   useEffect(() => {
     if (items) {
-      console.log("ITEMS before formattedData in Flatlist", items);
+      // console.log("ITEMS before formattedData in Flatlist", items);
       const formattedData = Object.keys(items).reduce((acc, date) => {
         const movies = items[date];
         movies.forEach((movie) => {
@@ -305,7 +305,7 @@ const Events = ({ route, navigation }) => {
         return acc;
       }, []);
       setFlatListData(formattedData);
-      console.log("formattedData in Flatlist", formattedData);
+      // console.log("formattedData in Flatlist", formattedData);
     }
   }, [items]);
 
@@ -351,7 +351,7 @@ const Events = ({ route, navigation }) => {
   }
 
   const renderItem = ({ item }) => {
-    console.log("Item in renderItem", item);
+    // console.log("Item in renderItem", item);
     // Ensure the item exists and has the required properties
     if (!item || !item.date || !item.name || !item.people || !item.time) {
       return null; // or a placeholder component

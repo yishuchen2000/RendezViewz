@@ -1,11 +1,13 @@
 import React from "react";
 import { StyleSheet } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import Events from "./first_screen";
 import Pending from "./pending";
 import EventDetail from "../event_detail";
 
 const Tab = createMaterialTopTabNavigator();
+const Stack = createNativeStackNavigator();
 
 const EventStack = () => {
   return (

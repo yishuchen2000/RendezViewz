@@ -60,15 +60,25 @@ const AddEvent = ({ route, navigation }) => {
   // variables added by Char
   const [session, setSession] = useState(null);
   const [friendIDs, setFriendIDs] = useState(null);
+  const [currentUser, setCurrentUserData] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      console.log("USER", session.user);
+
       const fetchFriendID = async () => {
         const friends = await supabase
           .from("profiles")
           .select("*")
           .eq("id", session.user.id);
+
+        const user = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id);
+        // console.log("current User DAta", user.data[0]);
+        setCurrentUserData(user.data[0]);
 
         if (friends.error) {
           throw new Error(friends.error.message);
@@ -100,6 +110,7 @@ const AddEvent = ({ route, navigation }) => {
           value: person.id.toString(),
           photo: person.avatar_url,
         }));
+
         setPlist(peopleData);
       };
       fetchFriends();
@@ -156,8 +167,12 @@ const AddEvent = ({ route, navigation }) => {
     const personLabels = all_selected.map((person) => person.label);
     const personValues = all_selected.map((person) => person.value);
 
-    setPerson(personLabels);
-    setPersonValue(personValues);
+    // Prepend session.user.id to the personValues array
+    const updatedPersonValues = [session.user.id, ...personValues];
+    const updatedPersonLabels = [currentUser.username, ...personLabels];
+
+    setPerson(updatedPersonLabels);
+    setPersonValue(updatedPersonValues);
   };
 
   const handleAddEvent = async () => {
@@ -246,12 +261,21 @@ const AddEvent = ({ route, navigation }) => {
       }
 
       // navigate to success
+      const updatedPeopleData = [
+        {
+          label: currentUser.username,
+          value: currentUser.id.toString(),
+          photo: currentUser.avatar_url,
+        },
+        ...Plist,
+      ];
+      // setPlist(updatedPeopleData);
       navigation.navigate("Success", {
         date: date,
         name: show,
         people: person,
         time: time,
-        all: Plist,
+        all: updatedPeopleData,
         poster: poster,
       });
     } catch (error) {

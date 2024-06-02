@@ -20,6 +20,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import supabase from "../../Supabase";
 import AddEvent from "./add_event";
+import getHostInfo from "../../components/getMovieDetails";
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -30,7 +32,7 @@ export default function FirstScreen({ navigation }) {
   const [session, setSession] = useState(null);
 
   const fetchData = async (session) => {
-    console.log(session);
+    // console.log(session);
     try {
       // fetch invites that are accepted
       const { data, error } = await supabase
@@ -51,7 +53,7 @@ export default function FirstScreen({ navigation }) {
         .select("*")
         .eq("host", session.user.id)
         .order("date", { ascending: false });
-      console.log("data2", response.data);
+      // console.log("data2", response.data);
       const data2 = response.data;
 
       if (error) {
@@ -79,17 +81,17 @@ export default function FirstScreen({ navigation }) {
           const { id, date, time, show, people, host, accepted, people_ids } =
             event.party;
 
-          console.log(
-            "[1]",
-            id,
-            date,
-            time,
-            show,
-            people,
-            host,
-            accepted,
-            people_ids
-          );
+          // console.log(
+          //   "[1]",
+          //   id,
+          //   date,
+          //   time,
+          //   show,
+          //   people,
+          //   host,
+          //   accepted,
+          //   people_ids
+          // );
 
           if (!formattedData[date]) {
             formattedData[date] = [];
@@ -112,17 +114,17 @@ export default function FirstScreen({ navigation }) {
           const { id, date, time, show, people, host, accepted, people_ids } =
             event;
 
-          console.log(
-            "[2]",
-            id,
-            date,
-            time,
-            show,
-            people,
-            host,
-            accepted,
-            people_ids
-          );
+          // console.log(
+          //   "[2]",
+          //   id,
+          //   date,
+          //   time,
+          //   show,
+          //   people,
+          //   host,
+          //   accepted,
+          //   people_ids
+          // );
 
           if (!formattedData[date]) {
             formattedData[date] = [];
@@ -153,7 +155,7 @@ export default function FirstScreen({ navigation }) {
         data: { session },
       } = await supabase.auth.getSession();
       setSession(session);
-      console.log(session.user.id);
+      // console.log(session.user.id);
       setUserId(session.user.id);
 
       if (session) {
@@ -178,15 +180,15 @@ export default function FirstScreen({ navigation }) {
     if (!event_id) {
       event_id = id;
     }
-    console.log(
-      "INPUT DATA TO DELETE",
-      id,
-      event_id,
-      accepted_friend_ids,
-      host_id,
-      date,
-      eventName
-    );
+    // console.log(
+    //   "INPUT DATA TO DELETE",
+    //   id,
+    //   event_id,
+    //   accepted_friend_ids,
+    //   host_id,
+    //   date,
+    //   eventName
+    // );
     // [1] you are the host - delete event for everyone
     if (host_id === session.user.id) {
       try {
@@ -212,7 +214,7 @@ export default function FirstScreen({ navigation }) {
 
         // Update the UI after successful deletion
         const updatedItems = { ...items };
-        console.log("updatedItems", updatedItems);
+        // console.log("updatedItems", updatedItems);
         const index = updatedItems[date].findIndex(
           (event) => event.id === event_id
         );
@@ -264,7 +266,7 @@ export default function FirstScreen({ navigation }) {
 
         // Update the UI after successful deletion
         const updatedItems = { ...items };
-        console.log("updatedItems", updatedItems);
+        // console.log("updatedItems", updatedItems);
         const index = updatedItems[date].findIndex(
           (event) => event.id === event_id
         );
@@ -318,6 +320,9 @@ export default function FirstScreen({ navigation }) {
   };
 
   const renderItem = (item) => {
+    console.log("RENDERITE.host_id", item.host_id);
+    const data = getHostInfo(item.host_id);
+    console.log("HOST INFO DATA", data);
     return (
       <Pressable
         onPress={() =>
@@ -403,7 +408,7 @@ export default function FirstScreen({ navigation }) {
           }}
           onDayPress={(day) => {
             setSelected(day.dateString);
-            console.log("selected day", day);
+            // console.log("selected day", day);
           }}
           items={items}
           renderItem={renderItem}
