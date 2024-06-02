@@ -14,6 +14,7 @@ import {
   Switch,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { debounce } from "lodash";
 import { LinearGradient } from "expo-linear-gradient";
@@ -42,6 +43,7 @@ const AddWishlist = () => {
   const [isDuplicateEntry, setIsDuplicateEntry] = useState(false);
   const [commentsEnabled, setCommentsEnabled] = useState(false);
   const [comments, setComments] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -107,16 +109,18 @@ const AddWishlist = () => {
   }, [entry, fetchSuggestions]);
 
   const handleRank = async () => {
-    console.log(entry);
+    setLoading(true);
     const movieDetails = await getMovieDetails(entry);
 
     if (!movieDetails || movieDetails.Response === "False") {
       Alert.alert("Invalid Title", "Please enter a valid movie or show title.");
+      setLoading(false);
       return;
     }
 
     if (isDuplicateEntry) {
       Alert.alert(`${entry} is already ranked on this list.`);
+      setLoading(false);
       return;
     }
 
@@ -140,7 +144,7 @@ const AddWishlist = () => {
       comments: [],
       movie_title: movieDetails.Title,
       user_id: session.user.id,
-      action: `Added ${movieDetails.Title} to their Wishlist!`,
+      action: `Added this to their Wishlist!`,
       created_at: new Date(),
     };
 
@@ -163,6 +167,8 @@ const AddWishlist = () => {
       setRankings(newSortedData);
       navigation.navigate("Wishlist");
     }
+
+    setTimeout(() => setLoading(false), 3000);
   };
 
   useEffect(() => {
@@ -320,17 +326,21 @@ const AddWishlist = () => {
               { backgroundColor: modalValid ? "#858AE3" : "gray" },
             ]}
             onPress={handleRank}
-            disabled={!modalValid}
+            disabled={!modalValid || loading}
           >
-            <Text
-              style={{
-                color: modalValid ? "white" : "#0E0111",
-                fontSize: 15,
-                fontWeight: "bold",
-              }}
-            >
-              Update Ranking
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text
+                style={{
+                  color: modalValid ? "white" : "#0E0111",
+                  fontSize: 15,
+                  fontWeight: "bold",
+                }}
+              >
+                Update Ranking
+              </Text>
+            )}
           </Pressable>
         </View>
       </KeyboardAwareScrollView>

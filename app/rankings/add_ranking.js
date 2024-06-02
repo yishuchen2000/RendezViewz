@@ -14,6 +14,7 @@ import {
   Switch,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { debounce } from "lodash";
@@ -46,6 +47,7 @@ const AddRanking = () => {
   const [rankings, setRankings] = useState([]);
   const [commentsEnabled, setCommentsEnabled] = useState(true);
   const [comments, setComments] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -120,10 +122,12 @@ const AddRanking = () => {
   };
 
   const handleRank = async () => {
+    setLoading(true);
     const movieDetails = await getMovieDetails(entry);
 
     if (!movieDetails || movieDetails.Response === "False") {
       Alert.alert("Invalid Title", "Please enter a valid movie or show title.");
+      setLoading(false);
       return;
     }
 
@@ -144,6 +148,7 @@ const AddRanking = () => {
       if (error) {
         console.error("Failed to update ranking:", error);
         Alert.alert("Error", "Failed to update ranking. Please try again.");
+        setLoading(false);
         return;
       }
 
@@ -166,6 +171,7 @@ const AddRanking = () => {
         if (postError) {
           console.error("Failed to create post:", postError);
           Alert.alert("Error", "Failed to create post. Please try again.");
+          setLoading(false);
           return;
         }
       }
@@ -206,6 +212,7 @@ const AddRanking = () => {
       if (error) {
         console.error("Failed to insert ranking:", error);
         Alert.alert("Error", "Failed to insert ranking. Please try again.");
+        setLoading(false);
         return;
       }
 
@@ -228,6 +235,7 @@ const AddRanking = () => {
         if (postError) {
           console.error("Failed to create post:", postError);
           Alert.alert("Error", "Failed to create post. Please try again.");
+          setLoading(false);
           return;
         }
       }
@@ -248,6 +256,8 @@ const AddRanking = () => {
         navigation.navigate("Rankings");
       }
     }
+    setLoading(false);
+    setTimeout(() => setLoading(false), 3000);
   };
 
   useEffect(() => {
@@ -420,17 +430,21 @@ const AddRanking = () => {
               { backgroundColor: modalValid ? "#858AE3" : "gray" },
             ]}
             onPress={handleRank}
-            disabled={!modalValid}
+            disabled={!modalValid || loading}
           >
-            <Text
-              style={{
-                color: modalValid ? "white" : "#0E0111",
-                fontSize: 15,
-                fontWeight: "bold",
-              }}
-            >
-              Update Ranking
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text
+                style={{
+                  color: modalValid ? "white" : "#0E0111",
+                  fontSize: 15,
+                  fontWeight: "bold",
+                }}
+              >
+                Update Ranking
+              </Text>
+            )}
           </Pressable>
         </View>
       </KeyboardAwareScrollView>
