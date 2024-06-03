@@ -186,18 +186,21 @@ const Pending = ({ route, navigation }) => {
         <View style={styles.inside}>
           <View style={styles.inside1}>
             <Text style={styles.invitee}>{item.invite}</Text>
-            <Text style={styles.textt}> cordially invites you to: </Text>
+            <Text style={styles.textt}> cordially invites you to watch: </Text>
           </View>
           <View style={styles.tiempo}>
-            <Text style={styles.datet}>{item.date}</Text>
-            <Text style={styles.timet}>{item.time}</Text>
-          </View>
-          <View style={styles.tiempo1}>
             <Text numberOfLines={1} style={styles.showt}>
               {item.name}
             </Text>
+          </View>
+          <View style={styles.tiempo1}>
+            <View style={styles.tiempo}>
+              <Text style={styles.datet}>{item.date}</Text>
+              <Text style={styles.timet}>{item.time}</Text>
+            </View>
+
             <Text numberOfLines={1} style={styles.timet}>
-              (w/ {item.people.join(", ")})
+              w/ {item.people.join(", ")}
             </Text>
           </View>
         </View>
@@ -358,7 +361,7 @@ const styles = StyleSheet.create({
     //borderWidth: 5,
   },
   background: {
-    height: windowHeight * 0.09,
+    height: windowHeight * 0.12,
     margin: 5,
     flexDirection: "row",
     width: windowWidth * 0.95,
@@ -394,7 +397,7 @@ const styles = StyleSheet.create({
   },
   tiempo1: {
     width: windowWidth * 0.8,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "start",
   },
   timet: {
@@ -419,9 +422,14 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   showt: {
-    color: "#97DFFC",
-    fontSize: 16,
+    // color: "#97DFFC",
+    marginVertical: 5,
+
     marginRight: 5,
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    // width: windowWidth * 0.55,
   },
   showt2: {
     color: "black",

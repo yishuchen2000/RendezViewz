@@ -34,16 +34,6 @@ const ChatScreen = () => {
   const [numbersFetched, setNumbersFetched] = useState(false);
   const [infoFetched, setInfoFetched] = useState(false);
 
-  // console.log("Current ID", id);
-
-  // const [data, setData] = useState([]);
-
-  // const [userID, setUserID] = useState(null);
-  // const route = useRoute();
-  // const { data } = route.params;
-  // console.log(data);
-  // setUserID(data);
-
   useEffect(() => {
     // console.log("id info in profile!", session.user.id);
     const fetchData = async () => {
@@ -87,9 +77,10 @@ const ChatScreen = () => {
   }, []);
 
   const goToAddEvent = () => {
-    navigation.navigate("messages", {
-      screen: "AddEvent",
-    });
+    // navigation.navigate("messages", {
+    //   screen: "AddEvent",
+    // });
+    navigation.navigate("AddEvent");
   };
 
   const handleRecordInserted = (payload) => {
@@ -168,6 +159,7 @@ const ChatScreen = () => {
             marginRight: 10,
             marginLeft: 6,
             backgroundColor: "rgba(255, 255, 255, 0)",
+            marginBottom: 5,
           }}
         >
           <FontAwesome name="send" size={20} color="#97DFFC" />
@@ -210,6 +202,10 @@ const ChatScreen = () => {
 
   const renderInputToolbar = (props) => {
     return (
+      // <InputToolbar
+      //   {...props}
+      //   containerStyle={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}
+      // />
       <InputToolbar
         {...props}
         containerStyle={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}
@@ -348,7 +344,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.9)",
     paddingHorizontal: 12,
     fontSize: 16,
-    marginTop: 6,
+    marginVertical: 8,
     marginBottom: 10,
     paddingVertical: 8,
     maxHeight: 120, // Set a maximum height for the text input

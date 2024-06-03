@@ -8,15 +8,48 @@ import FriendProfile from "./FriendProfile";
 import NewFriendProfile from "./NewFriendProfile";
 import MessageScreen from "./MessageScreen";
 import ChatScreen from "./ChatScreen";
+import AddEvent from "../messages/add_event";
+import Success from "../messages/success";
 import FriendRankingDetails from "./friendRankingDetails";
 import FriendWishlistDetails from "./FriendWishlistDetails";
 import { useRoute } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 
+const ChatScreenStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ChatScreen"
+        component={ChatScreen}
+        options={{
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="AddEvent"
+        component={AddEvent}
+        options={{
+          title: "Schedule a new Watch Party!",
+          headerStyle: { backgroundColor: "#000814" },
+          headerTitleStyle: { color: "white" },
+          headerTintColor: "white",
+          headerBackTitleVisible: "false",
+        }}
+      />
+      <Stack.Screen
+        name="Success"
+        component={Success}
+        options={{ headerShown: false, headerBackTitleVisible: "false" }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const PeopleStack = () => {
-  //const route = useRoute();
-  //console.log("ID in layout", route.params.id);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -112,6 +145,22 @@ const PeopleStack = () => {
           headerTitle: "",
           headerBackTitleVisible: false,
         }}
+      />
+      <Stack.Screen
+        name="AddEvent"
+        component={AddEvent}
+        options={{
+          title: "Schedule a new Watch Party!",
+          headerStyle: { backgroundColor: "#000814" },
+          headerTitleStyle: { color: "white" },
+          headerTintColor: "white",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="Success"
+        component={Success}
+        options={{ headerShown: false, headerBackTitleVisible: "false" }}
       />
     </Stack.Navigator>
   );

@@ -140,7 +140,7 @@ const EventDetail = ({ route }) => {
       await Calendar.createEventAsync(defaultCalendarId, eventDetails)
         .then((event) => {
           // Event added successfully
-          console.log("Event added to calendar:", event);
+          // console.log("Event added to calendar:", event);
           Alert.alert("Success", "Event exported to calendar!");
         })
         .catch((error) => {

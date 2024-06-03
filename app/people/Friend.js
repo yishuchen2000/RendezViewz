@@ -129,7 +129,7 @@ const Friend = ({ id, user, profilePic, onDeleteFriend, goesTo }) => {
             <View style={styles.recentMessageContainer}>
               <Text
                 style={styles.recentMessage}
-                numberOfLines={2}
+                numberOfLines={1}
                 ellipsizeMode="tail"
               >
                 {recentMessage}
@@ -175,11 +175,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(151, 223, 252, 0.17)",
     borderColor: "#361866",
     borderRadius: 15,
-    padding: 10,
+    padding: 14,
+
     paddingLeft: 14,
+
+    marginVertical: windowHeight * 0.002,
+    height: windowHeight * 0.09,
     width: "100%",
-    margin: 2,
-    height: windowHeight * 0.1,
   },
   header: {
     flexDirection: "row",
@@ -222,12 +224,19 @@ const styles = StyleSheet.create({
     color: "grey",
   },
   deleteButtonContainer: {
+    // position: "absolute",
+    // right: -8,
+    // bottom: 20,
+    // width: windowWidth * 0.1,
+    // height: "50%",
+    // justifyContent: "center",
+    // top: 0,
     position: "absolute",
-    right: -8,
-    bottom: 20,
+    right: 0,
+    marginRight: -10,
+    bottom: 2,
     width: windowWidth * 0.1,
     height: "50%",
     justifyContent: "center",
-    top: 0,
   },
 });

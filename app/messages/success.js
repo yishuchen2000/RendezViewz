@@ -38,7 +38,11 @@ const Success = ({ navigation, route }) => {
             source={{ uri: photoUri }}
             style={{ width: 45, height: 45, borderRadius: 22.5 }}
           />
-          <Text numberOfLines={1} style={styles.circletext}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.circletext}
+          >
             {personName}
           </Text>
         </View>
@@ -61,7 +65,13 @@ const Success = ({ navigation, route }) => {
             source={{ uri: photoUri }}
             style={{ width: 45, height: 45, borderRadius: 22.5 }}
           />
-          <Text style={styles.circletext}>{personName}</Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.circletext}
+          >
+            {personName}
+          </Text>
         </View>
       );
     });

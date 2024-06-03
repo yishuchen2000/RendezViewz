@@ -65,7 +65,6 @@ const AddEvent = ({ route, navigation }) => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      console.log("USER", session.user);
 
       const fetchFriendID = async () => {
         const friends = await supabase
@@ -417,7 +416,7 @@ const AddEvent = ({ route, navigation }) => {
                         title="Select"
                         color="black"
                         onPress={() => {
-                          console.log(date);
+                          // console.log(date);
                           handleChange1(date);
                         }}
                       />

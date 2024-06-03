@@ -18,7 +18,7 @@ const EventStack = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="EventDetail"
+        name="EventDetails"
         component={EventDetail}
         options={{
           headerTransparent: true,
@@ -63,11 +63,8 @@ export default function MyEventTabs() {
         tabBarIndicatorStyle: { backgroundColor: "white" },
       }}
     >
-      {/* <Tab.Screen name="My Events" component={Events} />
-      <Tab.Screen name="Pending Invites" component={Pending} /> */}
       <Tab.Screen name="My Events" component={EventStack} />
       <Tab.Screen name="Pending Invites" component={PendingStack} />
-      {/* <Tab.Screen name="EventDetail" component={EventDetail} /> */}
     </Tab.Navigator>
   );
 }

@@ -9,6 +9,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -75,7 +76,13 @@ const EventDetail = ({ route }) => {
               source={{ uri: personData.photo }}
               style={{ width: 45, height: 45, borderRadius: 22.5 }}
             />
-            <Text style={styles.circletext}>{personName}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.circletext}
+            >
+              {personName}
+            </Text>
           </View>
         );
       } else {

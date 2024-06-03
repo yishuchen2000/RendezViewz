@@ -372,15 +372,16 @@ const Events = ({ route, navigation }) => {
       >
         <View style={styles.background}>
           <View style={styles.inside}>
+            <Text numberOfLines={1} style={styles.showt}>
+              {item.name}
+            </Text>
             <View style={styles.tiempo}>
               <Text style={styles.datet}>{item.date}</Text>
               <Text style={styles.timet}>{item.time}</Text>
             </View>
-            <Text numberOfLines={1} style={styles.showt}>
-              {item.name}
-            </Text>
+
             <Text numberOfLines={1} style={styles.timet}>
-              {item.people.join(", ")}
+              w/ {item.people.join(", ")}
             </Text>
           </View>
           <View style={styles.crossContainer}>
@@ -491,7 +492,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   background: {
-    height: windowHeight * 0.09,
+    height: windowHeight * 0.095,
     margin: 5,
     flexDirection: "row",
     width: windowWidth * 0.95,
@@ -529,9 +530,12 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   showt: {
-    color: "#97DFFC",
-    fontSize: 16,
-    marginTop: 8,
+    marginBottom: 5,
+
+    marginRight: 5,
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   searchContainer: {
     height: windowHeight * 0.04,
