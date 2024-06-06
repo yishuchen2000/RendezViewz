@@ -28,12 +28,11 @@ const LIKE_ICON_FILLED = require("../assets/like_solid_purple.png");
 const Post = ({
   showPostIDs,
   sessionID,
-  id,
-  user,
+  user_id,
+  post_id,
   timestamp,
   text,
   liked,
-  imageUrl,
   action,
   rawComments,
   title,
@@ -78,7 +77,7 @@ const Post = ({
       const profileInfo = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", id);
+        .eq("id", user_id);
 
       setProfilePic(profileInfo.data[0].avatar_url);
 
@@ -93,19 +92,19 @@ const Post = ({
       const myPosts = await supabase
         .from("posts")
         .select("*")
-        .eq("user_id", id);
+        .eq("user_id", user_id);
       setMyPostData(myPosts.data);
       // console.log("POST", myPosts.data);
 
       const rankings = await supabase
         .from("rankings")
         .select("*", { count: "exact", head: true })
-        .eq("user_id", id);
+        .eq("user_id", user_id);
 
       const wishlist = await supabase
         .from("wishlist")
         .select("*", { count: "exact", head: true })
-        .eq("user_id", id);
+        .eq("user_id", user_id);
 
       setRankedNumber(rankings.count);
       setWishlistNumber(wishlist.count);
@@ -164,7 +163,8 @@ const Post = ({
     const response = await supabase
       .from("posts")
       .update({ liked: !liked })
-      .eq("user_id", id);
+      .eq("user_id", user_id)
+      .eq("id", post_id);
     console.log(response);
   };
 
@@ -177,7 +177,8 @@ const Post = ({
       const response = await supabase
         .from("posts")
         .update({ comments: [...comments, [sessionID, inputText]] })
-        .eq("user_id", id);
+        .eq("user_id", user_id)
+        .eq("id", post_id);
       console.log(response);
       setInputText("");
     } else {
@@ -193,7 +194,8 @@ const Post = ({
       .update({
         comments: [...comments.slice(0, index), ...comments.slice(index + 1)],
       })
-      .eq("user_id", id);
+      .eq("user_id", user_id)
+      .eq("id", post_id);
     console.log(response);
   };
 
@@ -238,24 +240,26 @@ const Post = ({
       />
     );
   } else {
-    imageToRender = (
-      <Pressable
-        style={styles.imageContainer}
-        onPress={() =>
-          navigation.navigate(posterGoesTo, {
-            details: movieDetails,
-          })
-        }
-      >
-        <Image
-          source={{
-            uri: movieDetails.Poster,
-            name: "Preview",
-          }}
-          style={styles.image}
-        />
-      </Pressable>
-    );
+    if (movieDetails) {
+      imageToRender = (
+        <Pressable
+          style={styles.imageContainer}
+          onPress={() =>
+            navigation.navigate(posterGoesTo, {
+              details: movieDetails,
+            })
+          }
+        >
+          <Image
+            source={{
+              uri: movieDetails.Poster,
+              name: "Preview",
+            }}
+            style={styles.image}
+          />
+        </Pressable>
+      );
+    }
   }
 
   let contentToRender;
@@ -316,7 +320,7 @@ const Post = ({
                 () =>
                   navigation.navigate(avatarGoesTo, {
                     // screen: "FriendProfile",
-                    id: id,
+                    id: user_id,
                     friendNumber: friendNumber,
                     myPostData: myPostData,
                     profileData: profileData,

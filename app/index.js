@@ -250,7 +250,8 @@ export default function Page() {
               <Post
                 showPostIDs={showPostIDs}
                 sessionID={session.user.id}
-                id={item.user_id}
+                user_id={item.user_id}
+                post_id={item.id}
                 timestamp={item.created_at}
                 text={item.text}
                 liked={item.liked}

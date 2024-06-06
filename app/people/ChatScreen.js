@@ -208,7 +208,9 @@ const ChatScreen = () => {
       // />
       <InputToolbar
         {...props}
-        containerStyle={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}
+        containerStyle={{
+          backgroundColor: "rgba(255, 255, 255, 0.3)",
+        }}
       />
     );
   };
@@ -347,7 +349,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginBottom: 10,
     paddingVertical: 8,
-    maxHeight: 120, // Set a maximum height for the text input
+    maxHeight: 140, // Set a maximum height for the text input
     marginLeft: 5,
   },
   avatar: {
