@@ -70,8 +70,9 @@ Scan the QR code with your camera app or open with device simulator.
 
 ## Documentation
 
-- [Design Prototype](https://www.figma.com/file/kGnvLGbZxT4xSdzNHRW9hZ/Medium-Fi?type=design&node-id=0-1&mode=design&t=vavKZ9crnAQ3zXGO-0)
 - [Project Documentation](https://docs.google.com/document/d/1czxC48jpyQymzcjhpch4FymYhwO53hX9dhWqsdUxIKI/edit?usp=sharing)
+- [Figma Design](https://www.figma.com/file/kGnvLGbZxT4xSdzNHRW9hZ/Medium-Fi?type=design&node-id=0-1&mode=design&t=vavKZ9crnAQ3zXGO-0)
+
 
 ## License
 
